@@ -1,55 +1,86 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import ch4 from "@/assets/2-ch4.m4a.asset.json";
-import ch6 from "@/assets/3-ch6.m4a.asset.json";
-import ch7 from "@/assets/4-ch7.m4a.asset.json";
-import { LABELS } from "./study";
+import { useSettings } from "./settings";
 
-export const TRACKS = [
-  { ch: 4, title: "Growing through life", detail: "Erikson · Piaget · attachment · adolescence", src: ch4.url },
-  { ch: 6, title: "How learning happens", detail: "Pavlov · consequences · schedules · Bandura", src: ch6.url },
-  { ch: 7, title: "Make it memorable", detail: "Encoding · storage · retrieval · exam recall", src: ch7.url },
-];
+export type Track = { key: string; title: string; subtitle: string; resolve: () => Promise<string[]> };
 
 type Player = {
-  track: number;
+  queue: Track[];
+  index: number;
+  current?: Track;
   playing: boolean;
+  loading: boolean;
   started: boolean;
   time: number;
   duration: number;
   error: string;
-  select: (n: number, play?: boolean) => void;
+  playQueue: (q: Track[], i?: number) => void;
   toggle: () => void;
   seek: (t: number) => void;
   skip: (d: number) => void;
+  jump: (d: number) => void;
 };
 const Ctx = createContext<Player | null>(null);
 export const usePlayer = () => useContext(Ctx)!;
 
 export function PlayerProvider({ children }: { children: ReactNode }) {
+  const { s } = useSettings();
   const ref = useRef<HTMLAudioElement>(null);
-  const [track, setTrack] = useState(0);
+  const [queue, setQueue] = useState<Track[]>([]);
+  const [index, setIndex] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [started, setStarted] = useState(false);
   const [time, setTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [error, setError] = useState("");
-  const trackRef = useRef(0);
+  const parts = useRef<{ urls: string[]; i: number }>({ urls: [], i: 0 });
+  const qRef = useRef<Track[]>([]);
+  const iRef = useRef(0);
+  const token = useRef(0);
+  const cache = useRef(new Map<string, string[]>());
 
-  const select = (n: number, play = false) => {
-    const a = ref.current!;
-    if (n !== trackRef.current) {
-      trackRef.current = n;
-      setTrack(n);
-      a.src = TRACKS[n].src;
-      setTime(0);
-    }
+  const load = async (q: Track[], i: number) => {
+    const t = q[i];
+    if (!t) return;
+    const my = ++token.current;
+    iRef.current = i;
+    setIndex(i);
     setError("");
-    if (play) a.play().catch(() => {});
+    setLoading(true);
+    setStarted(true);
+    try {
+      const urls = cache.current.get(t.key) ?? (await t.resolve());
+      cache.current.set(t.key, urls);
+      if (my !== token.current) return;
+      parts.current = { urls, i: 0 };
+      const a = ref.current!;
+      a.src = urls[0]!;
+      a.playbackRate = s.speechRate;
+      await a.play().catch(() => {});
+      // Prefetch next track
+      const n = q[i + 1];
+      if (n && !cache.current.has(n.key)) n.resolve().then((u) => cache.current.set(n.key, u)).catch(() => {});
+    } catch (e) {
+      if (my === token.current) setError(e instanceof Error ? e.message : "Could not load audio.");
+    } finally {
+      if (my === token.current) setLoading(false);
+    }
+  };
+
+  const playQueue = (q: Track[], i = 0) => {
+    qRef.current = q;
+    setQueue(q);
+    load(q, i);
   };
   const toggle = () => {
     const a = ref.current!;
+    if (!a.src && qRef.current.length) return load(qRef.current, iRef.current);
     if (a.paused) a.play().catch(() => {});
     else a.pause();
+  };
+  const jump = (d: number) => {
+    const n = Math.max(0, Math.min(qRef.current.length - 1, iRef.current + d));
+    load(qRef.current, n);
   };
   const seek = (t: number) => {
     if (ref.current) ref.current.currentTime = t;
@@ -60,16 +91,19 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const t = TRACKS[track]!;
-    if ("mediaSession" in navigator) {
-      navigator.mediaSession.metadata = new MediaMetadata({
-        title: t.title,
-        artist: "Psychology study studio",
-        album: LABELS[t.ch] ?? "",
-      });
-      navigator.mediaSession.playbackState = playing ? "playing" : "paused";
-    }
-  }, [track, playing]);
+    if (ref.current) ref.current.playbackRate = s.speechRate;
+  }, [s.speechRate]);
+
+  const current = queue[index];
+  useEffect(() => {
+    if (!("mediaSession" in navigator) || !current) return;
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: current.title,
+      artist: "Study Studio",
+      album: current.subtitle,
+    });
+    navigator.mediaSession.playbackState = playing ? "playing" : "paused";
+  }, [current, playing]);
 
   useEffect(() => {
     if (!("mediaSession" in navigator)) return;
@@ -78,8 +112,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       ["pause", () => ref.current?.pause()],
       ["seekbackward", (d) => skip(-(d.seekOffset || 10))],
       ["seekforward", (d) => skip(d.seekOffset || 10)],
-      ["previoustrack", () => select(Math.max(0, trackRef.current - 1), true)],
-      ["nexttrack", () => select(Math.min(TRACKS.length - 1, trackRef.current + 1), true)],
+      ["previoustrack", () => jump(-1)],
+      ["nexttrack", () => jump(1)],
     ];
     for (const [n, f] of h) {
       try {
@@ -91,22 +125,28 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <Ctx.Provider value={{ track, playing, started, time, duration, error, select, toggle, seek, skip }}>
+    <Ctx.Provider
+      value={{ queue, index, current, playing, loading, started, time, duration, error, playQueue, toggle, seek, skip, jump }}
+    >
       {children}
       <audio
         ref={ref}
-        src={TRACKS[0].src}
         preload="metadata"
         playsInline
-        onPlay={() => {
-          setPlaying(true);
-          setStarted(true);
-        }}
+        onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
-        onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+        onLoadedMetadata={(e) => {
+          setDuration(e.currentTarget.duration);
+          e.currentTarget.playbackRate = s.speechRate;
+        }}
         onEnded={() => {
-          if (trackRef.current < TRACKS.length - 1) select(trackRef.current + 1, true);
+          const p = parts.current;
+          if (p.i < p.urls.length - 1) {
+            p.i += 1;
+            ref.current!.src = p.urls[p.i]!;
+            ref.current!.play().catch(() => {});
+          } else if (iRef.current < qRef.current.length - 1) load(qRef.current, iRef.current + 1);
         }}
         onError={() => setError("Track could not load. Check your connection and try again.")}
       />
