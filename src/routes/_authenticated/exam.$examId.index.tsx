@@ -135,6 +135,34 @@ function ExamHome() {
   );
 }
 
+/** Rename chapters (sections) of this exam. */
+function ChaptersCard({ examId }: { examId: string }) {
+  const { data } = useSuspenseQuery(examQuery(examId));
+  const qc = useQueryClient();
+  const rename = async (id: string, current: string) => {
+    const t = window.prompt("Chapter name", current);
+    if (!t?.trim() || t.trim() === current) return;
+    const { error } = await supabase.from("sections").update({ title: t.trim() }).eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["exam", examId] });
+  };
+  return (
+    <div className="gummy-card mt-4 p-4">
+      <p className="mb-3 font-bold">Chapters</p>
+      <ul className="space-y-2">
+        {data.sections.map((sec) => (
+          <li key={sec.id} className="flex items-center gap-2">
+            <span className="min-w-0 flex-1 truncate text-sm font-bold">{sec.title}</span>
+            <button className="gummy-icon sm" aria-label={`Rename ${sec.title}`} onClick={() => rename(sec.id, sec.title)}>
+              <Pencil size={14} />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Stat({ n, label, tone }: { n: number; label: string; tone: string }) {
   return (
     <div className="gummy-card p-3" data-tone={tone}>
