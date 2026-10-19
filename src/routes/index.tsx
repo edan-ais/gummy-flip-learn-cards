@@ -25,7 +25,7 @@ function Cards() {
   const [known, setKnown] = useState<string[]>([]);
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const [dir, setDir] = useState(0);
-  const c = CARDS[order[pos]];
+  const c = CARDS[order[pos]!]!;
   const touch = useRef<number | null>(null);
 
   useEffect(() => setKnown(load("known", [])), []);

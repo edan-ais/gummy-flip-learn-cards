@@ -60,7 +60,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   };
 
   useEffect(() => {
-    const t = TRACKS[track];
+    const t = TRACKS[track]!;
     if ("mediaSession" in navigator) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: t.title,

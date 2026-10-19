@@ -29,7 +29,7 @@ function Memorize() {
   const [draw, setDraw] = useState(false);
   const [strokes, setStrokes] = useState<Stroke[]>([]);
   const input = useRef<HTMLTextAreaElement>(null);
-  const c = CARDS[pos];
+  const c = CARDS[pos]!;
   const words = c.a.match(WORD_RE) || [];
   const total = memoryWords(c.a).length;
   const entered = value.toLowerCase().match(/[a-z0-9]/g) || [];
