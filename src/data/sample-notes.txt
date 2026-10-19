@@ -1,232 +1,45 @@
-Exam 2 study guide (36 pages) and class notes (2 pages)
+StudyLamb welcome guide (sample class)
 
-The 36-page Exam 2 guide is primary. The 2-page class notes add emphasis. The guide's memory heading says Chapter 17; we use Ch 7 Memory for this exam.
+This is the sample class that comes with StudyLamb. Instead of a school subject, it teaches you how to use the app itself, so every feature you try here works exactly the same in your own classes.
 
-Corrections applied
-There is no blanket guaranteed-safe first-two-week rule for alcohol or smoking. Teratogen effects depend on amount, duration and developmental stage. Iconic memory lasts a fraction of a second; echoic memory lasts several seconds.
+Chapter 1 · Getting started
 
-The assigned Yanjaa video is not included in the supplied files. Watch it for the exact demonstrations. This is practice, not a guarantee of the test's questions.
+Classes and exams. A class is one school subject, like Science or Math. You create it with a name and a color, and it can hold as many exams as you like, such as Unit 1 test and Final. Everything you can add, you can also rename or delete with the pencil and trash buttons.
 
-Source coverage
-All guide topics are represented. Four Quizlet sets were checked and only verified concepts were included.
+Adding materials. Open an exam and add your study materials: PDFs, photos of pages, Word documents (.docx), plain text files, or pasted text, up to 25 MB each. The camera button opens your camera directly. StudyLamb reads the pages and builds chapters, flashcards, practice questions, and podcast episodes from your own material.
 
-Ch 4 · Development
-• What are the three domains of development? — Physical is change in the body and brain, such as growth and puberty. Cognitive is change in thinking, memory, language, and problem solving. Socioemotional is change in emotions and relationships. Think body, thinking, people. The domains interact rather than developing in isolation.
-• How do nature and nurture contribute? — Nature refers to inherited characteristics; nurture includes experience, the current environment, culture, and society. Development reflects their interaction. A child's biology matters, but so do opportunities to practice, relationships, and the environment.
-• What are Erikson's eight crises, in order? — Trust versus mistrust; autonomy versus shame and doubt; initiative versus guilt; industry versus inferiority; identity versus role confusion; intimacy versus isolation; generativity versus stagnation; integrity versus despair. The guide's cue is T A I I I I G I. Say the actual names, not only the letters.
-• What are Erikson's first four ages and questions? — Birth to one: trust, can I rely on care? One to three: autonomy, can I do things myself? Three to six: initiative, can I make choices? Six to twelve: industry, am I good at things? These are the guide's age bands, not rigid deadlines for every child.
-• What happens in Erikson's last four stages? — Adolescence brings identity and the question who am I. Young adulthood brings intimacy and close relationships. Middle adulthood brings generativity and contributing to the next generation. Late adulthood brings integrity and reflecting on whether life was meaningful.
-• What are Piaget's four stages and ages? — Sensorimotor, birth to two; preoperational, two to seven; concrete operational, seven to eleven; formal operational, about twelve and up. S P C F is the guide's cue. Know the order and match an example to the type of thinking, rather than relying only on age.
-• What is object permanence? — Knowing something still exists when you cannot see it. In the sensorimotor stage children learn through senses and actions, and object permanence develops. A baby searching for a hidden toy shows the concept. Do not assume all one-year-olds fail a hidden-object task.
-• What distinguishes preoperational thinking? — Language and pretend play become possible, but thinking is not yet fully logical. Egocentrism means difficulty taking another person's perspective. Centration means focusing on one feature. A child may judge the taller glass as holding more water because height captures attention.
-• What distinguishes concrete and formal operational thinking? — Concrete operational children reason logically about concrete situations and understand conservation: the water amount stays the same after pouring into a taller glass. Formal operational thinking supports abstract ideas and hypothetical possibilities, such as testing what would happen if a rule changed.
-• How do assimilation and accommodation differ? — A schema is a mental framework. Assimilation fits a new experience into an existing schema. Accommodation changes the schema or develops a new one. Calling every four-legged animal a dog is assimilation; revising the categories after learning about cats is accommodation.
-• What are Kohlberg's three moral levels? — Preconventional: personal consequences, punishment, and rewards. Conventional: rules, laws, and social expectations. Postconventional: ethical principles, rights, and justice. Remember punishment, community, principles. The reason for a decision determines the level.
-• What matters in the Heinz dilemma? — Not just whether Heinz steals medicine, but why. Avoiding jail is preconventional. Respecting the law is conventional. Arguing that a life outweighs property law can be postconventional. Two people can choose the same action for different moral reasons.
-• What is dynamic systems theory? — Development emerges from interacting factors: brain maturation, body, environment, experience, motivation, and behavior. Crawling is not a brain-only switch. Muscles, space, a desired toy, and practice all contribute. Many interacting factors is the exam clue.
-• What patterns can development follow? — Stable patterns stay relatively constant. Growth and decline involve rising and then falling. Continuous change is gradual. Stage change proceeds through distinct steps. Unpredictable patterns do not follow a single expected path. Identify the pattern described rather than assuming all development is stage-like.
-• What is prenatal development, and what is a teratogen? — Prenatal means before birth. A teratogen is an environmental substance or condition that can harm development, such as alcohol, certain drugs, infections, or toxins. The guide's A D S cue means amount, duration, stage. Different organs develop at different times, so timing matters.
-• Is there a guaranteed safe first-two-week window for alcohol or smoking? — No. The sparse notes' blanket no-harm claim is not a safe rule. Exposure effects depend on timing and other factors; do not infer guaranteed safety. For the exam, learn amount, duration, and developmental stage. Germinal, embryonic, and fetal are the prenatal periods in order.
-• How do infancy, experience, and reflexes connect? — Early brains develop rapidly, and experience shapes neural connections. Abuse and neglect can disrupt learning, attention, emotional regulation, and social development. Rooting turns toward a touch near the mouth; sucking supports feeding; grasping closes the hand. These are inborn reflexes, not learned tricks.
-• How do hearing, vision, and motor development differ? — Hearing is relatively developed early, and infants recognize familiar voices. Newborn vision is less mature and improves. Motor development reflects brain maturation, environment, and practice together. Healthy development cannot be judged only by comparing total brain size.
-• What did Harlow show about attachment? — Attachment is a strong emotional bond with a caregiver. Infant monkeys preferred the soft, comforting surrogate even when a wire surrogate provided food. Contact comfort and security mattered; food alone did not explain the bond. Draw a soft caregiver beside a wire bottle to remember the contrast.
-• What does Ainsworth's Strange Situation assess? — It examines separation, a stranger, and reunion. Secure attachment uses the caregiver as a base and is comforted at reunion. Avoidant attachment shows little outward response or avoids contact. Resistant or ambivalent attachment seeks contact but resists comfort. Focus on the reunion pattern, not one isolated cry.
-• What is theory of mind? — Understanding that other people have their own thoughts, feelings, beliefs, and perspectives, which may differ from yours. If you know the keys moved but your friend did not see that happen, you can predict your friend will look in the old place. That is reasoning about another person's belief.
-• Why can adolescent risk-taking increase? — Reward and emotion systems can be active while planning and impulse-control systems, including the prefrontal cortex, are still developing. Risk-taking can also support exploration, independence, and new relationships. This is a developmental tendency, not a claim that every teenager makes poor choices.
-• What are the four parenting styles? — Authoritative is high warmth and high control: warm and firm. Authoritarian is low warmth and high control. Permissive is high warmth and low control. Uninvolved is low warmth and low control. Picture a two-by-two grid and identify both dimensions before choosing the label.
-• How do peers and emerging adulthood matter? — Peers influence identity, behavior, decisions, and emotions; influence can be positive. Emerging adulthood spans roughly the late teens through twenties. Its five features are identity exploration, instability, self-focus, feeling in between, and possibilities. Self-focus here is a developmental feature, not automatically selfishness.
-• What can change and remain strong in older adulthood? — Processing speed and some memory abilities may decline, but skills and knowledge can remain useful. Physical activity, learning, mental stimulation, social connection, and healthy habits support functioning. Dementia is significant cognitive decline that disrupts everyday life, not an inevitable synonym for aging.
-• What are fluid and crystallized intelligence? — Fluid intelligence is solving new problems without relying mainly on learned knowledge. Crystallized intelligence is accumulated knowledge and experience. This contrast is named in the sparse class notes; use it to distinguish rapid novel reasoning from vocabulary or well-practiced knowledge.
-• What supports continued well-being? — Meaning, purpose, close relationships, and enjoyable activities can continue in older age. Marriage and other close relationships can offer support and companionship; children bring rewards and responsibilities. The guide describes blue zones through social connection, purpose, activity, healthy eating, and community, not a guarantee for any individual.
-• What language terms supplement this chapter? — Babbling is repeated speech-like sounds. A phoneme is a speech sound unit; a morpheme is a meaningful unit, such as un or play. Telegraphic speech uses a few content words, such as me go. Overregularization applies a grammar rule too widely, as in I goed. Syntax concerns word order.
-• Erikson: Trust vs. mistrust - age and question? — Birth-1 year. Can I trust people to care for me?
-• Erikson: Autonomy vs. shame and doubt - age and question? — 1-3 years. Can I do things myself?
-• Erikson: Initiative vs. guilt - age and question? — 3-6 years. Can I act and make choices?
-• Erikson: Industry vs. inferiority - age and question? — 6-12 years. Am I good at things?
-• Erikson: Identity vs. role confusion - age and question? — Adolescence. Who am I?
-• Erikson: Intimacy vs. isolation - age and question? — Young adulthood. Can I form close relationships?
-• Erikson: Generativity vs. stagnation - age and question? — Middle adulthood. Am I contributing to the next generation?
-• Erikson: Integrity vs. despair - age and question? — Late adulthood. Was my life meaningful?
-• Piaget: Sensorimotor - age and hallmark? — Birth-2. Learning through senses and actions; object permanence develops.
-• Piaget: Preoperational - age and hallmark? — 2-7. Language and symbols; not yet fully logical; egocentrism and centration.
-• Piaget: Concrete operational - age and hallmark? — 7-11. Logical thinking about concrete situations; conservation.
-• Piaget: Formal operational - age and hallmark? — About 12+. Abstract and hypothetical reasoning.
-• Parenting: Authoritative - warmth and control? — High warmth, high control. Warm and firm.
-• Parenting: Authoritarian - warmth and control? — Low warmth, high control. Strict and less responsive.
-• Parenting: Permissive - warmth and control? — High warmth, low control. Warm with few limits.
-• Parenting: Uninvolved - warmth and control? — Low warmth, low control. Little involvement.
-• Kohlberg: Preconventional reasoning? — Personal consequences, punishment and rewards.
-• Kohlberg: Conventional reasoning? — Rules, laws, approval and social expectations.
-• Kohlberg: Postconventional reasoning? — Ethical principles, rights and justice.
-• Secure attachment? — Uses caregiver as a secure base, distressed by separation and comforted at reunion.
-• Avoidant attachment? — Shows little outward response; may avoid the caregiver or not seek comfort.
-• Resistant / ambivalent attachment? — Distressed by separation, seeks contact but resists comfort on reunion.
-• Babbling? — Repeated speech-like sounds, such as ba-ba-ba.
-• Phoneme? — A basic sound unit in language.
-• Morpheme? — A smallest meaningful language unit, such as un-, play, or -ed.
-• Telegraphic speech? — Short phrases mainly using content words, such as me go.
-• Overregularization? — Applying a grammar rule too broadly, such as saying goed.
-• Syntax? — Rules for arranging words into sentences.
-• Egocentrism? — Difficulty taking another person's perspective, in Piaget's account.
-• Centration? — Focusing on one aspect of a situation and overlooking others.
-• Assimilation? — Fitting a new experience into an existing schema.
-• Accommodation? — Changing a schema or developing a new one to fit new experience.
-• Zygote? — The fertilized egg at the start of prenatal development.
-• Prenatal periods in order? — Germinal, embryonic, fetal.
-• Secure attachment: longer-term associations? — The supplemental set emphasizes better peer relationships, school adjustment, and socioemotional functioning. These are tendencies, not guarantees.
-• Kohlberg: limitations? — The supplemental set notes that the theory emphasizes cognitive reasoning and can underplay emotional and cultural influences; moral development need not fit one universal progression.
-• Teratogen risk: what does A D S stand for? — Amount, duration, stage of development.
-• What are the five characteristics of emerging adulthood? — Identity exploration, instability, self-focus, feeling in between, possibilities.
+Syllabus upload. From the classes page, Upload a syllabus reads your syllabus and creates the classes and their major exams for you, with dates when listed.
 
-Ch 6 · Learning
-• What is learning? — Learning is a relatively permanent change in behavior or knowledge that happens because of experience.
-• What is non-associative learning? — Non-associative learning happens when you change your response to one repeated stimulus.
-• What is associative learning? — Associative learning happens when you learn a connection between two events or between a behavior and its consequence.
-• What is habituation? — Habituation occurs when you respond less to a stimulus after being exposed to it repeatedly.
-• What is sensitization? — Sensitization occurs when your response to a stimulus becomes stronger after exposure.
-• What is classical conditioning? — Classical conditioning is learning by associating two stimuli. A previously neutral stimulus becomes associated with something that naturally produces a response.
-• Who is associated with classical conditioning? — Ivan Pavlov, who studied how dogs learned to associate a sound with food.
-• What is an unconditioned stimulus (US)? — Something that naturally produces a response without prior learning.
-• What is an unconditioned response (UR)? — A natural, unlearned response to an unconditioned stimulus.
-• What is a conditioned stimulus (CS)? — A previously neutral stimulus that produces a learned response after being associated with an unconditioned stimulus.
-• What is a conditioned response (CR)? — A learned response to the conditioned stimulus.
-• What is acquisition? — The initial learning of an association between two stimuli.
-• What is extinction? — The conditioned response gradually decreases when the conditioned stimulus is repeatedly presented without the unconditioned stimulus.
-• What is spontaneous recovery? — The reappearance of an extinguished conditioned response after a break.
-• What is stimulus generalization? — Responding similarly to stimuli that resemble the conditioned stimulus.
-• What is stimulus discrimination? — Learning to respond differently to distinct stimuli.
-• What is operant conditioning? — Operant conditioning is learning through the consequences of your behavior.
-• Who is associated with operant conditioning? — B. F. Skinner, who studied how consequences affect behavior.
-• What is the law of effect? — Edward Thorndike's principle that behaviors followed by satisfying consequences are more likely to happen again, while behaviors followed by unpleasant consequences are less likely to happen.
-• What is reinforcement? — Reinforcement increases the likelihood that a behavior will happen again.
-• What is punishment? — Punishment decreases the likelihood that a behavior will happen again.
-• What is positive reinforcement? — Adding something desirable to increase a behavior.
-• What is negative reinforcement? — Removing something unpleasant to increase a behavior.
-• What is positive punishment? — Adding something unpleasant to decrease a behavior.
-• What is negative punishment? — Removing something desirable to decrease a behavior.
-• What is continuous reinforcement? — Reinforcing a behavior every time it happens.
-• What is partial or intermittent reinforcement? — Reinforcing a behavior only some of the time.
-• What is a fixed-ratio schedule? — Reinforcement happens after a set number of responses.
-• What is a variable-ratio schedule? — Reinforcement happens after an unpredictable number of responses.
-• What is a fixed-interval schedule? — Reinforcement becomes available after a set amount of time.
-• What is a variable-interval schedule? — Reinforcement becomes available after unpredictable amounts of time.
-• What is shaping in operant conditioning? — Shaping means reinforcing small steps that gradually lead toward a desired behavior.
-• What is behavior modification? — Behavior modification uses learning principles to increase desired behaviors or decrease unwanted behaviors.
-• What is a token economy? — A system in which people earn tokens or points for certain behaviors and exchange them for rewards.
-• How does biology influence learning? — Biological factors can make some associations easier to learn than others. Organisms may be biologically prepared to learn certain connections.
-• What is preparedness? — A biological tendency to learn some associations more easily than others.
-• What is latent learning? — Learning that occurs without an immediate reward or obvious change in behavior, but becomes apparent when there is a reason to use the knowledge.
-• What is a cognitive map? — A mental representation of the layout of an environment.
-• What is insight learning? — Solving a problem through a sudden realization of how the pieces fit together.
-• What is observational learning? — Observational learning occurs when you learn by watching another person's behavior and its consequences.
-• Who is most associated with observational learning? — Albert Bandura, a psychologist known for research on learning through observation and modeling.
-• What is modeling? — Learning or demonstrating a behavior by observing and imitating another person.
-• What is vicarious conditioning? — Learning through observing the consequences someone else experiences.
-• What did Bandura's Bobo doll experiment demonstrate? — It showed that children can learn aggressive behaviors by observing adults, providing evidence that people can learn through observation rather than only through direct rewards or punishments.
-• What are mirror neurons? — Neurons that respond when an individual performs certain actions and, in some cases, when they observe similar actions performed by others. They are studied in relation to action understanding and imitation.
-• What is the main difference between classical and operant conditioning? — Classical conditioning connects stimuli, while operant conditioning connects behaviors with their consequences.
-• What is the main difference between positive reinforcement and negative reinforcement? — Positive reinforcement adds something desirable to increase behavior. Negative reinforcement removes something unpleasant to increase behavior.
-• What is the main difference between reinforcement and punishment? — Reinforcement increases a behavior, while punishment decreases a behavior.
-• What is the difference between habituation and extinction? — Habituation is a reduced response to a repeated stimulus. Extinction is a reduction in a learned conditioned response when the expected association is no longer reinforced.
-• What is the difference between generalization and discrimination? — Generalization means responding similarly to similar stimuli. Discrimination means learning to distinguish between stimuli.
-• What is the difference between classical and observational learning? — Classical conditioning involves learning associations between stimuli. Observational learning involves learning by watching others.
-• What is the operant in a lever-press experiment? — The lever-pressing behavior.
-• Why are tokens secondary reinforcers? — Their reward value is learned through exchange for other rewards.
-• Classify: child earns tokens for helping and loses tokens for rule-breaking. — Token earning can be positive reinforcement if helping increases. Token loss can be negative punishment if rule-breaking decreases.
-• Taste aversion: label food poisoning, chicken-salad taste, vomiting, and avoidance. — Food poisoning: US. Natural vomiting: UR. Associated chicken-salad taste: CS. Learned avoidance or aversive response to that taste: CR.
+Source of truth. Chapter material from the textbook or teacher outranks student notes. When they contradict, only the true version enters the study guide. Information repeated across many of your notes is treated as important and weighted more heavily.
 
-Ch 7 · Memory
-• What are the three phases of memory? — The three phases of memory are encoding, storage, and retrieval. • Encoding: Getting information into your memory. • Storage: Keeping information in your memory over time. • Retrieval: Getting information back out of your memory when you need it.
-• What is encoding? — Encoding is the process of taking information you see, hear, or experience and turning it into a form your brain can store in memory.
-• What is selective attention? — Selective attention is focusing on certain information while ignoring other information around you.
-• How does selective attention affect encoding? — When you pay attention to information, you're more likely to encode it into memory. When your attention is elsewhere, you may not process the information well enough to remember it later.
-• What are the three types of coding in memory? — The three types are visual, acoustic, and semantic coding. • Visual coding: Remembering information based on how it looks. • Acoustic coding: Remembering information based on how it sounds. • Semantic coding: Remembering information based on what it means.
-• What is visual coding? — Visual coding is encoding information through its appearance or visual features.
-• What is acoustic coding? — Acoustic coding is encoding information based on its sound.
-• What is semantic coding? — Semantic coding is encoding information based on its meaning.
-• If you remember a word because of how it looks, what type of coding is that? — Visual coding.
-• If you remember a word because of how it sounds, what type of coding is that? — Acoustic coding.
-• If you remember a word because you understand its definition, what type of coding is that? — Semantic coding.
-• What is storage? — Storage is the process of maintaining encoded information in memory over time.
-• What is maintenance rehearsal? — Maintenance rehearsal involves repeating information over and over to keep it active in memory.
-• What is elaborative rehearsal? — Elaborative rehearsal involves connecting new information to information you already know, explaining its meaning, or creating examples to make it more memorable.
-• What is the main difference between maintenance rehearsal and elaborative rehearsal? — Maintenance rehearsal repeats information, while elaborative rehearsal connects information to meaning, examples, or existing knowledge.
-• What are some ways to improve memory? — Pay attention while learning. • Connect new information to things you already know. • Explain definitions in your own words. • Use examples to understand difficult concepts. • Practice recalling information without looking at your notes. • Review information over multiple study sessions instead of cramming everything at once.
-• What is the main idea to look for in the Yanjaa video? — Focus on the memory-improvement strategies Yanjaa demonstrates and how they help people encode and retrieve information more effectively.
-• What is prospective memory? — Prospective memory is remembering to do something in the future.
-• What is retrospective memory? — Retrospective memory is remembering information or events from the past.
-• What is explicit memory? — Explicit memory is memory for information or experiences that you consciously remember and can usually describe.
-• What is implicit memory? — Implicit memory is memory that influences your behavior without requiring conscious recollection.
-• What is semantic memory? — Semantic memory is memory for facts, concepts, and general knowledge.
-• What is episodic memory? — Episodic memory is memory for personal experiences and events, including their context.
-• What is highly superior autobiographical memory (HSAM)? — HSAM is a rare ability to recall an unusually large amount of personal life events, often along with the dates they occurred.
-• What is a flashbulb memory? — A flashbulb memory is a vivid memory of the circumstances in which someone learned about a surprising or emotionally significant event.
-• What do coding, capacity, and duration mean when describing a memory system? — Coding: The form in which information is represented. • Capacity: How much information the system can hold. • Duration: How long information remains available.
-• What is a schema? — A schema is a mental framework that organizes your knowledge and expectations about a topic or situation.
-• How can schemas affect memory? — Schemas help us organize and interpret information, but they can also cause us to remember details that fit our expectations even if those details were not actually present.
-• What is an association network? — An association network is a way of representing how concepts and memories connect to one another.
-• What are neural network models? — Neural network models describe how information can be represented through interconnected units, with patterns of activation helping explain learning, associations, and memory.
-• What is the levels-of-processing view? — The levels-of-processing view proposes that how deeply you process information affects how well you remember it later.
-• What is shallow processing? — Shallow processing focuses on surface features, such as how a word looks or sounds.
-• What is deep processing? — Deep processing focuses on meaning and connections to existing knowledge.
-• How do coding and rehearsal affect memory? — The way you encode information and how you practice it influence how easily you may retrieve it later. Repetition can help, but connecting information to meaning and existing knowledge often produces more durable learning.
-• Which brain areas are involved in memory? — Several brain areas contribute to memory, including: • Hippocampus: Important for forming new explicit memories and helping organize new experiences. • Amygdala: Important for emotional processing and for influencing emotional memories. • Cerebral cortex: Different areas help represent and store different kinds of knowledge over time. • Prefrontal cortex: Helps with working memory, organization, and strategic retrieval. • Cerebellum and basal ganglia: Important for aspects of motor learning, habits, and other forms of implicit memory.
-• What is long-term potentiation (LTP)? — Long-term potentiation is a lasting increase in the strength of communication between certain neurons after repeated or coordinated activity. It is considered one mechanism that may contribute to learning and memory.
-• What is memory consolidation? — Consolidation is the process through which a newly formed memory becomes more stable over time.
-• What is reconsolidation? — Reconsolidation is the process through which a memory can become temporarily changeable after being retrieved and then be stored again.
-• What is classical conditioning? — Classical conditioning is learning an association between two stimuli.
-• What is procedural memory? — Procedural memory is memory for how to perform skills and actions.
-• How are classical conditioning and procedural memory related to implicit memory? — Some conditioned responses and learned skills can be expressed without consciously recalling the original learning experience. These are examples of learning that can involve implicit memory systems.
-• What is retrieval? — Retrieval is accessing information that has been stored in memory.
-• What is a retrieval cue? — A retrieval cue is a piece of information that helps you access a memory.
-• What is context-dependent memory? — Context-dependent memory occurs when recalling information is easier in an environment similar to the one where you learned it.
-• What is state-dependent memory? — State-dependent memory occurs when your internal state during retrieval is similar to the state you were in when learning.
-• What is a mnemonic? — A mnemonic is a memory aid that helps you encode or retrieve information. Examples: • Acronyms. • Rhymes. • Imagery. • Creating a memorable story. • Connecting new information to something you already know.
-• What is forgetting? — Forgetting is the inability to retrieve information that was previously learned, or the loss or weakening of information in memory.
-• What is Ebbinghaus' forgetting curve? — It describes the general pattern in which forgetting tends to happen rapidly after learning and then slows over time.
-• What does the forgetting curve suggest about studying? — Reviewing information over time can help strengthen memory and reduce forgetting compared with relying on one study session.
-• What is amnesia? — Amnesia refers to significant memory loss that can affect past memories, the ability to form new memories, or both.
-• What is anterograde amnesia? — Anterograde amnesia is difficulty forming new long-term memories after the onset of the condition.
-• What is retrograde amnesia? — Retrograde amnesia is difficulty recalling memories formed before the onset of the condition.
-• What is interference theory? — Interference theory suggests that forgetting can happen when memories compete with or disrupt the retrieval of other memories.
-• What is proactive interference? — Proactive interference occurs when older information interferes with learning or recalling newer information.
-• What is retroactive interference? — Retroactive interference occurs when newer information interferes with remembering older information.
-• What is blocking? — Blocking is the temporary inability to retrieve information that you know is stored in memory.
-• What is absent-mindedness? — Absent-mindedness is a memory failure that happens when attention is insufficient during learning or when carrying out an intended action.
-• What is memory persistence? — Memory persistence refers to memories that continue to come to mind, sometimes repeatedly or when a person would rather not think about them.
-• What are memory distortions? — Memory distortions occur when a memory is inaccurate or altered rather than being an exact representation of what happened.
-• What is memory bias? — Memory bias occurs when current beliefs, feelings, or expectations influence how a person remembers past events.
-• What is source amnesia? — Source amnesia occurs when you remember information but forget where, when, or how you learned it.
-• What is cryptomnesia? — Cryptomnesia occurs when a previously encountered idea comes back to mind and is mistakenly believed to be original or newly created.
-• What is suggestibility in memory? — Suggestibility is the tendency for memory to be influenced by suggestions, misleading information, or other people's descriptions of an event.
-• What is a false memory? — A false memory is a recollection of an event or detail that did not happen as remembered.
-• Who is Elizabeth Loftus? — Elizabeth Loftus is a psychologist known for research showing that memory can be influenced by suggestion and misleading information.
-• What is the main lesson of the “Lost in a Shopping Mall” study? — The study explored whether suggestion could lead some participants to develop a recollection of a childhood event that had not actually occurred. It helped demonstrate that memories can sometimes be influenced or distorted by information provided after an event.
-• What is the Atkinson-Shiffrin model? — The Atkinson-Shiffrin model describes memory as involving three main storage systems: sensory memory, short-term memory, and long-term memory.
-• What is the general sequence in the Atkinson-Shiffrin model? — Information enters sensory memory, some attended information moves into short-term memory, and through rehearsal or other processes some information can be stored in long-term memory. Information can later be retrieved for use.
-• What is the serial position effect? — The serial position effect is the tendency to remember items at the beginning and end of a list better than items in the middle.
-• What is the primacy effect? — The primacy effect is better memory for items near the beginning of a list.
-• What is the recency effect? — The recency effect is better memory for items near the end of a list.
-• What is sensory memory? — Sensory memory briefly holds information from the senses before it fades or receives further attention.
-• What is iconic memory? — Iconic memory is brief visual sensory memory.
-• What is echoic memory? — Echoic memory is brief auditory sensory memory.
-• How is sensory memory coded? — Sensory memory initially preserves information in a form related to the sensory system involved, such as visual or auditory information.
-• What is the capacity of sensory memory? — Sensory memory can briefly register a large amount of sensory information, although much of it fades quickly.
-• How long does sensory memory last? — It is very brief. Iconic memory generally lasts a fraction of a second, while echoic memory can last several seconds.
-• What did George Sperling investigate? — Sperling studied iconic memory by briefly showing people arrays of letters.
-• What did his research suggest? — His results suggested that people briefly register more visual information than they can report completely before it fades.
-• What did the partial-report method show? — When a cue indicated which part of the array to report immediately after the display disappeared, people could report many of the letters in the indicated portion. This supported the idea that a rich but short-lived visual sensory memory exists.
-• What is short-term memory? — Short-term memory temporarily holds a limited amount of information that is currently being used.
-• How is information coded in short-term memory? — Short-term memory often uses acoustic coding, though visual and semantic coding can also occur.
-• What is the capacity of short-term memory? — Traditional research often describes short-term memory capacity as around seven items, plus or minus two. More recent work on working memory suggests that capacity can be lower, often around four chunks under some conditions.
-• How long does short-term memory last without rehearsal? — Information can fade within roughly 15-30 seconds without rehearsal, although the exact duration depends on the task and conditions.
-• What is chunking? — Chunking is organizing separate pieces of information into meaningful groups so they are easier to remember.
-• What is decay? — Decay is the idea that a memory trace weakens over time when it is not maintained.
-• What is interference? — Interference happens when other information competes with or disrupts what you are trying to remember.
-• What is the difference between decay and interference? — Decay emphasizes the passage of time, while interference emphasizes competition from other information.
-• What is long-term memory? — Long-term memory is the relatively enduring storage of information, skills, and experiences.
-• What is the capacity of long-term memory? — Long-term memory is considered to have a very large capacity, though memories may be difficult to retrieve or may become distorted.
-• How long can information remain in long-term memory? — Information may remain in long-term memory for days, years, or even a lifetime. Retention depends on factors such as learning, use, and retrieval.
-• What is the difference between short-term and long-term memory? — Short-term memory holds a limited amount of information briefly, while long-term memory can retain information for much longer periods and has a much larger capacity.
-• A person with anterograde amnesia can still cycle. Which system may remain intact? — Implicit procedural memory. Memory impairment can affect systems differently.
-• Do personally important distractions capture attention? — They can. Attention is selective, and personally relevant information may draw focus even during another task.'
+Duplicates. Identical files are detected and skipped, so nothing is processed twice.
+
+Final review. At the end of a semester, use Final review: pick classes on the classes page to checkbox the classes on your final and combine all their cards and questions into one free review exam.
+
+Colors and wording. Blue screens are for learning, red for quizzing, green for correct answers. Misses are called "Not yet" with a next step, and feedback praises strategy and effort.
+
+Chapter 2 · Study tools
+
+Flashcards. Spaced repetition drives every page: what you know well returns later as review, what you struggle with returns sooner and more often. Tap a card to flip it and grade yourself honestly.
+
+Flashcard audio. The audio button reads the card with your device's own voice, highlighting the current word while a bouncy ball jumps word to word. It is free and never costs BrainBucks.
+
+Drawing. You can sketch on any study card; the ink is slightly transparent so the words stay readable.
+
+Memorize. Type each word from its first letter, over three rounds. Passing requires accuracy strictly above 90%, and a neighboring keyboard key counts as a match. A wrong letter turns the word red immediately, shows the key you pressed, and reveals the correct word.
+
+Listen tab. The first tab inside an exam. Q&A mode reads every question and answer in order; Abstract mode turns the topic into a fun, memorable audio lesson. The mini-player has a close button.
+
+Home and notes. The exam Home page shows progress, daily goal, the due date box, sample exam, chapters, what you uploaded, and your notes. My notes holds typed or spoken notes; voice notes are transcribed for you.
+
+Chapter 3 · Practice and extras
+
+Practice and sample exams. Practice gives immediate feedback, weighted toward what you find hard. Sample exam lets you pick 5, 10, 20, or all questions, grade each answer Got it or Not yet, see your percentage, and retake only the questions you missed. Missed questions also surface more often in Cards and Practice.
+
+Due dates and pacing. Set a Test, Exam, or Homework due date on Home. About three days out or less, cram mode teaches more in less time by leading with unknown cards. With more time, new cards are spread into small daily sets plus review. Timers are off by default.
+
+BrainBucks. AI work costs BrainBucks (the dollar-bill chip): building a study set costs 5 plus 1 per PDF or photo, an episode costs 3, a new read-aloud clip or spoken note costs 1. Replays are free, and failed work is refunded. New students start with 25 free BrainBucks. A balance of 5 or fewer triggers a top-up reminder, and any action costing 95% or more of your balance shows a warning with cheaper options before you confirm. If you run out mid task, a 3 BrainBuck grace buffer lets the current step finish; beyond that the task pauses until you top up.
+
+Settings. Optional supports include Dyslexia (structured literacy with explicit sound-letter patterns and the Word Lab), ADHD (short chunks, immediate feedback, visible progress, goal setting), read-aloud as a toggle, and adjustable text size and spacing.
+
+StudyLamb is powered by waiwiser. Professor Lamby says: small daily wins beat one big cram.
