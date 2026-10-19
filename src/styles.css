@@ -67,45 +67,69 @@
 
 :root {
   --radius: 1.25rem;
-  --background: oklch(0.975 0.012 70);
-  --foreground: oklch(0.24 0.03 20);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.24 0.03 20);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.24 0.03 20);
-  --primary: oklch(0.66 0.19 18);
-  --primary-foreground: oklch(0.99 0.005 20);
-  --primary-deep: oklch(0.55 0.19 18);
-  --secondary: oklch(0.94 0.03 60);
-  --secondary-foreground: oklch(0.3 0.04 30);
-  --muted: oklch(0.95 0.015 70);
-  --muted-foreground: oklch(0.5 0.025 30);
-  --accent: oklch(0.86 0.09 170);
-  --accent-foreground: oklch(0.28 0.05 170);
-  --success: oklch(0.7 0.14 160);
-  --destructive: oklch(0.6 0.22 27);
-  --destructive-foreground: oklch(0.98 0 0);
-  --border: oklch(0.91 0.015 60);
-  --input: oklch(0.91 0.015 60);
-  --ring: oklch(0.66 0.19 18);
-  --chart-1: oklch(0.66 0.19 18); --chart-2: oklch(0.7 0.14 160); --chart-3: oklch(0.8 0.14 85); --chart-4: oklch(0.65 0.12 240); --chart-5: oklch(0.7 0.15 50);
-  --sidebar: oklch(0.98 0.01 70); --sidebar-foreground: oklch(0.24 0.03 20); --sidebar-primary: oklch(0.66 0.19 18); --sidebar-primary-foreground: oklch(0.99 0 0); --sidebar-accent: oklch(0.95 0.015 70); --sidebar-accent-foreground: oklch(0.24 0.03 20); --sidebar-border: oklch(0.91 0.015 60); --sidebar-ring: oklch(0.66 0.19 18);
+  /* Learn (blue) is the base wash. Cards white, text ink, captions slate. */
+  --ink: #1C2633;
+  --slate: #5A6778;
+  --heading: #24466E;
+  --background: #F2F6FA;
+  --foreground: var(--ink);
+  --card: #FFFFFF;
+  --card-foreground: var(--ink);
+  --popover: #FFFFFF;
+  --popover-foreground: var(--ink);
+  --primary: #3E6FA3;
+  --primary-foreground: #FFFFFF;
+  --primary-deep: #2C5583;
+  --secondary: #E2EAF3;
+  --secondary-foreground: var(--heading);
+  --muted: #EAF0F6;
+  --muted-foreground: var(--slate);
+  --accent: #3E6FA3;
+  --accent-foreground: #24466E;
+  /* Correct answer (green) */
+  --success: #36704F;
+  --success-tint: #E5F2EA;
+  /* Quiz & recall red, used for the quiz section accent */
+  --quiz: #BC3F38;
+  --destructive: #BC3F38;
+  --destructive-foreground: #FFFFFF;
+  --border: #DAE3ED;
+  --input: #DAE3ED;
+  --ring: #3E6FA3;
+  --chart-1: #3E6FA3; --chart-2: #36704F; --chart-3: #BC3F38; --chart-4: #24466E; --chart-5: #5A6778;
+  --sidebar: #F2F6FA; --sidebar-foreground: var(--ink); --sidebar-primary: #3E6FA3; --sidebar-primary-foreground: #FFFFFF; --sidebar-accent: #EAF0F6; --sidebar-accent-foreground: var(--ink); --sidebar-border: #DAE3ED; --sidebar-ring: #3E6FA3;
 
-  --app-sans: "Nunito", ui-rounded, system-ui, sans-serif;
-  --app-display: "Fredoka", ui-rounded, system-ui, sans-serif;
+  --app-sans: "Lexend", system-ui, sans-serif;
+  --app-display: "Lexend", system-ui, sans-serif;
   --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --shadow-gummy: 0 1px 0 oklch(1 0 0) inset, 0 -3px 0 oklch(0.9 0.02 50) inset, 0 2px 4px oklch(0.4 0.05 30 / 0.06), 0 10px 24px -6px oklch(0.4 0.08 30 / 0.14);
+  --shadow-gummy: 0 1px 0 oklch(1 0 0) inset, 0 -3px 0 oklch(0.92 0.015 250) inset, 0 2px 4px oklch(0.35 0.04 250 / 0.06), 0 10px 24px -6px oklch(0.35 0.06 250 / 0.14);
   --shadow-gummy-primary: 0 1px 0 oklch(1 0 0 / 0.35) inset, 0 -4px 0 var(--primary-deep) inset, 0 8px 20px -6px color-mix(in oklab, var(--primary) 60%, transparent);
-  --shadow-float: 0 12px 40px -8px oklch(0.3 0.05 30 / 0.22), 0 2px 6px oklch(0.3 0.05 30 / 0.08);
+  --shadow-float: 0 12px 40px -8px oklch(0.3 0.05 250 / 0.2), 0 2px 6px oklch(0.3 0.05 250 / 0.08);
 
+}
+
+/* Quiz & recall wash (red accent) */
+:root[data-section="quiz"] {
+  --background: #F9E9E7;
+  --primary: #BC3F38;
+  --primary-deep: #93302A;
+  --ring: #BC3F38;
+  --accent: #BC3F38;
+  --accent-foreground: #7A2621;
+  --heading: #7A2621;
+  --secondary: #F2D8D4;
+  --secondary-foreground: #7A2621;
+  --muted: #F5E1DE;
+  --border: #EDD2CE;
+  --input: #EDD2CE;
 }
 
 @layer base {
   * { border-color: var(--color-border); -webkit-tap-highlight-color: transparent; }
   html { -webkit-text-size-adjust: 100%; }
-  html { font-size: calc(16px * var(--font-scale, 1)); }
-  body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); letter-spacing: var(--ls, 0); line-height: var(--lh, 1.6); -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
+  html { font-size: calc(17px * var(--font-scale, 1)); }
+  body { background-color: var(--color-background); color: var(--color-foreground); font-family: var(--font-sans); letter-spacing: var(--ls, 0.02em); word-spacing: 0.08em; line-height: var(--lh, 1.5); text-align: left; -webkit-font-smoothing: antialiased; overscroll-behavior-y: none; }
   button { cursor: pointer; }
   button:disabled { opacity: 0.4; cursor: default; }
   a { color: var(--primary); }
@@ -114,7 +138,7 @@
 @layer components {
   .app-frame { max-width: 520px; margin: 0 auto; min-height: 100dvh; position: relative; }
   .page { padding: calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 170px); }
-  .page-title { font-family: var(--font-display); font-weight: 700; font-size: 2.125rem; line-height: 1.1; letter-spacing: -0.02em; }
+  .page-title { color: var(--heading); font-family: var(--font-display); font-weight: 700; font-size: 2.125rem; line-height: 1.1; letter-spacing: 0; }
   .eyebrow { display: block; font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); }
   .caption { font-size: 0.75rem; color: var(--muted-foreground); }
 
@@ -125,7 +149,7 @@
   .gummy-btn:active:not(:disabled), .gummy-icon:active:not(:disabled), .pill:active, .gummy-chip:active, .tab:active { transform: scale(0.92); transition-duration: .1s; }
   .gummy-btn[data-variant="primary"] { background: var(--primary); color: var(--primary-foreground); box-shadow: var(--shadow-gummy-primary); }
   .gummy-btn[data-variant="success"] { background: var(--success); color: var(--primary-foreground); box-shadow: 0 -4px 0 color-mix(in oklab, var(--success) 70%, black) inset, 0 8px 20px -6px color-mix(in oklab, var(--success) 60%, transparent); }
-  .gummy-btn[data-variant="ghost"] { background: var(--secondary); box-shadow: 0 -2px 0 oklch(0.88 0.03 55) inset; }
+  .gummy-btn[data-variant="ghost"] { background: var(--secondary); box-shadow: 0 -2px 0 color-mix(in oklab, var(--secondary) 80%, var(--ink)) inset; }
 
   .gummy-icon { display: inline-grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 999px; background: var(--card); color: var(--foreground); box-shadow: var(--shadow-gummy); transition: transform .35s var(--spring); }
   .gummy-icon.lg { width: 56px; height: 56px; }
@@ -149,7 +173,7 @@
   .card-q { font-family: var(--font-display); font-weight: 600; font-size: 1.5rem; line-height: 1.25; margin: 14px 0 12px; }
   .card-foot { margin-top: auto; padding-top: 18px; font-size: 0.8125rem; font-weight: 700; color: var(--primary); }
 
-  .draw-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: pan-y; color: var(--accent-foreground); z-index: 2; }
+  .draw-layer { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; touch-action: pan-y; color: var(--accent-foreground); z-index: 2; opacity: 0.45; }
   .draw-layer[data-active="true"] { pointer-events: auto; touch-action: none; }
 
   .round-dot { flex: 1; height: 6px; border-radius: 999px; background: var(--secondary); transition: background .4s var(--spring), transform .4s var(--spring); }
@@ -159,10 +183,15 @@
   .memory-ghost { color: color-mix(in oklab, var(--foreground) 28%, transparent); }
   .memory-word[data-masked="true"] .memory-ghost { color: transparent; background: var(--secondary); border-radius: 6px; }
   .memory-letter { position: absolute; inset: 0; color: var(--foreground); animation: pop .3s var(--spring); }
+  .memory-word[data-miss="true"] .memory-letter { color: var(--quiz); font-weight: 700; }
+  .memory-word[data-miss="true"][data-masked="true"] .memory-ghost { background: color-mix(in oklab, var(--quiz) 12%, var(--card)); }
+  .slip-row { margin-top: 10px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 18px; background: var(--card); box-shadow: var(--shadow-gummy); font-size: 0.9375rem; animation: shake .35s; }
+  .slip-key { display: grid; place-items: center; min-width: 40px; height: 40px; border-radius: 12px; background: var(--muted); font-weight: 700; box-shadow: 0 -3px 0 var(--border) inset; text-decoration: line-through; color: var(--slate); }
+  .slip-word { color: var(--quiz); }
   .memory-word[data-current="true"] { box-shadow: 0 3px 0 var(--primary); }
   .memory-input { position: absolute; opacity: 0.01; left: 0; bottom: 0; width: 100%; height: 40px; font-size: 1rem; resize: none; caret-color: transparent; }
   .feedback { margin-top: 12px; padding: 14px 16px; border-radius: 20px; background: var(--secondary); font-weight: 700; font-size: 0.875rem; }
-  .success-banner { margin-top: 12px; display: flex; gap: 8px; align-items: center; padding: 14px 16px; border-radius: 20px; background: var(--success); color: var(--primary-foreground); font-weight: 800; font-size: 0.875rem; }
+  .success-banner { margin-top: 12px; display: flex; gap: 8px; align-items: center; padding: 14px 16px; border-radius: 20px; background: var(--success-tint); color: var(--success); font-weight: 800; font-size: 0.875rem; }
 
   .num-badge { flex-shrink: 0; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 10px; background: var(--secondary); font-weight: 800; font-size: 0.8125rem; }
   .reveal-btn { margin-top: 12px; display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: 0.875rem; color: var(--primary); }
@@ -312,3 +341,9 @@
 @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 
 html[data-font="lexend"] { --app-sans: "Lexend", system-ui, sans-serif; --app-display: "Lexend", system-ui, sans-serif; }
+
+@layer components {
+  .gem-icon { color: var(--primary); }
+  .gem-chip { text-decoration: none; color: var(--foreground); padding: 6px 12px 6px 10px; }
+  [data-pace="cram"] { color: var(--heading); font-weight: 600; }
+}

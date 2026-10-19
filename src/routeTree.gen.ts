@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedCoursesRouteImport } from './routes/_authenticated/courses'
+import { Route as AuthenticatedGemsRouteImport } from './routes/_authenticated/gems'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedExamExamIdRouteImport } from './routes/_authenticated/exam.$examId'
 import { Route as AuthenticatedExamsNewRouteImport } from './routes/_authenticated/exams.new'
@@ -41,6 +42,11 @@ const AuthRoute = AuthRouteImport.update({
 const AuthenticatedCoursesRoute = AuthenticatedCoursesRouteImport.update({
   id: '/courses',
   path: '/courses',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedGemsRoute = AuthenticatedGemsRouteImport.update({
+  id: '/gems',
+  path: '/gems',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/courses': typeof AuthenticatedCoursesRoute
+  '/gems': typeof AuthenticatedGemsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/exams/new': typeof AuthenticatedExamsNewRoute
@@ -120,6 +127,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/courses': typeof AuthenticatedCoursesRoute
+  '/gems': typeof AuthenticatedGemsRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
@@ -136,6 +144,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/courses': typeof AuthenticatedCoursesRoute
+  '/_authenticated/gems': typeof AuthenticatedGemsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/_authenticated/exams/new': typeof AuthenticatedExamsNewRoute
@@ -153,6 +162,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/courses'
+    | '/gems'
     | '/settings'
     | '/exam/$examId'
     | '/exams/new'
@@ -168,6 +178,7 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/courses'
+    | '/gems'
     | '/settings'
     | '/exams/new'
     | '/exam/$examId/cards'
@@ -183,6 +194,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/courses'
+    | '/_authenticated/gems'
     | '/_authenticated/settings'
     | '/_authenticated/exam/$examId'
     | '/_authenticated/exams/new'
@@ -229,6 +241,13 @@ declare module '@tanstack/react-router' {
       path: '/courses'
       fullPath: '/courses'
       preLoaderRoute: typeof AuthenticatedCoursesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/gems': {
+      id: '/_authenticated/gems'
+      path: '/gems'
+      fullPath: '/gems'
+      preLoaderRoute: typeof AuthenticatedGemsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
@@ -333,6 +352,7 @@ const AuthenticatedExamExamIdRouteWithChildren =
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCoursesRoute: typeof AuthenticatedCoursesRoute
+  AuthenticatedGemsRoute: typeof AuthenticatedGemsRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedExamExamIdRoute: typeof AuthenticatedExamExamIdRouteWithChildren
   AuthenticatedExamsNewRoute: typeof AuthenticatedExamsNewRoute
@@ -340,6 +360,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCoursesRoute: AuthenticatedCoursesRoute,
+  AuthenticatedGemsRoute: AuthenticatedGemsRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedExamExamIdRoute: AuthenticatedExamExamIdRouteWithChildren,
   AuthenticatedExamsNewRoute: AuthenticatedExamsNewRoute,

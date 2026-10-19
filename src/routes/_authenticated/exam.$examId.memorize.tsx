@@ -5,11 +5,11 @@ import { ChevronLeft, ChevronRight, RotateCcw, Pencil, Keyboard, Sparkles } from
 import { SectionPills } from "@/components/study/Shell";
 import { DrawLayer, type Stroke } from "@/components/study/DrawLayer";
 import { examQuery, useGrade } from "@/lib/exam-data";
-import { studyOrder } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
+import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks, syllables } from "@/lib/literacy";
-import { MEMORY_ROUNDS, load, save, memoryScore, memoryWords, passes } from "@/lib/study";
+import { MEMORY_ROUNDS, load, save, memoryScore, memoryWords, nearbyKey, passes } from "@/lib/study";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/memorize")({
   component: Memorize,
@@ -24,7 +24,7 @@ function Memorize() {
   const grade = useGrade(examId);
   const [section, setSection] = useState<string | null>(null);
   const order = useMemo(
-    () => studyOrder(data.cards.filter((c) => !section || c.section_id === section), data.states, s.spaced),
+    () => pacedOrder(data.cards.filter((c) => !section || c.section_id === section), data.states, s.spaced, data.pace),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [section, s.spaced],
   );
@@ -43,6 +43,9 @@ function Memorize() {
   const words = text.match(WORD_RE) || [];
   const total = memoryWords(text).length;
   const entered = value.toLowerCase().match(/[a-z0-9]/g) || [];
+  const firsts = memoryWords(text).map((w) => w[0].toLowerCase());
+  const missAt = (i: number) => entered[i] !== undefined && !nearbyKey(firsts[i] ?? "", entered[i]);
+  const [slip, setSlip] = useState<{ typed: string; word: string; n: number } | null>(null);
 
   useEffect(() => {
     if (c) setStrokes(load(c.id, []));
@@ -56,32 +59,34 @@ function Memorize() {
     setComplete(false);
     setValue("");
     setFeedback("");
+    setSlip(null);
     setDraw(false);
   }
 
   const check = (typed: string) => {
     if (!c) return;
     const sc = memoryScore(text, typed);
-    let fb = `${Math.round(sc.percent * 10) / 10}% · ${sc.correct} / ${sc.total} words. `;
+    let fb = `${sc.correct} of ${sc.total} words matched. `;
     if (passes(sc.percent)) {
       if (stage < 2) {
-        fb += `Passed! Try ${MEMORY_ROUNDS[stage + 1]!.toLowerCase()}.`;
+        fb += `Your recall worked. Next: ${MEMORY_ROUNDS[stage + 1]!.toLowerCase()}.`;
         setStage(stage + 1);
       } else if (part < parts.length - 1) {
-        fb += "Chunk memorized! On to the next piece.";
+        fb += "That chunk stuck. Next: the following piece.";
         setPart(part + 1);
         setStage(0);
       } else {
         setComplete(true);
-        fb += "Memorized! You passed without answer text.";
+        fb += "You recalled it with no words showing.";
         grade(c.id, "memorize", "good");
       }
     } else {
       if (stage > 0) grade(c.id, "memorize", "again");
       setStage(0);
-      fb += "Back to all words. Try again.";
+      fb += "Not yet. Read the red words once, then type it again with all words showing.";
     }
     setValue("");
+    setSlip(null);
     setFeedback(fb);
   };
 
@@ -127,8 +132,9 @@ function Memorize() {
           {words.map((w, i) => {
             const masked = stage === 2 || (stage === 1 && i % 2 === 1);
             const done = i < entered.length;
+            const miss = done && missAt(i);
             return (
-              <span key={i} className="memory-word" data-masked={masked} data-done={done} data-current={!complete && i === entered.length}>
+              <span key={i} className="memory-word" data-masked={masked} data-done={done} data-miss={miss} data-current={!complete && i === entered.length}>
                 <span className="memory-ghost">{w}</span>
                 {done && <span className="memory-letter">{w}</span>}
               </span>
@@ -148,6 +154,12 @@ function Memorize() {
           spellCheck={false}
           onChange={(e) => {
             const v = e.target.value;
+            const next = v.toLowerCase().match(/[a-z0-9]/g) || [];
+            const i = next.length - 1;
+            if (next.length > entered.length && i >= 0 && i < firsts.length && !nearbyKey(firsts[i]!, next[i]!)) {
+              setSlip({ typed: next[i]!, word: memoryWords(text)[i]!, n: Date.now() });
+              navigator.vibrate?.(40);
+            } else if (next.length > entered.length) setSlip(null);
             setValue(v);
             setFeedback("");
             if ((v.match(/[a-z0-9]/gi) || []).length >= total) check(v);
@@ -156,6 +168,12 @@ function Memorize() {
         <DrawLayer strokes={strokes} active={draw} onCommit={(x) => (setStrokes(x), save(c.id, x))} />
       </div>
 
+      {slip && (
+        <div className="slip-row" key={slip.n} role="status" aria-live="assertive">
+          <span className="slip-key" aria-label={`You typed ${slip.typed}`}>{slip.typed.toUpperCase()}</span>
+          <span>Not yet. That word is <b className="slip-word">{slip.word}</b>. Keep going.</span>
+        </div>
+      )}
       {showCurrent && (
         <div className="mt-2 flex items-center gap-2 text-sm" aria-live="polite">
           <span className="font-bold text-muted-foreground">Next word:</span>
@@ -167,7 +185,7 @@ function Memorize() {
         </div>
       )}
       <p className="caption mt-2">
-        {entered.length} / {total} first letters · above 90% advances · neighboring keys count
+        {entered.length} of {total} first letters typed
       </p>
       {feedback && (
         <div className="feedback animate-pop" role="status">
@@ -176,7 +194,7 @@ function Memorize() {
       )}
       {complete && (
         <div className="success-banner animate-pop">
-          <Sparkles size={18} /> Memorized! Tap next for another.
+          <Sparkles size={18} /> All three rounds done. Tap Next for another card.
         </div>
       )}
       <div className="mt-3 grid grid-cols-3 gap-2">

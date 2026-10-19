@@ -4,11 +4,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { ChevronLeft, Play, ClipboardCheck, Plus, RefreshCw, Settings2, Target, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { actionError } from "@/lib/gems-client";
 import { examQuery } from "@/lib/exam-data";
 import { mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 import { processExam } from "@/lib/study.functions";
 import { ProgressChip } from "@/components/study/Shell";
+import { GemChip } from "@/lib/gems-client";
+import { paceLabel, type PlanKind } from "@/lib/pacing";
+import { supabase } from "@/integrations/supabase/client";
+import { CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/")({
   component: ExamHome,
@@ -40,7 +45,15 @@ function ExamHome() {
         <div className="gummy-card flex flex-col items-center gap-3 py-10 text-center">
           {data.exam.status === "failed" ? <AlertCircle className="text-destructive" size={36} /> : <Loader2 className="animate-spin text-primary" size={36} />}
           <h1 className="text-lg font-extrabold">{data.exam.status === "failed" ? "We couldn't build this study set" : "Building your study set…"}</h1>
-          {data.exam.error && <p className="text-sm text-muted-foreground">{data.exam.error}</p>}
+          {data.exam.error && (
+            <p className="text-sm text-muted-foreground">
+              {data.exam.error.includes("NOT_ENOUGH_GEMS") ? (
+                <>This needs a few more gems. <Link to="/gems">Get gems</Link>, then tap Try again.</>
+              ) : (
+                data.exam.error
+              )}
+            </p>
+          )}
           <button
             className="gummy-btn"
             data-variant="primary"
@@ -49,7 +62,7 @@ function ExamHome() {
               setBusy(true);
               const r = await retry({ data: { examId } });
               setBusy(false);
-              if (!r.ok) toast.error(r.error);
+              if (!r.ok) actionError(r.error, "We couldn't build this study set.");
               qc.invalidateQueries({ queryKey: ["exam", examId] });
               router.invalidate();
             }}
@@ -67,6 +80,7 @@ function ExamHome() {
           <ChevronLeft />
         </Link>
         <div className="flex items-center gap-2">
+          <GemChip />
           <ProgressChip today={data.today} />
           <Link to="/settings" className="gummy-icon" aria-label="Settings">
             <Settings2 size={18} />
@@ -75,6 +89,7 @@ function ExamHome() {
       </div>
       <p className="eyebrow">{data.exam.course?.title}</p>
       <h1 className="page-title">{data.exam.title}</h1>
+      <PlanCard examId={examId} />
 
       <Link to="/exam/$examId/cards" params={{ examId }} className="start-btn mt-5 animate-pop">
         <span className="start-play">
@@ -148,6 +163,52 @@ function Stat({ n, label, tone }: { n: number; label: string; tone: string }) {
     <div className="gummy-card p-3" data-tone={tone}>
       <p className="stat-n">{n}</p>
       <p className="text-xs font-bold text-muted-foreground">{label}</p>
+    </div>
+  );
+}
+
+const KINDS: { v: PlanKind; label: string }[] = [
+  { v: "test", label: "Test" },
+  { v: "exam", label: "Exam" },
+  { v: "homework", label: "Homework" },
+];
+
+/** Due date + type. A close date switches to cram mode; a far one spreads new cards into daily sets. */
+function PlanCard({ examId }: { examId: string }) {
+  const { data } = useSuspenseQuery(examQuery(examId));
+  const qc = useQueryClient();
+  const savePlan = async (patch: { kind?: PlanKind; due_date?: string | null }) => {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return;
+    const next = { ...data.plan, ...patch };
+    const { error } = await supabase
+      .from("exam_plans")
+      .upsert({ user_id: u.user.id, exam_id: examId, kind: next.kind, due_date: next.due_date, updated_at: new Date().toISOString() });
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["exam", examId] });
+  };
+  return (
+    <div className="gummy-card mt-4 p-4">
+      <div className="flex items-center gap-2">
+        <CalendarDays size={18} className="text-primary" />
+        <p className="flex-1 font-bold">When is it due?</p>
+      </div>
+      <div className="pill-row mt-3" role="group" aria-label="Type">
+        {KINDS.map((k) => (
+          <button key={k.v} className="pill" data-active={data.plan.kind === k.v} onClick={() => savePlan({ kind: k.v })}>
+            {k.label}
+          </button>
+        ))}
+      </div>
+      <input
+        type="date"
+        className="gummy-input mt-3"
+        aria-label="Due date"
+        value={data.plan.due_date ?? ""}
+        min={new Date().toISOString().slice(0, 10)}
+        onChange={(e) => savePlan({ due_date: e.target.value || null })}
+      />
+      <p className="caption mt-2" data-pace={data.pace.mode}>{paceLabel(data.pace)}</p>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import sampleCards from "@/data/sample-cards.json";
 import sampleQuestions from "@/data/sample-questions.json";
 import sampleNotes from "@/data/sample-notes.txt?raw";
 import { schedule, type Grade, type ReviewState } from "./srs";
+import { pace, type Pace, type Plan } from "./pacing";
 
 export type Card = Pick<Tables<"cards">, "id" | "exam_id" | "section_id" | "position" | "q" | "a" | "source">;
 export type Question = Pick<Tables<"questions">, "id" | "exam_id" | "section_id" | "position" | "q" | "a">;
@@ -21,6 +22,8 @@ export type ExamBundle = {
   materials: Material[];
   states: Map<string, ReviewState>;
   today: number;
+  plan: Plan;
+  pace: Pace;
 };
 
 const must = <T>(r: { data: T | null; error: unknown }) => {
@@ -37,7 +40,7 @@ export const examQuery = (examId: string) =>
       ) as ExamBundle["exam"];
       const start = new Date();
       start.setHours(0, 0, 0, 0);
-      const [sections, podcasts, materials, rs, ev, cards, questions] = await Promise.all([
+      const [sections, podcasts, materials, rs, ev, cards, questions, plan] = await Promise.all([
         supabase.from("sections").select("*").eq("exam_id", examId).order("position").then(must),
         supabase.from("podcasts").select("*").eq("exam_id", examId).order("position").then(must),
         exam.is_sample
@@ -66,7 +69,11 @@ export const examQuery = (examId: string) =>
         exam.is_sample
           ? Promise.resolve(sampleQuestions as Question[])
           : supabase.from("questions").select("*").eq("exam_id", examId).order("position").then(must),
+        supabase.from("exam_plans").select("kind,due_date").eq("exam_id", examId).maybeSingle().then(must),
       ]);
+      const states = new Map((rs as ReviewState[]).map((r) => [r.item_id, r]));
+      const p = (plan as Plan | null) ?? { kind: "exam", due_date: exam.exam_date };
+      const newCount = (cards as Card[]).filter((c) => !states.has(c.id)).length;
       return {
         exam,
         sections: sections as Section[],
@@ -74,8 +81,10 @@ export const examQuery = (examId: string) =>
         materials: materials as Material[],
         cards: cards as Card[],
         questions: questions as Question[],
-        states: new Map((rs as ReviewState[]).map((r) => [r.item_id, r])),
+        states,
         today: ev.count ?? 0,
+        plan: p,
+        pace: pace(p.due_date, newCount),
       };
     },
   });

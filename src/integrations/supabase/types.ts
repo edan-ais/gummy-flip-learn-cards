@@ -127,6 +127,38 @@ export type Database = {
           },
         ]
       }
+      exam_plans: {
+        Row: {
+          due_date: string | null
+          exam_id: string
+          kind: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          due_date?: string | null
+          exam_id: string
+          kind?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          due_date?: string | null
+          exam_id?: string
+          kind?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_plans_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       exams: {
         Row: {
           course_id: string
@@ -170,6 +202,51 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gem_ledger: {
+        Row: {
+          created_at: string
+          delta: number
+          id: string
+          reason: string
+          ref: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          delta: number
+          id?: string
+          reason: string
+          ref?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          delta?: number
+          id?: string
+          reason?: string
+          ref?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      gem_wallets: {
+        Row: {
+          balance: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          balance?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          balance?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       materials: {
         Row: {
@@ -483,6 +560,13 @@ export type Database = {
       can_read_exam: { Args: { _exam: string }; Returns: boolean }
       can_write_course: { Args: { _course: string }; Returns: boolean }
       can_write_exam: { Args: { _exam: string }; Returns: boolean }
+      credit_gems: {
+        Args: { _amount: number; _reason: string; _ref: string; _user: string }
+        Returns: undefined
+      }
+      ensure_wallet: { Args: never; Returns: number }
+      refund_gems: { Args: { _cost: number; _reason: string }; Returns: number }
+      spend_gems: { Args: { _cost: number; _reason: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never

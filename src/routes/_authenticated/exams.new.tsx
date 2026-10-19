@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera } from "lucide-react";
 import { toast } from "sonner";
+import { actionError } from "@/lib/gems-client";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
 import { Page } from "@/components/study/Shell";
@@ -104,11 +105,11 @@ function NewExam() {
       setBusy("Reading and organizing… this can take a minute or two.");
       const r = await process({ data: { examId: id } });
       await qc.invalidateQueries();
-      if (!r.ok) toast.error(r.error);
-      else toast.success("Your study set is ready!");
+      if (!r.ok) actionError(r.error, "We couldn't build this study set.");
+      else toast.success("Your study set is ready. Next: start with Cards.");
       nav({ to: "/exam/$examId", params: { examId: id } });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Upload failed.");
+      actionError(e, "That upload didn't go through. Try again.");
       setBusy(null);
     }
   };
