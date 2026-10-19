@@ -88,7 +88,7 @@ function Gems() {
         </>
       )}
       <Link to="/courses" className="gummy-btn mt-6 w-full" data-variant="ghost">
-        Back to my courses
+        Back to my classes
       </Link>
     </main>
   );
