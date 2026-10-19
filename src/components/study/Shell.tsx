@@ -37,7 +37,7 @@ export function MiniPlayer() {
   const p = usePlayer();
   const { pathname } = useLocation();
   if (!p.started || pathname === "/podcast") return null;
-  const t = TRACKS[p.track];
+  const t = TRACKS[p.track]!;
   return (
     <div className="mini-player">
       <Link to="/podcast" className="flex min-w-0 flex-1 items-center gap-3">

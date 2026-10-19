@@ -18,7 +18,7 @@ export const Route = createFileRoute("/podcast")({
 
 function Podcast() {
   const p = usePlayer();
-  const t = TRACKS[p.track];
+  const t = TRACKS[p.track]!;
   return (
     <main className="sp-page">
       <div className="sp-hero">
