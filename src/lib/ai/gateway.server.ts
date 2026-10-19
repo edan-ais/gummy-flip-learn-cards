@@ -109,7 +109,7 @@ export async function speech(text: string) {
 export async function transcribe(bytes: Uint8Array, mime: string) {
   const fd = new FormData();
   const ext = mime.includes("mp4") ? "m4a" : mime.includes("wav") ? "wav" : "webm";
-  fd.append("file", new Blob([bytes], { type: mime }), `note.${ext}`);
+  fd.append("file", new Blob([bytes as Uint8Array<ArrayBuffer>], { type: mime }), `note.${ext}`);
   fd.append("model", STT_MODEL);
   const res = await fetch(`${BASE}/audio/transcriptions`, {
     method: "POST",
