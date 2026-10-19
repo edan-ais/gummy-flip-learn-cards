@@ -58,7 +58,7 @@ function ExamHome() {
           {data.exam.error && (
             <p className="text-sm text-muted-foreground">
               {data.exam.error.includes("NOT_ENOUGH_GEMS") ? (
-                <>This needs a few more gems. <Link to="/gems">Get gems</Link>, then tap Try again.</>
+                <>This needs a few more BrainBucks. <Link to="/gems">Top up</Link>, then tap Try again.</>
               ) : (
                 data.exam.error
               )}

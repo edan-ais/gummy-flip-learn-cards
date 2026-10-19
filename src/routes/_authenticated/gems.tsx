@@ -41,28 +41,28 @@ function Gems() {
       <button className="gummy-icon mb-4" aria-label="Back" onClick={() => router.history.back()}>
         <ChevronLeft />
       </button>
-      <p className="eyebrow">Your gems</p>
+      <p className="eyebrow">Your BrainBucks</p>
       <h1 className="page-title flex items-center gap-2">
-        <Gem className="gem-icon" /> {balance ?? "…"}
+        <Banknote className="gem-icon" /> {balance ?? "…"}
       </h1>
-      <p className="mt-2 text-muted-foreground">Gems power the smart tools. Replaying audio you already made is free.</p>
+      <p className="mt-2 text-muted-foreground">BrainBucks power the smart tools. Replaying audio you already made is free.</p>
 
-      <h2 className="mt-6 mb-3 text-lg font-bold">Get gems</h2>
+      <h2 className="mt-6 mb-3 text-lg font-bold">Get BrainBucks</h2>
       <div className="grid gap-3">
         {GEM_PACKS.map((p) => (
           <button
             key={p.id}
             className="gummy-card flex items-center gap-3 p-4 text-left"
-            onClick={() => toast("Gem checkout is coming soon.")}
+            onClick={() => toast("BrainBucks checkout is coming soon.")}
           >
-            <Gem className="gem-icon" />
-            <span className="flex-1 font-bold">{p.gems} gems</span>
+            <Banknote className="gem-icon" />
+            <span className="flex-1 font-bold">{p.gems} BrainBucks</span>
             <span className="gummy-chip">${p.priceUsd.toFixed(2)}</span>
           </button>
         ))}
       </div>
 
-      <h2 className="mt-6 mb-3 text-lg font-bold">What gems do</h2>
+      <h2 className="mt-6 mb-3 text-lg font-bold">What BrainBucks do</h2>
       <ul className="gummy-card divide-y p-0">
         {USES.map((u) => (
           <li key={u.label} className="flex justify-between gap-3 px-4 py-3">
