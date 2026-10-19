@@ -10,7 +10,7 @@ import { pickExam } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 import { ReadAloud } from "@/lib/read-aloud";
 
-export const Route = createFileRoute("/_authenticated/exam/$examId/test")({
+export const Route = createFileRoute("/_authenticated/exam/$examId/sample-exam")({
   component: TestPage,
 });
 
