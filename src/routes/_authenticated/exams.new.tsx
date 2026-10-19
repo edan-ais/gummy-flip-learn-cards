@@ -128,8 +128,16 @@ function NewExam() {
           const { error } = await supabase.storage.from("materials").upload(path, it.file, { contentType: it.file.type || undefined });
           if (error) throw error;
         }
-        const { error } = await supabase.from("materials").insert({ exam_id: id, name: it.name, mime, storage_path: path, extracted_text: text });
+        const { error } = await supabase
+          .from("materials")
+          .insert({ exam_id: id, name: it.name, mime, storage_path: path, extracted_text: text, file_hash: it.hash ?? null });
         if (error) throw error;
+      }
+      const estChars = items.reduce((n, it) => n + (it.text?.length ?? (it.kind === "text" || it.kind === "doc" ? 0 : 8000)), 0);
+      const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").length;
+      if (!(await confirmSpend(processCost(estChars, estFiles)))) {
+        setBusy(null);
+        return;
       }
       setBusy("Reading and organizing… this can take a minute or two.");
       const r = await process({ data: { examId: id } });
@@ -157,7 +165,16 @@ function NewExam() {
     );
 
   return (
-    <Page eyebrow={examId ? "Add materials" : "New exam"} title={examId ? "Add more" : "What are you studying?"}>
+    <Page
+      eyebrow={examId ? "Add materials" : "New exam"}
+      title={examId ? "Add more" : "What are you studying?"}
+      action={
+        <button className="gummy-icon" onClick={() => nav({ to: examId ? "/exam/$examId" : "/courses", params: examId ? { examId } : undefined })} aria-label="Back">
+          <ChevronLeft />
+        </button>
+      }
+    >
+      {dialog}
       {!examId && (
         <input className="gummy-input mb-4" placeholder="Exam name, e.g. Unit 3 test" value={title} onChange={(e) => setTitle(e.target.value)} />
       )}
