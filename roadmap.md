@@ -12,6 +12,6 @@
 - [x] New color scheme (blue learn / red quiz / green correct), Lexend everywhere
 - [x] App wording: specific, effort-based, "Not yet", no "wrong/failed", no timers/streak guilt
 - [x] Due dates for tests/exams/homework + pacing (cram vs early with review sets)
-- [ ] Gems (wallet, costs, charging done; buying waits on payments setup): every AI action costs gems; buy gems (payments); price above AI cost
+- [ ] Gems (done except checkout; user will connect payments later): every AI action costs gems; buy gems (payments); price above AI cost
 - [x] Memorize: instant missed-word feedback, keyboard shake, correct word in red
 - [x] Drawing on cards semi-transparent
