@@ -36,3 +36,22 @@ export function memoryScore(answer: string, typed: string) {
 
 /** A round passes only when accuracy is strictly above 90%. */
 export const passes = (percent: number) => percent > 90;
+
+const PREFIX = "psych-studio.v1.";
+export function load<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const v = localStorage.getItem(PREFIX + key);
+    return v == null ? fallback : (JSON.parse(v) as T);
+  } catch {
+    return fallback;
+  }
+}
+export function save(key: string, value: unknown) {
+  try {
+    localStorage.setItem(PREFIX + key, JSON.stringify(value));
+    return true;
+  } catch {
+    return false;
+  }
+}
