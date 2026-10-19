@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { ChevronLeft, Gem } from "lucide-react";
+import { ChevronLeft, Banknote } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { GEM_COST, GEM_PACKS } from "@/lib/gems";
@@ -9,10 +9,10 @@ import { useGems } from "@/lib/gems-client";
 export const Route = createFileRoute("/_authenticated/gems")({
   head: () => ({
     meta: [
-      { title: "Gems · StudyLamb" },
-      { name: "description", content: "Gems power the smart tools in StudyLamb: building study sets, podcasts and read-aloud." },
-      { property: "og:title", content: "Gems · StudyLamb" },
-      { property: "og:description", content: "Gems power building study sets, podcasts and read-aloud." },
+      { title: "BrainBucks · StudyLamb" },
+      { name: "description", content: "BrainBucks power the smart tools in StudyLamb: building study sets, podcasts and read-aloud." },
+      { property: "og:title", content: "BrainBucks · StudyLamb" },
+      { property: "og:description", content: "BrainBucks power building study sets, podcasts and read-aloud." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
