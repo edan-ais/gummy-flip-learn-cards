@@ -4,7 +4,6 @@ import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
-import "@lovable.dev/cloud-auth-js/styles.css";
 
 type Search = { redirect?: string };
 const safe = (r?: string) => (r && r.startsWith("/") && !r.startsWith("//") ? r : "/courses");
@@ -17,6 +16,8 @@ export const Route = createFileRoute("/auth")({
       { name: "description", content: "Sign in to your courses, exams and study progress." },
       { property: "og:title", content: "Sign in · Study Studio" },
       { property: "og:description", content: "Sign in to your courses, exams and study progress." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: Auth,
@@ -29,7 +30,6 @@ function Auth() {
   const [email, setEmail] = useState("");
   const [pw, setPw] = useState("");
   const [busy, setBusy] = useState(false);
-  const [sent, setSent] = useState(false);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data }) => data.session && nav({ to: safe(redirect), replace: true }));
@@ -45,12 +45,11 @@ function Auth() {
     const r =
       mode === "in"
         ? await supabase.auth.signInWithPassword({ email, password: pw })
-        : await supabase.auth.signUp({ email, password: pw, options: { emailRedirectTo: window.location.origin + safe(redirect) } });
+        : await supabase.auth.signUp({ email, password: pw });
     setBusy(false);
     if (r.error) return toast.error(r.error.message);
-    if (mode === "up" && !r.data.session) setSent(true);
   };
-  const social = async (p: "google" | "lovable") => {
+  const social = async (p: "google") => {
     const r = await lovable.auth.signInWithOAuth(p, { redirect_uri: window.location.origin + "/auth" });
     if (r.error) toast.error(r.error.message ?? "Sign-in failed");
   };
@@ -64,12 +63,7 @@ function Auth() {
         <h1 className="page-title mt-4">Study Studio</h1>
         <p className="mt-2 text-muted-foreground">Recall it. Draw it. Hear it.</p>
       </div>
-      {sent ? (
-        <div className="gummy-card text-center animate-pop">
-          <h2 className="text-lg font-extrabold">Check your email</h2>
-          <p className="mt-2 text-sm text-muted-foreground">We sent a link to {email}. Tap it to finish signing up.</p>
-        </div>
-      ) : (
+      {(
         <div className="gummy-card space-y-3 animate-pop">
           <button type="button" className="gummy-btn w-full" onClick={() => social("google")}>
             <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden>
@@ -79,9 +73,6 @@ function Auth() {
               <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.2-.1-2.3-.4-3.5z" />
             </svg>
             Continue with Google
-          </button>
-          <button type="button" className="lovable-auth-button w-full" onClick={() => social("lovable")}>
-            Continue with Lovable
           </button>
           <div className="flex items-center gap-3 py-1 text-xs font-bold text-muted-foreground">
             <span className="h-px flex-1 bg-border" /> or <span className="h-px flex-1 bg-border" />
