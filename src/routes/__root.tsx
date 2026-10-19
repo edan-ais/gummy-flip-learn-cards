@@ -36,11 +36,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: ErrorComponentProps) {
   console.error(error);
   const router = useRouter();
-  const { pathname } = useLocation();
-  useEffect(() => {
-    // Same color means the same thing everywhere: blue = learn, red = quiz & recall.
-    document.documentElement.dataset.section = /\/(memorize|practice|sample-exam)/.test(pathname) ? "quiz" : "learn";
-  }, [pathname]);
   useEffect(() => {
     reportLovableError(error, { boundary: "tanstack_root_error_component" });
   }, [error]);
@@ -115,6 +110,11 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  const { pathname } = useLocation();
+  useEffect(() => {
+    // Same color means the same thing everywhere: blue = learn, red = quiz & recall.
+    document.documentElement.dataset.section = /\/(memorize|practice|sample-exam)/.test(pathname) ? "quiz" : "learn";
+  }, [pathname]);
   useEffect(() => {
     const { data } = supabase.auth.onAuthStateChange((event) => {
       if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
