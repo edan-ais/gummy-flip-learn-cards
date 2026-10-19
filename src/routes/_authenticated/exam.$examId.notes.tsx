@@ -2,13 +2,14 @@ import { createFileRoute } from "@tanstack/react-router";
 import { queryOptions, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
-import { ChevronDown, Mic, Square, Trash2, FileText, Loader2, ExternalLink } from "lucide-react";
+import { ChevronDown, Mic, Square, Trash2, FileText, Loader2, ExternalLink, Upload, Camera } from "lucide-react";
 import { toast } from "sonner";
-import { actionError } from "@/lib/gems-client";
+import { actionError, useSpendGuard } from "@/lib/gems-client";
+import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { Page } from "@/components/study/Shell";
 import { examQuery, type Material } from "@/lib/exam-data";
-import { transcribeNote } from "@/lib/study.functions";
+import { processExam, transcribeNote } from "@/lib/study.functions";
 import { ReadAloud } from "@/lib/read-aloud";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/notes")({
@@ -50,6 +51,7 @@ function Notes() {
       </div>
       {tab === "uploaded" ? (
         <div className="space-y-3">
+          <AddMaterials examId={examId} />
           {data.materials.length === 0 && <p className="text-sm text-muted-foreground">Nothing uploaded yet.</p>}
           {data.materials.map((m, i) => (
             <MaterialView key={m.id} m={m} open={i === 0} />
