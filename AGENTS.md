@@ -12,3 +12,5 @@
 - Deadline pacing lives in `src/lib/pacing.ts` (`pacedOrder`) and wraps `studyOrder` on every study page. Why: one place decides cram vs. spread.
 - Section colors come from `html[data-section]` set in `__root.tsx` (learn vs quiz). Why: same color means the same thing on every screen.
 - Brand artwork is rendered through the shared BrandLogo component and asset pointer; StudySplash handles route loading. Why: welcome, courses and loading screens stay consistent without duplicating artwork references.
+- Exam layouts reserve shared header space and expose distinct overview and study tabs. Why: mobile headings stay visible and home never doubles as flashcards.
+- Flashcard read-aloud uses device speech word-boundary events through flashcard-speech. Why: highlighted words and the ball follow actual speech without a new AI charge.

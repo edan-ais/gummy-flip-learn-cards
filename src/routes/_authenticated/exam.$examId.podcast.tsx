@@ -2,7 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
-import { Play, Pause, SkipBack, SkipForward, Shuffle, MoreHorizontal, Loader2, Sparkles, MessagesSquare, Wand2 } from "lucide-react";
+import { Play, Pause, SkipBack, SkipForward, Shuffle, MoreHorizontal, Loader2, Sparkles, MessagesSquare, Wand2, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { actionError } from "@/lib/gems-client";
 import { examQuery } from "@/lib/exam-data";
@@ -70,7 +71,8 @@ function Podcast() {
   }));
 
   const tracks = mode === "qa" ? qaTracks : absTracks;
-  const inThis = p.current && tracks.some((t) => t.key === p.current!.key);
+  const currentKey = p.current?.key;
+  const inThis = currentKey && tracks.some((t) => t.key === currentKey);
   const playAll = () => (inThis ? p.toggle() : p.playQueue(tracks, 0));
 
   return (
@@ -175,6 +177,7 @@ function Podcast() {
             <button onClick={() => p.jump(1)} aria-label="Next">
               <SkipForward size={20} fill="currentColor" />
             </button>
+            <Button variant="ghost" size="icon" className="shrink-0" onClick={p.close} aria-label="Close podcast player" title="Close podcast player"><X /></Button>
           </div>
           <input
             type="range"

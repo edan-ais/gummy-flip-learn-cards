@@ -58,9 +58,9 @@ function Practice() {
           const m = mastery(data.states.get(q.id));
           return (
             <li key={q.id} className="gummy-card p-4 animate-rise" style={{ animationDelay: `${Math.min(i, 8) * 40}ms` }}>
-              <div className="flex gap-3">
+              <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
                 <span className="num-badge" data-m={m}>{i + 1}</span>
-                <h3 className="flex-1 font-bold leading-snug">{q.q}</h3>
+                <h3 className="min-w-0 font-bold leading-snug">{q.q}</h3>
                 <ReadAloud text={q.q} />
               </div>
               <button className="reveal-btn" data-open={open === q.id} onClick={() => setOpen(open === q.id ? null : q.id)} aria-expanded={open === q.id}>

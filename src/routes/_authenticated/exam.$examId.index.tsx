@@ -106,7 +106,7 @@ function ExamHome() {
           <Play fill="currentColor" />
         </span>
         <span className="text-left">
-          <span className="block text-lg font-extrabold">Start studying</span>
+          <span className="block text-lg font-extrabold">Open flashcards</span>
           <span className="block text-sm opacity-90">
             {s.adhd ? `${s.chunkSize} cards, then a quick break` : due ? `${due} due for review` : `${Math.min(newCount, 10)} new cards`}
           </span>
@@ -212,7 +212,7 @@ function PlanCard({ examId }: { examId: string }) {
       </div>
       <input
         type="date"
-        className="gummy-input mt-3"
+        className="gummy-input due-date-input mt-3"
         aria-label="Due date"
         value={data.plan.due_date ?? ""}
         min={new Date().toISOString().slice(0, 10)}
