@@ -5,7 +5,6 @@ import { ChevronLeft, ChevronRight, RotateCcw, Pencil, Keyboard, Sparkles } from
 import { SectionPills } from "@/components/study/Shell";
 import { DrawLayer, type Stroke } from "@/components/study/DrawLayer";
 import { examQuery, useGrade } from "@/lib/exam-data";
-import { studyOrder } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";

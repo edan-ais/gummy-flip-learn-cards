@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { ChevronDown, ClipboardCheck, Check, X } from "lucide-react";
 import { Page, SectionPills } from "@/components/study/Shell";
 import { examQuery, useGrade } from "@/lib/exam-data";
-import { studyOrder, mastery } from "@/lib/srs";
+import { mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
