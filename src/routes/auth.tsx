@@ -87,6 +87,7 @@ function Auth() {
           </button>
         </div>
       )}
+      <p className="mt-8 text-center text-xs font-bold text-muted-foreground">Powered by waiwiser</p>
     </main>
   );
 }
