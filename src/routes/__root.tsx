@@ -13,7 +13,10 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PlayerProvider } from "@/lib/player";
-import { TabBar, MiniPlayer } from "@/components/study/Shell";
+import { MiniPlayer } from "@/components/study/Shell";
+import { SettingsProvider } from "@/lib/settings";
+import { Toaster } from "@/components/ui/sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -79,7 +82,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Lexend:wght@400;600;700&family=Nunito:wght@400;600;700;800&display=swap",
       },
     ],
   }),
@@ -105,15 +108,26 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
+  useEffect(() => {
+    const { data } = supabase.auth.onAuthStateChange((event) => {
+      if (event !== "SIGNED_IN" && event !== "SIGNED_OUT" && event !== "USER_UPDATED") return;
+      router.invalidate();
+      if (event !== "SIGNED_OUT") queryClient.invalidateQueries();
+    });
+    return () => data.subscription.unsubscribe();
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
-      <PlayerProvider>
-        <div className="app-frame">
-          <Outlet />
-          <MiniPlayer />
-          <TabBar />
-        </div>
-      </PlayerProvider>
+      <SettingsProvider>
+        <PlayerProvider>
+          <div className="app-frame">
+            <Outlet />
+            <MiniPlayer />
+          </div>
+          <Toaster position="top-center" />
+        </PlayerProvider>
+      </SettingsProvider>
     </QueryClientProvider>
   );
 }
