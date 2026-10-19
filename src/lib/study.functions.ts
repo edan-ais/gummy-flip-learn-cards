@@ -260,7 +260,7 @@ export const processSyllabus = createServerFn({ method: "POST" })
           .single();
         if (error || !course) throw error ?? new Error("save failed");
         let n = 0;
-        for (const e of c.exams.slice(0, 20)) {
+        for (const e of (c.exams ?? []).slice(0, 20)) {
           const { error: e2 } = await supabase.from("exams").insert({
             course_id: course.id,
             owner_id: context.userId,
