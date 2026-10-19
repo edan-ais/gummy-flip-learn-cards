@@ -103,18 +103,6 @@ function ExamHome() {
       <h1 className="page-title">{data.exam.title}</h1>
       <PlanCard examId={examId} />
 
-      <Link to="/exam/$examId/cards" params={{ examId }} className="start-btn mt-5 animate-pop">
-        <span className="start-play">
-          <Play fill="currentColor" />
-        </span>
-        <span className="text-left">
-          <span className="block text-lg font-extrabold">Open flashcards</span>
-          <span className="block text-sm opacity-90">
-            {s.adhd ? `${s.chunkSize} cards, then a quick break` : due ? `${due} due for review` : `${Math.min(newCount, 10)} new cards`}
-          </span>
-        </span>
-      </Link>
-
       <div className="mt-4 grid grid-cols-3 gap-3 text-center">
         <Stat n={due} label="Due" tone="primary" />
         <Stat n={newCount} label="New" tone="muted" />
