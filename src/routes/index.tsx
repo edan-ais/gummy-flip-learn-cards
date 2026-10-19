@@ -21,7 +21,17 @@ export const Route = createFileRoute("/")({
 function Landing() {
   const nav = useNavigate();
   useEffect(() => {
-    supabase.auth.getSession().then(({ data }) => data.session && nav({ to: "/courses", replace: true }));
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) return nav({ to: "/courses", replace: true });
+      // First open: new visitors meet Professor Lamby before the landing page.
+      let onboarded: string | null = null;
+      try {
+        onboarded = localStorage.getItem("studylamb-onboarded");
+      } catch {
+        // private browsing - treat as first open
+      }
+      if (!onboarded) nav({ to: "/onboarding", replace: true });
+    });
   }, []);
   return (
     <main className="page flex min-h-dvh flex-col justify-center">
