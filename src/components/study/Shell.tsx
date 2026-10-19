@@ -1,5 +1,5 @@
 import { Link, useLocation, useParams } from "@tanstack/react-router";
-import { Layers, Brain, Headphones, PenLine, BookOpen, Play, Pause, ChevronLeft, Settings2, Loader2, Home, X } from "lucide-react";
+import { Layers, Brain, Headphones, PenLine, Play, Pause, ChevronLeft, Settings2, Loader2, Home, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState, type ReactNode } from "react";
 import { usePlayer } from "@/lib/player";
@@ -11,7 +11,6 @@ const TABS = [
   { to: "/exam/$examId/cards", label: "Cards", icon: Layers },
   { to: "/exam/$examId/memorize", label: "Memorize", icon: Brain },
   { to: "/exam/$examId/practice", label: "Practice", icon: PenLine },
-  { to: "/exam/$examId/notes", label: "Notes", icon: BookOpen },
 ] as const;
 
 export function ExamTabBar({ examId }: { examId: string }) {

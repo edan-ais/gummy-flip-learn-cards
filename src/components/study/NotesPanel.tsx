@@ -1,5 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { queryOptions, useQuery, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
+import { queryOptions, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Mic, Square, Trash2, FileText, Loader2, ExternalLink, Upload, Camera } from "lucide-react";
@@ -7,24 +6,9 @@ import { toast } from "sonner";
 import { actionError, useSpendGuard } from "@/lib/gems-client";
 import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
-import { Page } from "@/components/study/Shell";
-import { examQuery, type Material } from "@/lib/exam-data";
+import { type Material } from "@/lib/exam-data";
 import { processExam, transcribeNote } from "@/lib/study.functions";
 import { ReadAloud } from "@/lib/read-aloud";
-
-export const Route = createFileRoute("/_authenticated/exam/$examId/notes")({
-  head: () => ({
-    meta: [
-      { title: "Notes · StudyLamb" },
-      { name: "description", content: "Your uploaded materials and personal notes in StudyLamb." },
-      { property: "og:title", content: "Notes · StudyLamb" },
-      { property: "og:description", content: "Your uploaded materials and personal notes in StudyLamb." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-    ],
-  }),
-  component: Notes,
-});
 
 const notesQuery = (examId: string) =>
   queryOptions({
@@ -35,13 +19,14 @@ const notesQuery = (examId: string) =>
     },
   });
 
-function Notes() {
-  const { examId } = Route.useParams();
-  const { data } = useSuspenseQuery(examQuery(examId));
+/** Uploaded materials + personal notes, shown on the exam home page. */
+export function NotesPanel({ examId, materials }: { examId: string; materials: Material[] }) {
   const [tab, setTab] = useState<"uploaded" | "mine">("uploaded");
   return (
-    <Page eyebrow="Notes" title={tab === "uploaded" ? "What you uploaded" : "My notes"}>
-      <div className="seg mb-4">
+    <section className="mt-6">
+      <p className="eyebrow">Notes</p>
+      <h2 className="page-title text-xl">{tab === "uploaded" ? "What you uploaded" : "My notes"}</h2>
+      <div className="seg mb-4 mt-3">
         <button data-active={tab === "uploaded"} onClick={() => setTab("uploaded")}>
           Uploaded
         </button>
@@ -52,15 +37,15 @@ function Notes() {
       {tab === "uploaded" ? (
         <div className="space-y-3">
           <AddMaterials examId={examId} />
-          {data.materials.length === 0 && <p className="text-sm text-muted-foreground">Nothing uploaded yet.</p>}
-          {data.materials.map((m, i) => (
+          {materials.length === 0 && <p className="text-sm text-muted-foreground">Nothing uploaded yet.</p>}
+          {materials.map((m, i) => (
             <MaterialView key={m.id} m={m} open={i === 0} />
           ))}
         </div>
       ) : (
         <MyNotes examId={examId} />
       )}
-    </Page>
+    </section>
   );
 }
 

@@ -21,7 +21,6 @@ import { Route as AuthenticatedExamsNewRouteImport } from './routes/_authenticat
 import { Route as AuthenticatedExamExamIdIndexRouteImport } from './routes/_authenticated/exam.$examId.index'
 import { Route as AuthenticatedExamExamIdCardsRouteImport } from './routes/_authenticated/exam.$examId.cards'
 import { Route as AuthenticatedExamExamIdMemorizeRouteImport } from './routes/_authenticated/exam.$examId.memorize'
-import { Route as AuthenticatedExamExamIdNotesRouteImport } from './routes/_authenticated/exam.$examId.notes'
 import { Route as AuthenticatedExamExamIdPodcastRouteImport } from './routes/_authenticated/exam.$examId.podcast'
 import { Route as AuthenticatedExamExamIdPracticeRouteImport } from './routes/_authenticated/exam.$examId.practice'
 import { Route as AuthenticatedExamExamIdSampleExamRouteImport } from './routes/_authenticated/exam.$examId.sample-exam'
@@ -88,12 +87,6 @@ const AuthenticatedExamExamIdMemorizeRoute =
     path: '/memorize',
     getParentRoute: () => AuthenticatedExamExamIdRoute,
   } as any)
-const AuthenticatedExamExamIdNotesRoute =
-  AuthenticatedExamExamIdNotesRouteImport.update({
-    id: '/notes',
-    path: '/notes',
-    getParentRoute: () => AuthenticatedExamExamIdRoute,
-  } as any)
 const AuthenticatedExamExamIdPodcastRoute =
   AuthenticatedExamExamIdPodcastRouteImport.update({
     id: '/podcast',
@@ -124,7 +117,6 @@ export interface FileRoutesByFullPath {
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
-  '/exam/$examId/notes': typeof AuthenticatedExamExamIdNotesRoute
   '/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
   '/exam/$examId/practice': typeof AuthenticatedExamExamIdPracticeRoute
   '/exam/$examId/sample-exam': typeof AuthenticatedExamExamIdSampleExamRoute
@@ -140,7 +132,6 @@ export interface FileRoutesByTo {
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
-  '/exam/$examId/notes': typeof AuthenticatedExamExamIdNotesRoute
   '/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
   '/exam/$examId/practice': typeof AuthenticatedExamExamIdPracticeRoute
   '/exam/$examId/sample-exam': typeof AuthenticatedExamExamIdSampleExamRoute
@@ -159,7 +150,6 @@ export interface FileRoutesById {
   '/_authenticated/exams/new': typeof AuthenticatedExamsNewRoute
   '/_authenticated/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/_authenticated/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
-  '/_authenticated/exam/$examId/notes': typeof AuthenticatedExamExamIdNotesRoute
   '/_authenticated/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
   '/_authenticated/exam/$examId/practice': typeof AuthenticatedExamExamIdPracticeRoute
   '/_authenticated/exam/$examId/sample-exam': typeof AuthenticatedExamExamIdSampleExamRoute
@@ -178,7 +168,6 @@ export interface FileRouteTypes {
     | '/exams/new'
     | '/exam/$examId/cards'
     | '/exam/$examId/memorize'
-    | '/exam/$examId/notes'
     | '/exam/$examId/podcast'
     | '/exam/$examId/practice'
     | '/exam/$examId/sample-exam'
@@ -194,7 +183,6 @@ export interface FileRouteTypes {
     | '/exams/new'
     | '/exam/$examId/cards'
     | '/exam/$examId/memorize'
-    | '/exam/$examId/notes'
     | '/exam/$examId/podcast'
     | '/exam/$examId/practice'
     | '/exam/$examId/sample-exam'
@@ -212,7 +200,6 @@ export interface FileRouteTypes {
     | '/_authenticated/exams/new'
     | '/_authenticated/exam/$examId/cards'
     | '/_authenticated/exam/$examId/memorize'
-    | '/_authenticated/exam/$examId/notes'
     | '/_authenticated/exam/$examId/podcast'
     | '/_authenticated/exam/$examId/practice'
     | '/_authenticated/exam/$examId/sample-exam'
@@ -312,13 +299,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExamExamIdMemorizeRouteImport
       parentRoute: typeof AuthenticatedExamExamIdRoute
     }
-    '/_authenticated/exam/$examId/notes': {
-      id: '/_authenticated/exam/$examId/notes'
-      path: '/notes'
-      fullPath: '/exam/$examId/notes'
-      preLoaderRoute: typeof AuthenticatedExamExamIdNotesRouteImport
-      parentRoute: typeof AuthenticatedExamExamIdRoute
-    }
     '/_authenticated/exam/$examId/podcast': {
       id: '/_authenticated/exam/$examId/podcast'
       path: '/podcast'
@@ -346,7 +326,6 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedExamExamIdRouteChildren {
   AuthenticatedExamExamIdCardsRoute: typeof AuthenticatedExamExamIdCardsRoute
   AuthenticatedExamExamIdMemorizeRoute: typeof AuthenticatedExamExamIdMemorizeRoute
-  AuthenticatedExamExamIdNotesRoute: typeof AuthenticatedExamExamIdNotesRoute
   AuthenticatedExamExamIdPodcastRoute: typeof AuthenticatedExamExamIdPodcastRoute
   AuthenticatedExamExamIdPracticeRoute: typeof AuthenticatedExamExamIdPracticeRoute
   AuthenticatedExamExamIdSampleExamRoute: typeof AuthenticatedExamExamIdSampleExamRoute
@@ -357,7 +336,6 @@ const AuthenticatedExamExamIdRouteChildren: AuthenticatedExamExamIdRouteChildren
   {
     AuthenticatedExamExamIdCardsRoute: AuthenticatedExamExamIdCardsRoute,
     AuthenticatedExamExamIdMemorizeRoute: AuthenticatedExamExamIdMemorizeRoute,
-    AuthenticatedExamExamIdNotesRoute: AuthenticatedExamExamIdNotesRoute,
     AuthenticatedExamExamIdPodcastRoute: AuthenticatedExamExamIdPodcastRoute,
     AuthenticatedExamExamIdPracticeRoute: AuthenticatedExamExamIdPracticeRoute,
     AuthenticatedExamExamIdSampleExamRoute:

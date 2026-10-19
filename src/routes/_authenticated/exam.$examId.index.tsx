@@ -2,7 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ChevronLeft, Play, ClipboardCheck, Plus, RefreshCw, Settings2, Target, Loader2, AlertCircle } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, RefreshCw, Settings2, Target, Loader2, AlertCircle, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { actionError } from "@/lib/gems-client";
 import { examQuery } from "@/lib/exam-data";
@@ -12,6 +12,7 @@ import { processExam } from "@/lib/study.functions";
 import { ProgressChip } from "@/components/study/Shell";
 import { GemChip, LowBalanceNudge } from "@/lib/gems-client";
 import { paceLabel, type PlanKind } from "@/lib/pacing";
+import { NotesPanel } from "@/components/study/NotesPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays } from "lucide-react";
 
@@ -102,18 +103,6 @@ function ExamHome() {
       <h1 className="page-title">{data.exam.title}</h1>
       <PlanCard examId={examId} />
 
-      <Link to="/exam/$examId/cards" params={{ examId }} className="start-btn mt-5 animate-pop">
-        <span className="start-play">
-          <Play fill="currentColor" />
-        </span>
-        <span className="text-left">
-          <span className="block text-lg font-extrabold">Open flashcards</span>
-          <span className="block text-sm opacity-90">
-            {s.adhd ? `${s.chunkSize} cards, then a quick break` : due ? `${due} due for review` : `${Math.min(newCount, 10)} new cards`}
-          </span>
-        </span>
-      </Link>
-
       <div className="mt-4 grid grid-cols-3 gap-3 text-center">
         <Stat n={due} label="Due" tone="primary" />
         <Stat n={newCount} label="New" tone="muted" />
@@ -139,12 +128,38 @@ function ExamHome() {
         <ClipboardCheck size={18} /> Take a sample exam
       </Link>
 
-      {own && (
-        <Link to="/exams/new" search={{ examId }} className="gummy-btn mt-4 w-full" data-variant="ghost">
-          <Plus size={18} /> Add more materials
-        </Link>
-      )}
+      {own && data.sections.length > 0 && <ChaptersCard examId={examId} />}
+
+      <NotesPanel examId={examId} materials={data.materials} />
     </main>
+  );
+}
+
+/** Rename chapters (sections) of this exam. */
+function ChaptersCard({ examId }: { examId: string }) {
+  const { data } = useSuspenseQuery(examQuery(examId));
+  const qc = useQueryClient();
+  const rename = async (id: string, current: string) => {
+    const t = window.prompt("Chapter name", current);
+    if (!t?.trim() || t.trim() === current) return;
+    const { error } = await supabase.from("sections").update({ title: t.trim() }).eq("id", id);
+    if (error) return toast.error(error.message);
+    qc.invalidateQueries({ queryKey: ["exam", examId] });
+  };
+  return (
+    <div className="gummy-card mt-4 p-4">
+      <p className="mb-3 font-bold">Chapters</p>
+      <ul className="space-y-2">
+        {data.sections.map((sec) => (
+          <li key={sec.id} className="flex items-center gap-2">
+            <span className="min-w-0 flex-1 truncate text-sm font-bold">{sec.title}</span>
+            <button className="gummy-icon sm" aria-label={`Rename ${sec.title}`} onClick={() => rename(sec.id, sec.title)}>
+              <Pencil size={14} />
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 
