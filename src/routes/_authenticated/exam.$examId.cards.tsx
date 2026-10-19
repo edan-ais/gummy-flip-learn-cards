@@ -13,6 +13,9 @@ import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks } from "@/lib/literacy";
 import { load, save } from "@/lib/study";
+import { Switch } from "@/components/ui/switch";
+import { FlashcardAudioButton, SpokenWords } from "@/components/study/FlashcardAudio";
+import { useFlashcardSpeech } from "@/lib/flashcard-speech";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
   head: () => ({
@@ -31,7 +34,7 @@ export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
 function Cards() {
   const { examId } = Route.useParams();
   const { data } = useSuspenseQuery(examQuery(examId));
-  const { s } = useSettings();
+  const { s, set } = useSettings();
   const grade = useGrade(examId);
   const [section, setSection] = useState<string | null>(null);
   const initial = useMemo(
@@ -56,6 +59,7 @@ function Cards() {
     setFlipped(false);
   }, [initial]);
   const c = queue[pos];
+  const speech = useFlashcardSpeech(c ? (flipped ? c.a : c.q) : "", s.flashcardAudio, s.speechRate);
   useEffect(() => {
     if (c) setStrokes(load(c.id, []));
   }, [c?.id]);
@@ -90,6 +94,11 @@ function Cards() {
   return (
     <main className="fit-page">
       <SectionPills sections={data.sections} value={section} onChange={setSection} />
+      <div className="flashcard-audio-setting">
+        <label htmlFor="flashcard-audio" className="font-bold">Flashcard audio</label>
+        <Switch id="flashcard-audio" checked={s.flashcardAudio} onCheckedChange={(value) => set({ flashcardAudio: value })} />
+      </div>
+      {speech.error && <p role="status" className="text-sm text-muted-foreground">{speech.error}</p>}
       <div className="flex items-center justify-between gap-2 text-xs font-bold">
         <span className="truncate text-primary">{sec?.title ?? "All sections"}</span>
         <span className="text-muted-foreground">
@@ -132,10 +141,12 @@ function Cards() {
             key={c.id + pos}
             className="flip-scene h-full"
             data-dir={dir}
-            onTouchStart={(e) => (touch.current = draw ? null : e.touches[0]!.clientX)}
+            onTouchStart={(e) => (touch.current = draw ? null : e.touches[0]?.clientX ?? null)}
             onTouchEnd={(e) => {
               if (touch.current == null || s.spaced) return;
-              const dx = e.changedTouches[0]!.clientX - touch.current;
+              const end = e.changedTouches[0];
+              if (!end) return;
+              const dx = end.clientX - touch.current;
               if (Math.abs(dx) > 60) go(pos + (dx < 0 ? 1 : -1));
               touch.current = null;
             }}
@@ -159,9 +170,9 @@ function Cards() {
               <div className="card-face gummy-card" aria-hidden={flipped}>
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">{st ? (mastery(st) === "known" ? "Review" : "Still learning") : "New card"}</span>
-                  <ReadAloud text={c.q} />
+                   {s.flashcardAudio && !flipped ? <FlashcardAudioButton playing={speech.playing} play={speech.play} /> : <ReadAloud text={c.q} />}
                 </div>
-                <h2 className="card-q">{c.q}</h2>
+                <h2 className="card-q card-scroll"><SpokenWords text={c.q} current={!flipped ? speech.word : -1} /></h2>
                 <p className="text-sm text-muted-foreground">Say your answer out loud, then tap to flip.</p>
                 <span className="card-foot">{draw ? "Draw anywhere on this card" : "Tap for answer"}</span>
                 {!flipped && <DrawLayer strokes={strokes} active={draw} onCommit={(x) => (setStrokes(x), save(c.id, x))} />}
@@ -169,23 +180,23 @@ function Cards() {
               <div className="card-face card-back gummy-card" aria-hidden={!flipped}>
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">Answer</span>
-                  <ReadAloud text={c.a} />
+                   {s.flashcardAudio && flipped ? <FlashcardAudioButton playing={speech.playing} play={speech.play} /> : <ReadAloud text={c.a} />}
                 </div>
                 <div className="card-scroll">
                   <h2 className="mt-2 text-base font-extrabold leading-snug">{c.q}</h2>
                   {lab ? (
                     <>
-                      <p className="mt-2 leading-relaxed">{c.a}</p>
+                      <p className="mt-2 leading-relaxed"><SpokenWords text={c.a} current={flipped ? speech.word : -1} /></p>
                       <WordLab text={c.a} />
                     </>
-                  ) : s.adhd ? (
+                  ) : s.adhd && !s.flashcardAudio ? (
                     <ul className="answer-chunks">
                       {chunks(c.a).map((x, i) => (
                         <li key={i}>{x}</li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-2 leading-relaxed">{c.a}</p>
+                    <p className="mt-2 leading-relaxed"><SpokenWords text={c.a} current={flipped ? speech.word : -1} /></p>
                   )}
                 </div>
                 {flipped && <DrawLayer strokes={strokes} active={draw} onCommit={(x) => (setStrokes(x), save(c.id, x))} />}

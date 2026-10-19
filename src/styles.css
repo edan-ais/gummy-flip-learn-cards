@@ -145,6 +145,8 @@
   }
   html {
     -webkit-text-size-adjust: 100%;
+    width: 100%;
+    overflow-x: clip;
   }
   html {
     font-size: calc(17px * var(--font-scale, 1));
@@ -159,6 +161,14 @@
     text-align: left;
     -webkit-font-smoothing: antialiased;
     overscroll-behavior-y: none;
+    width: 100%;
+    overflow-x: clip;
+    touch-action: pan-y pinch-zoom;
+  }
+  input, textarea, select {
+    min-width: 0;
+    max-width: 100%;
+    font-size: max(16px, 1rem);
   }
   button {
     cursor: pointer;
@@ -174,6 +184,8 @@
 
 @layer components {
   .app-frame {
+    width: 100%;
+    min-width: 0;
     max-width: 520px;
     margin: 0 auto;
     min-height: 100dvh;
@@ -207,6 +219,7 @@
     padding: calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 170px);
   }
   .page-title {
+    overflow-wrap: anywhere;
     color: var(--heading);
     font-family: var(--font-display);
     font-weight: 700;
@@ -590,6 +603,7 @@
       0 1px 0 oklch(1 0 0) inset;
   }
   .tab {
+    min-width: 0;
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -610,7 +624,7 @@
     transition: transform 0.45s var(--spring);
   }
   .tab-label {
-    font-size: 0.65625rem;
+    font-size: 10px;
     font-weight: 800;
   }
   .tab[data-active="true"] {
@@ -658,6 +672,53 @@
     gap: 10px;
     padding: calc(env(safe-area-inset-top) + 64px) 16px calc(env(safe-area-inset-bottom) + 96px);
     overflow: hidden;
+  }
+  .fit-page > :not(.card-area) {
+    flex-shrink: 0;
+    min-width: 0;
+  }
+  .exam-layout:not([data-home="true"]) > .page {
+    padding-top: calc(env(safe-area-inset-top) + 76px);
+  }
+  .page-heading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .page-heading > :last-child:not(:first-child) {
+    justify-self: start;
+  }
+  .flashcard-audio-setting {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 32px;
+    font-size: 16px;
+  }
+  .spoken-word {
+    position: relative;
+    border-radius: 4px;
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+  .spoken-word[data-current="true"] {
+    background: var(--secondary);
+    color: var(--primary-deep);
+    box-shadow: 0 2px 0 var(--primary);
+  }
+  .reading-ball {
+    position: absolute;
+    left: 50%;
+    top: -8px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--primary);
+    pointer-events: none;
+    animation: word-bounce 0.32s var(--ease-out);
+  }
+  .card-q.card-scroll {
+    padding-top: 12px;
+    overflow-wrap: anywhere;
   }
   .card-area {
     flex: 1;
@@ -733,11 +794,14 @@
   }
   .gummy-input {
     width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
     border-radius: 18px;
     padding: 14px 16px;
     background: var(--muted);
     border: 2px solid transparent;
-    font-size: 1rem;
+    font-size: max(16px, 1rem);
     font-weight: 600;
     transition:
       border-color 0.2s,
@@ -748,6 +812,16 @@
   .gummy-input:focus {
     border-color: var(--primary);
     background: var(--card);
+  }
+  .due-date-input {
+    display: block;
+    appearance: none;
+    -webkit-appearance: none;
+    min-height: 54px;
+  }
+  .due-date-input::-webkit-date-and-time-value {
+    min-width: 0;
+    text-align: left;
   }
   .gummy-select {
     border-radius: 999px;
@@ -814,7 +888,11 @@
   .scroll-x {
     overflow-x: auto;
     scrollbar-width: none;
-    padding-bottom: 2px;
+    padding-top: 6px;
+    padding-bottom: 10px;
+    max-width: 100%;
+    overscroll-behavior-x: contain;
+    touch-action: pan-x;
   }
   .scroll-x::-webkit-scrollbar {
     display: none;
@@ -1330,6 +1408,13 @@
     opacity: 1;
     transform: none;
   }
+}
+@keyframes word-bounce {
+  0%, 100% { transform: translate(-50%, 0); }
+  45% { transform: translate(-50%, -9px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-ball { animation: none; }
 }
 .mini-player {
   animation-name: rise-x;
