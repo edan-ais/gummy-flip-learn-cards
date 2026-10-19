@@ -16,6 +16,7 @@ import { Route as AuthenticatedCoursesRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedExamExamIdRouteImport } from './routes/_authenticated/exam.$examId'
 import { Route as AuthenticatedExamsNewRouteImport } from './routes/_authenticated/exams.new'
 import { Route as AuthenticatedExamExamIdIndexRouteImport } from './routes/_authenticated/exam.$examId.index'
+import { Route as AuthenticatedExamExamIdCardsRouteImport } from './routes/_authenticated/exam.$examId.cards'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -52,6 +53,12 @@ const AuthenticatedExamExamIdIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedExamExamIdRoute,
   } as any)
+const AuthenticatedExamExamIdCardsRoute =
+  AuthenticatedExamExamIdCardsRouteImport.update({
+    id: '/cards',
+    path: '/cards',
+    getParentRoute: () => AuthenticatedExamExamIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -59,6 +66,7 @@ export interface FileRoutesByFullPath {
   '/courses': typeof AuthenticatedCoursesRoute
   '/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/exams/new': typeof AuthenticatedExamsNewRoute
+  '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId/': typeof AuthenticatedExamExamIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -66,6 +74,7 @@ export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/courses': typeof AuthenticatedCoursesRoute
   '/exams/new': typeof AuthenticatedExamsNewRoute
+  '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId': typeof AuthenticatedExamExamIdIndexRoute
 }
 export interface FileRoutesById {
@@ -76,6 +85,7 @@ export interface FileRoutesById {
   '/_authenticated/courses': typeof AuthenticatedCoursesRoute
   '/_authenticated/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/_authenticated/exams/new': typeof AuthenticatedExamsNewRoute
+  '/_authenticated/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/_authenticated/exam/$examId/': typeof AuthenticatedExamExamIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -86,9 +96,16 @@ export interface FileRouteTypes {
     | '/courses'
     | '/exam/$examId'
     | '/exams/new'
+    | '/exam/$examId/cards'
     | '/exam/$examId/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/courses' | '/exams/new' | '/exam/$examId'
+  to:
+    | '/'
+    | '/auth'
+    | '/courses'
+    | '/exams/new'
+    | '/exam/$examId/cards'
+    | '/exam/$examId'
   id:
     | '__root__'
     | '/'
@@ -97,6 +114,7 @@ export interface FileRouteTypes {
     | '/_authenticated/courses'
     | '/_authenticated/exam/$examId'
     | '/_authenticated/exams/new'
+    | '/_authenticated/exam/$examId/cards'
     | '/_authenticated/exam/$examId/'
   fileRoutesById: FileRoutesById
 }
@@ -157,15 +175,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExamExamIdIndexRouteImport
       parentRoute: typeof AuthenticatedExamExamIdRoute
     }
+    '/_authenticated/exam/$examId/cards': {
+      id: '/_authenticated/exam/$examId/cards'
+      path: '/cards'
+      fullPath: '/exam/$examId/cards'
+      preLoaderRoute: typeof AuthenticatedExamExamIdCardsRouteImport
+      parentRoute: typeof AuthenticatedExamExamIdRoute
+    }
   }
 }
 
 interface AuthenticatedExamExamIdRouteChildren {
+  AuthenticatedExamExamIdCardsRoute: typeof AuthenticatedExamExamIdCardsRoute
   AuthenticatedExamExamIdIndexRoute: typeof AuthenticatedExamExamIdIndexRoute
 }
 
 const AuthenticatedExamExamIdRouteChildren: AuthenticatedExamExamIdRouteChildren =
   {
+    AuthenticatedExamExamIdCardsRoute: AuthenticatedExamExamIdCardsRoute,
     AuthenticatedExamExamIdIndexRoute: AuthenticatedExamExamIdIndexRoute,
   }
 
