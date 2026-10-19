@@ -10,7 +10,7 @@ export function WordLab({ text }: { text: string }) {
   const [typed, setTyped] = useState("");
   const [hint, setHint] = useState(false);
   const word = terms[i];
-  if (!word) return null;
+  if (!word) return <p className="mt-3 text-sm text-muted-foreground">No tricky words in this answer.</p>;
   const sy = syllables(word);
   const pats = patterns(word);
   const fb = letterFeedback(word, typed);

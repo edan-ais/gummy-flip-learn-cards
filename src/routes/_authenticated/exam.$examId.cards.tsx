@@ -163,7 +163,10 @@ function Cards() {
                 <div className="card-scroll">
                   <h2 className="mt-2 text-base font-extrabold leading-snug">{c.q}</h2>
                   {lab ? (
-                    <WordLab text={c.a} />
+                    <>
+                      <p className="mt-2 leading-relaxed">{c.a}</p>
+                      <WordLab text={c.a} />
+                    </>
                   ) : s.adhd ? (
                     <ul className="answer-chunks">
                       {chunks(c.a).map((x, i) => (

@@ -33,7 +33,7 @@ function Practice() {
       eyebrow="Answer first, then check"
       title="Practice"
       action={
-        <Link to="/exam/$examId/test" params={{ examId }} className="gummy-chip">
+        <Link to="/exam/$examId/sample-exam" params={{ examId }} className="gummy-chip">
           <ClipboardCheck size={15} /> Sample exam
         </Link>
       }

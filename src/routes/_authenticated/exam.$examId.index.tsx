@@ -109,7 +109,7 @@ function ExamHome() {
         </select>
       </div>
 
-      <Link to="/exam/$examId/test" params={{ examId }} className="gummy-btn mt-4 w-full">
+      <Link to="/exam/$examId/sample-exam" params={{ examId }} className="gummy-btn mt-4 w-full">
         <ClipboardCheck size={18} /> Take a sample exam
       </Link>
 
