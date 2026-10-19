@@ -64,6 +64,90 @@ function Notes() {
   );
 }
 
+/** Upload or photograph more chapter material; rebuilds the study set. */
+function AddMaterials({ examId }: { examId: string }) {
+  const qc = useQueryClient();
+  const process = useServerFn(processExam);
+  const { confirmSpend, dialog } = useSpendGuard();
+  const [busy, setBusy] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const camRef = useRef<HTMLInputElement>(null);
+
+  const add = async (files: FileList | null) => {
+    const list = Array.from(files ?? []).filter((f) => {
+      const ok = f.type === "application/pdf" || f.type.startsWith("image/") || f.name.endsWith(".docx") || f.type.startsWith("text/");
+      if (!ok) toast.error(`${f.name}: use PDF, photos, Word (.docx) or text files.`);
+      else if (f.size > 25 * 1024 * 1024) toast.error(`${f.name} is over 25 MB.`);
+      return ok && f.size <= 25 * 1024 * 1024;
+    });
+    if (!list.length) return;
+    setBusy(true);
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      const known = new Set(
+        ((await supabase.from("materials").select("file_hash").eq("exam_id", examId).not("file_hash", "is", null)).data ?? []).map(
+          (m) => m.file_hash as string,
+        ),
+      );
+      let added = 0;
+      for (const f of list) {
+        const d = await crypto.subtle.digest("SHA-256", await f.arrayBuffer());
+        const hash = [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+        if (known.has(hash)) {
+          toast(`${f.name} is already uploaded — skipping the copy.`);
+          continue;
+        }
+        let text = "";
+        if (f.name.endsWith(".docx")) {
+          const mammoth = await import("mammoth");
+          text = (await mammoth.extractRawText({ arrayBuffer: await f.arrayBuffer() })).value;
+        } else if (f.type.startsWith("text/")) {
+          text = await f.text();
+        }
+        const path = `${u.user!.id}/${examId}/${crypto.randomUUID()}-${f.name.replace(/[^\w.-]/g, "_")}`;
+        const { error } = await supabase.storage.from("materials").upload(path, f, { contentType: f.type || undefined });
+        if (error) throw error;
+        const { error: e2 } = await supabase
+          .from("materials")
+          .insert({ exam_id: examId, name: f.name, mime: f.type || "text/plain", storage_path: path, extracted_text: text, file_hash: hash });
+        if (e2) throw e2;
+        known.add(hash);
+        added++;
+      }
+      if (!added) return;
+      if (!(await confirmSpend(processCost(added * 8000, added)))) return;
+      toast("Reading your new pages… this can take a minute or two.");
+      const r = await process({ data: { examId } });
+      if (!r.ok) actionError(r.error, "We couldn't add those pages.");
+      else toast.success("Added! Your study set now includes the new pages.");
+      await qc.invalidateQueries();
+    } catch (e) {
+      actionError(e, "That upload didn't go through. Try again.");
+    } finally {
+      setBusy(false);
+      if (fileRef.current) fileRef.current.value = "";
+      if (camRef.current) camRef.current.value = "";
+    }
+  };
+
+  return (
+    <div className="gummy-card p-3">
+      {dialog}
+      <div className="grid grid-cols-2 gap-3">
+        <button className="gummy-btn" data-variant="ghost" onClick={() => fileRef.current?.click()} disabled={busy}>
+          {busy ? <Loader2 className="animate-spin" size={18} /> : <Upload size={18} />} Upload
+        </button>
+        <button className="gummy-btn" data-variant="ghost" onClick={() => camRef.current?.click()} disabled={busy}>
+          <Camera size={18} /> Camera
+        </button>
+      </div>
+      <p className="caption mt-2 text-center">Add more chapter pages — the study set updates to include them.</p>
+      <input ref={fileRef} type="file" hidden multiple accept=".pdf,image/*,.docx,.txt,.md,text/plain" onChange={(e) => add(e.target.files)} />
+      <input ref={camRef} type="file" hidden accept="image/*" capture="environment" onChange={(e) => add(e.target.files)} />
+    </div>
+  );
+}
+
 function MaterialView({ m, open: initial }: { m: Material; open: boolean }) {
   const [open, setOpen] = useState(initial);
   const [url, setUrl] = useState<string | null>(null);
