@@ -65,7 +65,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       navigator.mediaSession.metadata = new MediaMetadata({
         title: t.title,
         artist: "Psychology study studio",
-        album: LABELS[t.ch],
+        album: LABELS[t.ch] ?? "",
       });
       navigator.mediaSession.playbackState = playing ? "playing" : "paused";
     }
