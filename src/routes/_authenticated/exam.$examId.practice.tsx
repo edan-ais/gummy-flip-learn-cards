@@ -11,6 +11,16 @@ import { ReadAloud } from "@/lib/read-aloud";
 import { chunks } from "@/lib/literacy";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/practice")({
+  head: () => ({
+    meta: [
+      { title: "Practice · StudyLamb" },
+      { name: "description", content: "Practice your StudyLamb questions and review what needs another try." },
+      { property: "og:title", content: "Practice · StudyLamb" },
+      { property: "og:description", content: "Practice your StudyLamb questions and review what needs another try." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Practice,
 });
 

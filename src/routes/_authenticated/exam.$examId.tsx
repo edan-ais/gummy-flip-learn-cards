@@ -7,10 +7,12 @@ export const Route = createFileRoute("/_authenticated/exam/$examId")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(examQuery(params.examId)),
   head: () => ({
     meta: [
-      { title: "Exam · Study Studio" },
+      { title: "Exam · StudyLamb" },
       { name: "description", content: "Flashcards, memory drills, podcasts, practice and notes for this exam." },
-      { property: "og:title", content: "Exam · Study Studio" },
+      { property: "og:title", content: "Exam · StudyLamb" },
       { property: "og:description", content: "Study this exam your way." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: ExamLayout,

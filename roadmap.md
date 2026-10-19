@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] StudyLamb branding: supplied Professor Lamby logo on welcome, homepage, route-loading splash and app icon; renamed app throughout
+
 - [ ] Sign in (email, Google, Lovable) and per-user saved progress
 - [ ] Courses & exams home: open, create courses and exams; psych course kept as sample
 - [ ] Upload materials (PDF, photos, Word/text, paste) -> AI parses into sections, cards, practice questions

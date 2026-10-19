@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Sparkles } from "lucide-react";
+import { BrandLogo } from "@/components/study/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 
@@ -12,9 +12,9 @@ export const Route = createFileRoute("/auth")({
   validateSearch: (s: Record<string, unknown>): Search => ({ redirect: typeof s.redirect === "string" ? s.redirect : undefined }),
   head: () => ({
     meta: [
-      { title: "Sign in · Study Studio" },
+      { title: "Sign in · StudyLamb" },
       { name: "description", content: "Sign in to your courses, exams and study progress." },
-      { property: "og:title", content: "Sign in · Study Studio" },
+      { property: "og:title", content: "Sign in · StudyLamb" },
       { property: "og:description", content: "Sign in to your courses, exams and study progress." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -57,10 +57,8 @@ function Auth() {
   return (
     <main className="page flex min-h-dvh flex-col justify-center">
       <div className="mb-8 text-center animate-rise">
-        <span className="brand-blob mx-auto">
-          <Sparkles />
-        </span>
-        <h1 className="page-title mt-4">Study Studio</h1>
+        <div className="flex justify-center"><BrandLogo /></div>
+        <h1 className="page-title mt-4">StudyLamb</h1>
         <p className="mt-2 text-muted-foreground">Recall it. Draw it. Hear it.</p>
       </div>
       {(

@@ -9,9 +9,9 @@ import { useGems } from "@/lib/gems-client";
 export const Route = createFileRoute("/_authenticated/gems")({
   head: () => ({
     meta: [
-      { title: "Gems · Study Studio" },
-      { name: "description", content: "Gems power the smart tools in Study Studio: building study sets, podcasts and read-aloud." },
-      { property: "og:title", content: "Gems · Study Studio" },
+      { title: "Gems · StudyLamb" },
+      { name: "description", content: "Gems power the smart tools in StudyLamb: building study sets, podcasts and read-aloud." },
+      { property: "og:title", content: "Gems · StudyLamb" },
       { property: "og:description", content: "Gems power building study sets, podcasts and read-aloud." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

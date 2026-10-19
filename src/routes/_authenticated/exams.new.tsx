@@ -18,10 +18,12 @@ export const Route = createFileRoute("/_authenticated/exams/new")({
   }),
   head: () => ({
     meta: [
-      { title: "New exam · Study Studio" },
+      { title: "New exam · StudyLamb" },
       { name: "description", content: "Upload notes, chapters or photos and turn them into study materials." },
-      { property: "og:title", content: "New exam · Study Studio" },
+      { property: "og:title", content: "New exam · StudyLamb" },
       { property: "og:description", content: "Upload study materials and build your exam prep." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: NewExam,

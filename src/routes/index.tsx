@@ -1,15 +1,18 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { Layers, Headphones, Brain, Sparkles } from "lucide-react";
+import { Layers, Headphones, Brain } from "lucide-react";
+import { BrandLogo } from "@/components/study/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Study Studio · Flashcards, podcasts and practice exams" },
+      { title: "StudyLamb · Flashcards, podcasts and practice exams" },
       { name: "description", content: "Upload your class notes and get flashcards, memory drills, podcasts and practice exams that adapt to you." },
-      { property: "og:title", content: "Study Studio" },
+      { property: "og:title", content: "StudyLamb" },
       { property: "og:description", content: "Turn class notes into flashcards, podcasts and practice exams that adapt to you." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
   component: Landing,
@@ -22,10 +25,9 @@ function Landing() {
   }, []);
   return (
     <main className="page flex min-h-dvh flex-col justify-center">
-      <span className="brand-blob animate-pop">
-        <Sparkles />
-      </span>
-      <h1 className="page-title mt-6 animate-rise">Study smarter, one bite at a time.</h1>
+      <div className="animate-pop"><BrandLogo /></div>
+      <h1 className="page-title mt-6 animate-rise">StudyLamb</h1>
+      <p className="mt-2 text-muted-foreground">Meet Professor Lamby.</p>
       <p className="mt-3 text-muted-foreground animate-rise">
         Upload your notes. Get flashcards, memory drills, podcasts and practice exams that bring back what you're
         still learning.

@@ -12,6 +12,16 @@ import { studyOrder, weakness, mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/podcast")({
+  head: () => ({
+    meta: [
+      { title: "Listen · StudyLamb" },
+      { name: "description", content: "Listen to your StudyLamb Q&A and Abstract study episodes." },
+      { property: "og:title", content: "Listen · StudyLamb" },
+      { property: "og:description", content: "Listen to your StudyLamb Q&A and Abstract study episodes." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Podcast,
 });
 
