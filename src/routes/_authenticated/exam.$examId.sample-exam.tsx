@@ -11,6 +11,16 @@ import { useSettings } from "@/lib/settings";
 import { ReadAloud } from "@/lib/read-aloud";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/sample-exam")({
+  head: () => ({
+    meta: [
+      { title: "Sample exam · StudyLamb" },
+      { name: "description", content: "Test your preparation with a StudyLamb sample exam." },
+      { property: "og:title", content: "Sample exam · StudyLamb" },
+      { property: "og:description", content: "Test your preparation with a StudyLamb sample exam." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: TestPage,
 });
 

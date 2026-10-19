@@ -99,7 +99,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (!("mediaSession" in navigator) || !current) return;
     navigator.mediaSession.metadata = new MediaMetadata({
       title: current.title,
-      artist: "Study Studio",
+      artist: "StudyLamb",
       album: current.subtitle,
     });
     navigator.mediaSession.playbackState = playing ? "playing" : "paused";

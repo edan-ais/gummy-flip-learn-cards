@@ -16,6 +16,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/")({
+  head: () => ({
+    meta: [
+      { title: "Exam overview · StudyLamb" },
+      { name: "description", content: "Plan your exam prep and open your StudyLamb study materials." },
+      { property: "og:title", content: "Exam overview · StudyLamb" },
+      { property: "og:description", content: "Plan your exam prep and open your StudyLamb study materials." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ExamHome,
 });
 

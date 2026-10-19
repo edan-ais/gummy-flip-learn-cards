@@ -8,10 +8,12 @@ import { syllables } from "@/lib/literacy";
 export const Route = createFileRoute("/_authenticated/settings")({
   head: () => ({
     meta: [
-      { title: "Settings · Study Studio" },
+      { title: "Settings · StudyLamb" },
       { name: "description", content: "Learning supports: dyslexia, ADHD, read-aloud, spaced repetition, fonts and speed." },
-      { property: "og:title", content: "Settings · Study Studio" },
+      { property: "og:title", content: "Settings · StudyLamb" },
       { property: "og:description", content: "Make studying work for how you learn." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   component: SettingsPage,

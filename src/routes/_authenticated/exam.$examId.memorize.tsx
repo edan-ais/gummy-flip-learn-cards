@@ -12,6 +12,16 @@ import { chunks, syllables } from "@/lib/literacy";
 import { MEMORY_ROUNDS, load, save, memoryScore, memoryWords, nearbyKey, passes } from "@/lib/study";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/memorize")({
+  head: () => ({
+    meta: [
+      { title: "Memorize · StudyLamb" },
+      { name: "description", content: "Practice recalling your StudyLamb answers with memory drills." },
+      { property: "og:title", content: "Memorize · StudyLamb" },
+      { property: "og:description", content: "Practice recalling your StudyLamb answers with memory drills." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Memorize,
 });
 

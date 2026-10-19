@@ -12,6 +12,16 @@ import { transcribeNote } from "@/lib/study.functions";
 import { ReadAloud } from "@/lib/read-aloud";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/notes")({
+  head: () => ({
+    meta: [
+      { title: "Notes · StudyLamb" },
+      { name: "description", content: "Your uploaded materials and personal notes in StudyLamb." },
+      { property: "og:title", content: "Notes · StudyLamb" },
+      { property: "og:description", content: "Your uploaded materials and personal notes in StudyLamb." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Notes,
 });
 

@@ -15,6 +15,16 @@ import { chunks } from "@/lib/literacy";
 import { load, save } from "@/lib/study";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
+  head: () => ({
+    meta: [
+      { title: "Flashcards · StudyLamb" },
+      { name: "description", content: "Review your StudyLamb flashcards, one question at a time." },
+      { property: "og:title", content: "Flashcards · StudyLamb" },
+      { property: "og:description", content: "Review your StudyLamb flashcards, one question at a time." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: Cards,
 });
 
