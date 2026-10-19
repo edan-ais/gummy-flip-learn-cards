@@ -2,7 +2,7 @@ import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useSuspenseQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
-import { ChevronLeft, Play, ClipboardCheck, Plus, RefreshCw, Settings2, Target, Loader2, AlertCircle } from "lucide-react";
+import { ChevronLeft, ClipboardCheck, RefreshCw, Settings2, Target, Loader2, AlertCircle, Pencil } from "lucide-react";
 import { toast } from "sonner";
 import { actionError } from "@/lib/gems-client";
 import { examQuery } from "@/lib/exam-data";
@@ -12,6 +12,7 @@ import { processExam } from "@/lib/study.functions";
 import { ProgressChip } from "@/components/study/Shell";
 import { GemChip, LowBalanceNudge } from "@/lib/gems-client";
 import { paceLabel, type PlanKind } from "@/lib/pacing";
+import { NotesPanel } from "@/components/study/NotesPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays } from "lucide-react";
 
