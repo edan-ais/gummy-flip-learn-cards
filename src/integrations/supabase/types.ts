@@ -14,13 +14,475 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cards: {
+        Row: {
+          a: string
+          exam_id: string
+          id: string
+          position: number
+          q: string
+          section_id: string | null
+          source: string
+        }
+        Insert: {
+          a: string
+          exam_id: string
+          id?: string
+          position?: number
+          q: string
+          section_id?: string | null
+          source?: string
+        }
+        Update: {
+          a?: string
+          exam_id?: string
+          id?: string
+          position?: number
+          q?: string
+          section_id?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cards_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      courses: {
+        Row: {
+          color: string
+          created_at: string
+          id: string
+          is_sample: boolean
+          owner_id: string | null
+          title: string
+        }
+        Insert: {
+          color?: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          owner_id?: string | null
+          title: string
+        }
+        Update: {
+          color?: string
+          created_at?: string
+          id?: string
+          is_sample?: boolean
+          owner_id?: string | null
+          title?: string
+        }
+        Relationships: []
+      }
+      exam_attempts: {
+        Row: {
+          created_at: string
+          exam_id: string
+          finished: boolean
+          id: string
+          question_ids: string[]
+          results: Json
+          retake_of: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          finished?: boolean
+          id?: string
+          question_ids: string[]
+          results?: Json
+          retake_of?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          finished?: boolean
+          id?: string
+          question_ids?: string[]
+          results?: Json
+          retake_of?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exam_attempts_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exams: {
+        Row: {
+          course_id: string
+          created_at: string
+          error: string | null
+          exam_date: string | null
+          id: string
+          is_sample: boolean
+          owner_id: string | null
+          status: string
+          title: string
+        }
+        Insert: {
+          course_id: string
+          created_at?: string
+          error?: string | null
+          exam_date?: string | null
+          id?: string
+          is_sample?: boolean
+          owner_id?: string | null
+          status?: string
+          title: string
+        }
+        Update: {
+          course_id?: string
+          created_at?: string
+          error?: string | null
+          exam_date?: string | null
+          id?: string
+          is_sample?: boolean
+          owner_id?: string | null
+          status?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exams_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      materials: {
+        Row: {
+          created_at: string
+          exam_id: string
+          extracted_text: string
+          id: string
+          mime: string
+          name: string
+          storage_path: string | null
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          extracted_text?: string
+          id?: string
+          mime?: string
+          name: string
+          storage_path?: string | null
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          extracted_text?: string
+          id?: string
+          mime?: string
+          name?: string
+          storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "materials_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      personal_notes: {
+        Row: {
+          body: string
+          created_at: string
+          exam_id: string
+          id: string
+          source: string
+          user_id: string
+        }
+        Insert: {
+          body: string
+          created_at?: string
+          exam_id: string
+          id?: string
+          source?: string
+          user_id: string
+        }
+        Update: {
+          body?: string
+          created_at?: string
+          exam_id?: string
+          id?: string
+          source?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "personal_notes_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      podcasts: {
+        Row: {
+          audio_urls: string[]
+          detail: string
+          exam_id: string
+          id: string
+          position: number
+          script: string
+          section_id: string | null
+          status: string
+          storage_paths: string[]
+          title: string
+        }
+        Insert: {
+          audio_urls?: string[]
+          detail?: string
+          exam_id: string
+          id?: string
+          position?: number
+          script?: string
+          section_id?: string | null
+          status?: string
+          storage_paths?: string[]
+          title: string
+        }
+        Update: {
+          audio_urls?: string[]
+          detail?: string
+          exam_id?: string
+          id?: string
+          position?: number
+          script?: string
+          section_id?: string | null
+          status?: string
+          storage_paths?: string[]
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "podcasts_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "podcasts_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          id: string
+          settings: Json
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          id: string
+          settings?: Json
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          settings?: Json
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          a: string
+          exam_id: string
+          id: string
+          position: number
+          q: string
+          section_id: string | null
+        }
+        Insert: {
+          a: string
+          exam_id: string
+          id?: string
+          position?: number
+          q: string
+          section_id?: string | null
+        }
+        Update: {
+          a?: string
+          exam_id?: string
+          id?: string
+          position?: number
+          q?: string
+          section_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "questions_section_id_fkey"
+            columns: ["section_id"]
+            isOneToOne: false
+            referencedRelation: "sections"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      review_state: {
+        Row: {
+          due_at: string
+          ease: number
+          exam_id: string
+          interval_days: number
+          item_id: string
+          kind: string
+          lapses: number
+          reps: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          due_at?: string
+          ease?: number
+          exam_id: string
+          interval_days?: number
+          item_id: string
+          kind?: string
+          lapses?: number
+          reps?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          due_at?: string
+          ease?: number
+          exam_id?: string
+          interval_days?: number
+          item_id?: string
+          kind?: string
+          lapses?: number
+          reps?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "review_state_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sections: {
+        Row: {
+          exam_id: string
+          id: string
+          position: number
+          summary: string
+          title: string
+        }
+        Insert: {
+          exam_id: string
+          id?: string
+          position?: number
+          summary?: string
+          title: string
+        }
+        Update: {
+          exam_id?: string
+          id?: string
+          position?: number
+          summary?: string
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sections_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      study_events: {
+        Row: {
+          created_at: string
+          exam_id: string
+          id: string
+          kind: string
+          user_id: string
+          value: string | null
+        }
+        Insert: {
+          created_at?: string
+          exam_id: string
+          id?: string
+          kind: string
+          user_id: string
+          value?: string | null
+        }
+        Update: {
+          created_at?: string
+          exam_id?: string
+          id?: string
+          kind?: string
+          user_id?: string
+          value?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "study_events_exam_id_fkey"
+            columns: ["exam_id"]
+            isOneToOne: false
+            referencedRelation: "exams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      can_read_exam: { Args: { _exam: string }; Returns: boolean }
+      can_write_course: { Args: { _course: string }; Returns: boolean }
+      can_write_exam: { Args: { _exam: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
