@@ -135,10 +135,8 @@ function NewExam() {
       }
       const estChars = items.reduce((n, it) => n + (it.text?.length ?? (it.kind === "text" || it.kind === "doc" ? 0 : 8000)), 0);
       const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").length;
-      if (!(await confirmSpend(processCost(estChars, estFiles)))) {
-        setBusy(null);
-        return;
-      }
+      setBusy(null);
+      if (!(await confirmSpend(processCost(estChars, estFiles)))) return;
       setBusy("Reading and organizing… this can take a minute or two.");
       const r = await process({ data: { examId: id } });
       await qc.invalidateQueries();
