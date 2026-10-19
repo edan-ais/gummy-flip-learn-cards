@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 export type Settings = {
   spaced: boolean;
   readAloud: boolean;
+  flashcardAudio: boolean;
   dyslexia: boolean;
   adhd: boolean;
   timers: boolean;
@@ -19,6 +20,7 @@ export type Settings = {
 export const DEFAULTS: Settings = {
   spaced: true,
   readAloud: false,
+  flashcardAudio: false,
   dyslexia: false,
   adhd: false,
   timers: false,
