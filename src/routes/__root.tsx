@@ -15,6 +15,7 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PlayerProvider } from "@/lib/player";
 import { MiniPlayer } from "@/components/study/Shell";
+import { StudySplash } from "@/components/study/BrandLogo";
 import { SettingsProvider } from "@/lib/settings";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -67,18 +68,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-capable", content: "yes" },
       { name: "mobile-web-app-capable", content: "yes" },
       { name: "apple-mobile-web-app-status-bar-style", content: "default" },
-      { name: "apple-mobile-web-app-title", content: "Study Studio" },
-      { name: "theme-color", content: "#fbf5ef" },
-      { title: "Psychology Study Studio" },
-      { name: "description", content: "Exam 2 psychology flashcards, memorization, podcast and practice." },
-      { property: "og:title", content: "Psychology Study Studio" },
+      { name: "apple-mobile-web-app-title", content: "StudyLamb" },
+      { name: "theme-color", content: "#F2F6FA" },
+      { title: "StudyLamb" },
+      { name: "description", content: "Your courses, flashcards, podcasts and exam practice with StudyLamb." },
+      { property: "og:title", content: "StudyLamb" },
       { property: "og:description", content: "Recall it. Draw it. Hear it." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
     links: [
       { rel: "stylesheet", href: appCss },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.png", type: "image/png" },
+      { rel: "apple-touch-icon", href: "/apple-touch-icon.png" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
@@ -89,6 +91,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
+  pendingComponent: StudySplash,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });

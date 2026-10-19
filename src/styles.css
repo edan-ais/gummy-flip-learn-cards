@@ -137,6 +137,9 @@
 
 @layer components {
   .app-frame { max-width: 520px; margin: 0 auto; min-height: 100dvh; position: relative; }
+  .lamby-logo { display: block; width: 180px; height: 180px; flex-shrink: 0; object-fit: contain; border-radius: 28px; box-shadow: var(--shadow-gummy); }
+  .lamby-logo-compact { width: 56px; height: 56px; border-radius: 16px; }
+  .study-splash { min-height: 100dvh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 24px; padding: 24px; background: var(--background); }
   .page { padding: calc(env(safe-area-inset-top) + 20px) 18px calc(env(safe-area-inset-bottom) + 170px); }
   .page-title { color: var(--heading); font-family: var(--font-display); font-weight: 700; font-size: 2.125rem; line-height: 1.1; letter-spacing: 0; }
   .eyebrow { display: block; font-size: 0.6875rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted-foreground); }

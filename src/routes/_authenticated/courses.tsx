@@ -6,6 +6,7 @@ import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut } f
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Page } from "@/components/study/Shell";
+import { BrandLogo } from "@/components/study/BrandLogo";
 
 const COLORS = ["coral", "mint", "sky", "sun", "grape"] as const;
 
@@ -25,10 +26,12 @@ const coursesQuery = queryOptions({
 export const Route = createFileRoute("/_authenticated/courses")({
   head: () => ({
     meta: [
-      { title: "Your courses · Study Studio" },
+      { title: "Your courses · StudyLamb" },
       { name: "description", content: "Open a course and exam, or create new ones from your study materials." },
-      { property: "og:title", content: "Your courses · Study Studio" },
+      { property: "og:title", content: "Your courses · StudyLamb" },
       { property: "og:description", content: "Your courses and exams in one place." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
   }),
   loader: ({ context }) => context.queryClient.ensureQueryData(coursesQuery),
@@ -63,7 +66,7 @@ function Courses() {
 
   return (
     <Page
-      eyebrow="Hi there"
+      eyebrow="StudyLamb"
       title="Your courses"
       action={
         <div className="flex items-center gap-2">
@@ -87,6 +90,10 @@ function Courses() {
       }
     >
       <div className="space-y-4">
+        <div className="mb-5 flex items-center gap-3">
+          <BrandLogo compact />
+          <p className="text-sm font-bold text-muted-foreground">Professor Lamby</p>
+        </div>
         {data.map((c, i) => (
           <section key={c.id} className="course-card animate-rise" data-color={c.color} style={{ animationDelay: `${i * 50}ms` }}>
             <div className="flex items-center justify-between gap-2">
