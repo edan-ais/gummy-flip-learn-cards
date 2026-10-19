@@ -10,7 +10,6 @@ import { examQuery, logEvent, useGrade } from "@/lib/exam-data";
 import { requeue, studyOrder, mastery, type Grade } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 import { pacedOrder } from "@/lib/pacing";
-import { ReadAloud } from "@/lib/read-aloud";
 import { chunks } from "@/lib/literacy";
 import { load, save } from "@/lib/study";
 import { Switch } from "@/components/ui/switch";
@@ -170,7 +169,7 @@ function Cards() {
               <div className="card-face gummy-card" aria-hidden={flipped}>
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">{st ? (mastery(st) === "known" ? "Review" : "Still learning") : "New card"}</span>
-                   {s.flashcardAudio && !flipped ? <FlashcardAudioButton playing={speech.playing} play={speech.play} /> : <ReadAloud text={c.q} />}
+                   {s.flashcardAudio && !flipped && <FlashcardAudioButton playing={speech.playing} play={speech.play} />}
                 </div>
                 <h2 className="card-q card-scroll"><SpokenWords text={c.q} current={!flipped ? speech.word : -1} /></h2>
                 <p className="text-sm text-muted-foreground">Say your answer out loud, then tap to flip.</p>
@@ -180,7 +179,7 @@ function Cards() {
               <div className="card-face card-back gummy-card" aria-hidden={!flipped}>
                 <div className="flex items-center justify-between">
                   <span className="eyebrow">Answer</span>
-                   {s.flashcardAudio && flipped ? <FlashcardAudioButton playing={speech.playing} play={speech.play} /> : <ReadAloud text={c.a} />}
+                   {s.flashcardAudio && flipped && <FlashcardAudioButton playing={speech.playing} play={speech.play} />}
                 </div>
                 <div className="card-scroll">
                   <h2 className="mt-2 text-base font-extrabold leading-snug">{c.q}</h2>

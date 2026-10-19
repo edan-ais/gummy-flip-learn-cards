@@ -513,7 +513,7 @@
     bottom: 0;
     width: 100%;
     height: 40px;
-    font-size: 1rem;
+    font-size: max(16px, 1rem);
     resize: none;
     caret-color: transparent;
   }
@@ -724,6 +724,9 @@
     flex: 1;
     min-height: 0;
   }
+  .app-frame:has(.mini-player) .fit-page {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 162px);
+  }
   .card-area .flip-scene {
     margin-top: 0;
   }
@@ -760,7 +763,8 @@
     transform: translateX(-50%);
     width: 100%;
     max-width: 520px;
-    display: flex;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
     align-items: center;
     gap: 8px;
     padding: calc(env(safe-area-inset-top) + 10px) 16px 8px;
