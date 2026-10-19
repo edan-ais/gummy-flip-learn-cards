@@ -15,7 +15,7 @@ export const AI_COST_USD = {
 
 export const GEM_COST = {
   parseBase: 2,
-  parsePer30k: 2,
+  parsePer30k: 3,
   ocrPerFile: 1,
   episode: 3,
   speechClip: 1,

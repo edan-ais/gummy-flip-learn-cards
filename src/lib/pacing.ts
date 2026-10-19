@@ -8,8 +8,9 @@ export const CRAM_DAYS = 3;
 
 export function daysLeft(due: string | null, now = new Date()) {
   if (!due) return null;
-  const d = new Date(due + "T23:59:59");
-  return Math.max(0, Math.ceil((+d - +now) / 86_400_000));
+  const [y, m, d] = due.split("-").map(Number);
+  const today = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
+  return Math.max(0, Math.round((Date.UTC(y!, m! - 1, d!) - today) / 86_400_000));
 }
 
 export type Pace =
