@@ -1,37 +1,4 @@
-import cardsData from "@/data/cards.json";
-import examsData from "@/data/exams.json";
-
-export type Card = { chapter: number; q: string; a: string; source: string; id: string };
-export type Exam = { chapter: number; q: string; a: string };
-
-export const CARDS = cardsData as Card[];
-export const EXAMS = examsData as Exam[];
-export const CHAPTERS = [4, 6, 7] as const;
-export const LABELS: Record<number, string> = {
-  4: "Ch 4 · Development",
-  6: "Ch 6 · Learning",
-  7: "Ch 7 · Memory",
-};
 export const MEMORY_ROUNDS = ["All words visible", "Some words hidden", "From memory"];
-
-const PREFIX = "psych-studio.v1.";
-export function load<T>(key: string, fallback: T): T {
-  if (typeof window === "undefined") return fallback;
-  try {
-    const v = localStorage.getItem(PREFIX + key);
-    return v == null ? fallback : (JSON.parse(v) as T);
-  } catch {
-    return fallback;
-  }
-}
-export function save(key: string, value: unknown) {
-  try {
-    localStorage.setItem(PREFIX + key, JSON.stringify(value));
-    return true;
-  } catch {
-    return false;
-  }
-}
 
 export function memoryWords(text: string) {
   return text.match(/[A-Za-z0-9]+(?:['’][A-Za-z0-9]+)*/g) || [];
