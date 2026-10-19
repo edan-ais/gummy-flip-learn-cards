@@ -717,7 +717,7 @@
     animation: word-bounce 0.32s var(--ease-out);
   }
   .card-q.card-scroll {
-    padding-top: 12px;
+    padding-top: 24px;
     overflow-wrap: anywhere;
   }
   .card-area {
