@@ -25,3 +25,4 @@
 - [x] Source of truth: chapter material beats student notes; contradictions dropped; repeated notes prioritized
 - [x] Gems renamed BrainBucks (dollar-bill icon); low-balance + 95%-spend warnings; -3 grace buffer then pause; duplicate uploads skipped
 - [x] Powered by waiwiser on signup + settings; Home is first tab; back button on new exam page
+- [x] Courses renamed Classes; rename/delete for classes and exams; syllabus upload builds classes + exams; final-review picker combines classes; sections list removed from exam Home
