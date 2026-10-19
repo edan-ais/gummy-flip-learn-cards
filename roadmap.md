@@ -21,3 +21,7 @@
 - [ ] Gems (done except checkout; user will connect payments later): every AI action costs gems; buy gems (payments); price above AI cost
 - [x] Memorize: instant missed-word feedback, keyboard shake, correct word in red
 - [x] Drawing on cards semi-transparent
+- [x] Notes page: upload + camera buttons add pages to a chapter and rebuild the study set
+- [x] Source of truth: chapter material beats student notes; contradictions dropped; repeated notes prioritized
+- [x] Gems renamed BrainBucks (dollar-bill icon); low-balance + 95%-spend warnings; -3 grace buffer then pause; duplicate uploads skipped
+- [x] Powered by waiwiser on signup + settings; Home is first tab; back button on new exam page
