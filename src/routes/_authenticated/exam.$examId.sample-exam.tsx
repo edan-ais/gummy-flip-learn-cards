@@ -134,13 +134,13 @@ function TestPage() {
             {sc.right} of {sc.total} correct
           </p>
           <p className="mt-1 text-sm text-muted-foreground">
-            {wrong.length ? "Missed questions will come back more often in Cards and Practice." : "Perfect run!"}
+            {wrong.length ? "Missed questions will come back more often in Cards and Practice." : "Every answer matched. Your review is paying off."}
           </p>
         </div>
         {wrong.length > 0 && (
           <>
             <button className="gummy-btn mt-4 w-full" data-variant="primary" onClick={() => start(wrong, finished.id)}>
-              <RotateCcw size={16} /> Retake the {wrong.length} I got wrong
+              <RotateCcw size={16} /> Try the {wrong.length} not-yet questions again
             </button>
             <ul className="mt-4 space-y-2">
               {wrong.map((id) => {

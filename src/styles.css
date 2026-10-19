@@ -214,6 +214,11 @@
   .memory-ghost { color: color-mix(in oklab, var(--foreground) 28%, transparent); }
   .memory-word[data-masked="true"] .memory-ghost { color: transparent; background: var(--secondary); border-radius: 6px; }
   .memory-letter { position: absolute; inset: 0; color: var(--foreground); animation: pop .3s var(--spring); }
+  .memory-word[data-miss="true"] .memory-letter { color: var(--quiz); font-weight: 700; }
+  .memory-word[data-miss="true"][data-masked="true"] .memory-ghost { background: color-mix(in oklab, var(--quiz) 12%, var(--card)); }
+  .slip-row { margin-top: 10px; display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 18px; background: var(--card); box-shadow: var(--shadow-gummy); font-size: 0.9375rem; animation: shake .35s; }
+  .slip-key { display: grid; place-items: center; min-width: 40px; height: 40px; border-radius: 12px; background: var(--muted); font-weight: 700; box-shadow: 0 -3px 0 var(--border) inset; text-decoration: line-through; color: var(--slate); }
+  .slip-word { color: var(--quiz); }
   .memory-word[data-current="true"] { box-shadow: 0 3px 0 var(--primary); }
   .memory-input { position: absolute; opacity: 0.01; left: 0; bottom: 0; width: 100%; height: 40px; font-size: 1rem; resize: none; caret-color: transparent; }
   .feedback { margin-top: 12px; padding: 14px 16px; border-radius: 20px; background: var(--secondary); font-weight: 700; font-size: 0.875rem; }
