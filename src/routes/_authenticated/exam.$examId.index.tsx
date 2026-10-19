@@ -128,11 +128,9 @@ function ExamHome() {
         <ClipboardCheck size={18} /> Take a sample exam
       </Link>
 
-      {own && (
-        <Link to="/exams/new" search={{ examId }} className="gummy-btn mt-4 w-full" data-variant="ghost">
-          <Plus size={18} /> Add more materials
-        </Link>
-      )}
+      {own && data.sections.length > 0 && <ChaptersCard examId={examId} />}
+
+      <NotesPanel examId={examId} materials={data.materials} />
     </main>
   );
 }
