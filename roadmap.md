@@ -1,5 +1,9 @@
 # Roadmap
 
+- [ ] Mobile fixes: date width, no sideways drift or typing zoom, unclipped chapter pills and page headings
+- [ ] Separate home tab, Listen first, dismissible podcast mini-player
+- [ ] Flashcard-specific audio toggle with spoken-word highlight and bouncing ball
+
 - [x] StudyLamb branding: supplied Professor Lamby logo on welcome, homepage, route-loading splash and app icon; renamed app throughout
 
 - [ ] Sign in (email, Google, Lovable) and per-user saved progress
