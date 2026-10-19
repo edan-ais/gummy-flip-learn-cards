@@ -18,9 +18,14 @@ type Player = {
   seek: (t: number) => void;
   skip: (d: number) => void;
   jump: (d: number) => void;
+  close: () => void;
 };
 const Ctx = createContext<Player | null>(null);
-export const usePlayer = () => useContext(Ctx)!;
+export const usePlayer = () => {
+  const player = useContext(Ctx);
+  if (!player) throw new Error("PlayerProvider is required");
+  return player;
+};
 
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const { s } = useSettings();
@@ -53,8 +58,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       cache.current.set(t.key, urls);
       if (my !== token.current) return;
       parts.current = { urls, i: 0 };
-      const a = ref.current!;
-      a.src = urls[0]!;
+      const a = ref.current;
+      const first = urls[0];
+      if (!a || !first) return;
+      a.src = first;
       a.playbackRate = s.speechRate;
       await a.play().catch(() => {});
       // Prefetch next track
@@ -73,7 +80,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     load(q, i);
   };
   const toggle = () => {
-    const a = ref.current!;
+    const a = ref.current;
+    if (!a) return;
     if (!a.src && qRef.current.length) return load(qRef.current, iRef.current);
     if (a.paused) a.play().catch(() => {});
     else a.pause();
@@ -86,8 +94,28 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     if (ref.current) ref.current.currentTime = t;
   };
   const skip = (d: number) => {
-    const a = ref.current!;
+    const a = ref.current;
+    if (!a) return;
     a.currentTime = Math.max(0, Math.min(a.duration || 0, a.currentTime + d));
+  };
+
+  const close = () => {
+    token.current++;
+    const a = ref.current;
+    if (a) { a.pause(); a.removeAttribute("src"); a.load(); }
+    parts.current = { urls: [], i: 0 };
+    qRef.current = [];
+    setQueue([]);
+    setStarted(false);
+    setPlaying(false);
+    setLoading(false);
+    setTime(0);
+    setDuration(0);
+    setError("");
+    if ("mediaSession" in navigator) {
+      navigator.mediaSession.metadata = null;
+      navigator.mediaSession.playbackState = "none";
+    }
   };
 
   useEffect(() => {
@@ -126,7 +154,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
 
   return (
     <Ctx.Provider
-      value={{ queue, index, current, playing, loading, started, time, duration, error, playQueue, toggle, seek, skip, jump }}
+      value={{ queue, index, current, playing, loading, started, time, duration, error, playQueue, toggle, seek, skip, jump, close }}
     >
       {children}
       <audio
@@ -144,8 +172,11 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
           const p = parts.current;
           if (p.i < p.urls.length - 1) {
             p.i += 1;
-            ref.current!.src = p.urls[p.i]!;
-            ref.current!.play().catch(() => {});
+            const a = ref.current;
+            const next = p.urls[p.i];
+            if (!a || !next) return;
+            a.src = next;
+            a.play().catch(() => {});
           } else if (iRef.current < qRef.current.length - 1) load(qRef.current, iRef.current + 1);
         }}
         onError={() => setError("Track could not load. Check your connection and try again.")}

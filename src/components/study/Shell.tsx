@@ -1,13 +1,15 @@
 import { Link, useLocation, useParams } from "@tanstack/react-router";
-import { Layers, Brain, Headphones, PenLine, BookOpen, Play, Pause, ChevronLeft, Settings2, Loader2 } from "lucide-react";
+import { Layers, Brain, Headphones, PenLine, BookOpen, Play, Pause, ChevronLeft, Settings2, Loader2, Home, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useEffect, useState, type ReactNode } from "react";
 import { usePlayer } from "@/lib/player";
 import { useSettings } from "@/lib/settings";
 
 const TABS = [
+  { to: "/exam/$examId/podcast", label: "Listen", icon: Headphones },
+  { to: "/exam/$examId", label: "Home", icon: Home },
   { to: "/exam/$examId/cards", label: "Cards", icon: Layers },
   { to: "/exam/$examId/memorize", label: "Memorize", icon: Brain },
-  { to: "/exam/$examId/podcast", label: "Listen", icon: Headphones },
   { to: "/exam/$examId/practice", label: "Practice", icon: PenLine },
   { to: "/exam/$examId/notes", label: "Notes", icon: BookOpen },
 ] as const;
@@ -18,7 +20,7 @@ export function ExamTabBar({ examId }: { examId: string }) {
     <nav className="tabbar" aria-label="Study sections">
       {TABS.map(({ to, label, icon: Icon }) => {
         const path = to.replace("$examId", examId);
-        const active = pathname.startsWith(path) || (label === "Practice" && pathname.endsWith("/test"));
+        const active = label === "Home" ? pathname.replace(/\/$/, "") === path : pathname.startsWith(path) || (label === "Practice" && pathname.endsWith("/sample-exam"));
         return (
           <Link key={to} to={to} params={{ examId }} className="tab" data-active={active}>
             <span className="tab-icon">
@@ -48,7 +50,7 @@ export function MiniPlayer() {
           <p className="truncate text-xs text-muted-foreground">{p.current.subtitle}</p>
         </div>
       </div>
-      <button className="gummy-icon" onClick={p.toggle} aria-label={p.playing ? "Pause" : "Play"}>
+      <Button variant="ghost" size="icon" className="gummy-icon shrink-0" onClick={p.toggle} aria-label={p.playing ? "Pause" : "Play"}>
         {p.loading ? (
           <Loader2 size={18} className="animate-spin" />
         ) : p.playing ? (
@@ -56,7 +58,8 @@ export function MiniPlayer() {
         ) : (
           <Play size={18} fill="currentColor" />
         )}
-      </button>
+      </Button>
+      <Button variant="ghost" size="icon" className="gummy-icon sm shrink-0" onClick={p.close} aria-label="Close podcast player" title="Close podcast player"><X size={18} /></Button>
       <span className="mini-progress" style={{ width: `${(p.time / (p.duration || 1)) * 100}%` }} />
     </div>
   );
@@ -111,7 +114,7 @@ export function ExamHeader({ title, examId, today }: { title: string; examId: st
 export function Page({ title, eyebrow, children, action }: { title: string; eyebrow?: string; children: ReactNode; action?: ReactNode }) {
   return (
     <main className="page">
-      <header className="mb-5 flex items-end justify-between gap-3 animate-rise">
+      <header className="page-heading mb-5 grid min-w-0 gap-3 animate-rise">
         <div className="min-w-0">
           {eyebrow && <p className="eyebrow">{eyebrow}</p>}
           <h1 className="page-title">{title}</h1>
@@ -143,7 +146,7 @@ export function SectionPills<T extends { id: string; title: string }>({
       )}
       {sections.map((s) => (
         <button key={s.id} className="pill" data-active={value === s.id} onClick={() => onChange(s.id)}>
-          {s.title.split("·")[0]!.trim()}
+          {(s.title.split("·")[0] ?? s.title).trim()}
         </button>
       ))}
     </div>

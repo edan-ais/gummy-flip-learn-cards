@@ -24,10 +24,10 @@ function ExamLayout() {
   const { pathname } = useLocation();
   const home = pathname.replace(/\/$/, "").endsWith(examId);
   return (
-    <>
+    <div className="exam-layout" data-home={home}>
       {!home && <ExamHeader title={data.exam.title} examId={examId} today={data.today} />}
       <Outlet />
       <ExamTabBar examId={examId} />
-    </>
+    </div>
   );
 }
