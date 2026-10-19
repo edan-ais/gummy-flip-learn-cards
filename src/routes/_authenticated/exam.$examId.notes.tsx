@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Mic, Square, Trash2, FileText, Loader2, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
+import { actionError } from "@/lib/gems-client";
 import { supabase } from "@/integrations/supabase/client";
 import { Page } from "@/components/study/Shell";
 import { examQuery, type Material } from "@/lib/exam-data";
@@ -124,11 +125,11 @@ function MyNotes({ examId }: { examId: string }) {
           let s = "";
           for (let i = 0; i < b.length; i += 0x8000) s += String.fromCharCode(...b.subarray(i, i + 0x8000));
           const { text } = await transcribe({ data: { audio: btoa(s), mime: type } });
-          if (!text.trim()) toast.error("We couldn't hear any words. Try again.");
+          if (!text.trim()) toast("No words came through. Try again a little closer to the mic.");
           setBody((x) => (x ? x + "\n" : "") + text);
           source.current = "voice";
         } catch (e) {
-          toast.error(e instanceof Error ? e.message : "Could not transcribe.");
+          actionError(e, "Could not turn that into text.");
         } finally {
           setBusy(false);
         }

@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Volume2, Loader2, Square } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { actionError } from "@/lib/gems-client";
 import { speak } from "./study.functions";
 import { useSettings } from "./settings";
 
@@ -45,7 +46,7 @@ export function ReadAloud({ text, className = "" }: { text: string; className?: 
       setState("playing");
     } catch (e) {
       setState("idle");
-      toast.error(e instanceof Error ? e.message : "Could not read this aloud.");
+      actionError(e, "Could not read this aloud.");
     }
   };
   return (

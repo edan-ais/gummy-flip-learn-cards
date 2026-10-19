@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useMemo, useState } from "react";
 import { Play, Pause, SkipBack, SkipForward, Shuffle, MoreHorizontal, Loader2, Sparkles, MessagesSquare, Wand2 } from "lucide-react";
 import { toast } from "sonner";
+import { actionError } from "@/lib/gems-client";
 import { examQuery } from "@/lib/exam-data";
 import { usePlayer, fmt, type Track } from "@/lib/player";
 import { episodeAudio, speak } from "@/lib/study.functions";
@@ -47,9 +48,10 @@ function Podcast() {
       try {
         const r = await ep({ data: { podcastId: x.id } });
         if (x.status !== "ready") qc.invalidateQueries({ queryKey: ["exam", examId] });
+        qc.invalidateQueries({ queryKey: ["gems"] });
         return r.urls;
       } catch (e) {
-        toast.error(e instanceof Error ? e.message : "Could not make this episode.");
+        actionError(e, "Could not make this episode.");
         throw e;
       } finally {
         setMaking(null);

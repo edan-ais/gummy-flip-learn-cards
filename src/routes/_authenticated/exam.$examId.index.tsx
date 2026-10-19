@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useState } from "react";
 import { ChevronLeft, Play, ClipboardCheck, Plus, RefreshCw, Settings2, Target, Loader2, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
+import { actionError } from "@/lib/gems-client";
 import { examQuery } from "@/lib/exam-data";
 import { mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
@@ -49,7 +50,7 @@ function ExamHome() {
               setBusy(true);
               const r = await retry({ data: { examId } });
               setBusy(false);
-              if (!r.ok) toast.error(r.error);
+              if (!r.ok) actionError(r.error, "We couldn't build this study set.");
               qc.invalidateQueries({ queryKey: ["exam", examId] });
               router.invalidate();
             }}
