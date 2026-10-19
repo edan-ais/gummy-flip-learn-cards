@@ -2,9 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
-import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera } from "lucide-react";
+import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
-import { actionError } from "@/lib/gems-client";
+import { actionError, useSpendGuard } from "@/lib/gems-client";
+import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
 import { Page } from "@/components/study/Shell";
@@ -29,7 +30,12 @@ export const Route = createFileRoute("/_authenticated/exams/new")({
   component: NewExam,
 });
 
-type Item = { id: string; file?: File; text?: string; name: string; kind: "pdf" | "image" | "doc" | "text" };
+type Item = { id: string; file?: File; text?: string; name: string; kind: "pdf" | "image" | "doc" | "text"; hash?: string };
+
+async function hashFile(f: File) {
+  const d = await crypto.subtle.digest("SHA-256", await f.arrayBuffer());
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 const kindOf = (f: File): Item["kind"] | null => {
   if (f.type === "application/pdf") return "pdf";
