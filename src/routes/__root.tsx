@@ -71,7 +71,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "apple-mobile-web-app-title", content: "StudyLamb" },
       { name: "theme-color", content: "#F2F6FA" },
       { title: "StudyLamb" },
-      { name: "description", content: "Your courses, flashcards, podcasts and exam practice with StudyLamb." },
+      { name: "description", content: "Your classes, flashcards, podcasts and exam practice with StudyLamb." },
       { property: "og:title", content: "StudyLamb" },
       { property: "og:description", content: "Recall it. Draw it. Hear it." },
       { property: "og:type", content: "website" },

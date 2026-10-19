@@ -13,9 +13,9 @@ export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
       { title: "Sign in · StudyLamb" },
-      { name: "description", content: "Sign in to your courses, exams and study progress." },
+      { name: "description", content: "Sign in to your classes, exams and study progress." },
       { property: "og:title", content: "Sign in · StudyLamb" },
-      { property: "og:description", content: "Sign in to your courses, exams and study progress." },
+      { property: "og:description", content: "Sign in to your classes, exams and study progress." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],

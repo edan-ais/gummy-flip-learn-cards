@@ -212,6 +212,109 @@ export const speak = createServerFn({ method: "POST" })
     return { urls: await signed(paths) };
   });
 
+const SyllabusSchema = z.object({
+  classes: z.array(
+    z.object({
+      title: z.string(),
+      exams: z.array(z.object({ title: z.string(), date: z.string().nullable().default(null) })).default([]),
+    }),
+  ),
+});
+
+/** Read a syllabus and create the classes and major exams it lists. */
+export const processSyllabus = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { name: string; mime: string; text?: string; path?: string }) => d)
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    const { aiText, aiObject, toBase64 } = await import("./ai/gateway.server");
+    const needsRead = !data.text && !!data.path;
+    const cost = GEM_COST.parseBase + (needsRead ? GEM_COST.ocrPerFile : 0);
+    await charge(supabase, cost, "Read syllabus");
+    try {
+      let text = data.text ?? "";
+      if (needsRead) {
+        const { data: blob, error } = await supabase.storage.from("materials").download(data.path!);
+        if (error || !blob) throw new Error("Could not open that file.");
+        const b64 = toBase64(new Uint8Array(await blob.arrayBuffer()));
+        const part =
+          data.mime === "application/pdf"
+            ? { type: "file" as const, filename: data.name, data: b64, mediaType: "application/pdf" }
+            : { type: "image" as const, image: new URL(`data:${data.mime};base64,${b64}`) };
+        text = await aiText("Transcribe this syllabus exactly as written. Plain text only.", [
+          { role: "user", content: [part, { type: "text", text: "Transcribe this." }] },
+        ]);
+      }
+      if (!text.trim()) throw new Error("No readable text found in that syllabus.");
+      const parsed = await aiObject(
+        `Read this school syllabus and list the class and its major exams (tests, quizzes, midterms, finals — not homework or readings). Return one class per syllabus. Exam titles short and clear, dates as YYYY-MM-DD when stated, else null.`,
+        [{ role: "user", content: text.slice(0, 60_000) }],
+        SyllabusSchema,
+      );
+      const created: { courseId: string; exams: number }[] = [];
+      for (const c of parsed.classes.slice(0, 8)) {
+        const { data: course, error } = await supabase
+          .from("courses")
+          .insert({ title: c.title.slice(0, 80), owner_id: context.userId, color: "sky" })
+          .select("id")
+          .single();
+        if (error || !course) throw error ?? new Error("save failed");
+        let n = 0;
+        for (const e of (c.exams ?? []).slice(0, 20)) {
+          const { error: e2 } = await supabase.from("exams").insert({
+            course_id: course.id,
+            owner_id: context.userId,
+            title: e.title.slice(0, 120),
+            status: "ready",
+            exam_date: e.date && /^\d{4}-\d{2}-\d{2}$/.test(e.date) ? e.date : null,
+          });
+          if (!e2) n++;
+        }
+        created.push({ courseId: course.id, exams: n });
+      }
+      if (!created.length) throw new Error("No classes found in that syllabus.");
+      return { ok: true as const, created };
+    } catch (e) {
+      await refund(context.userId, cost, "Read syllabus");
+      throw e;
+    }
+  });
+
+/** Combine every exam from the chosen classes into one final-review exam. Free — no AI needed. */
+export const buildFinalReview = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((d: { courseIds: string[] }) => d)
+  .handler(async ({ data, context }) => {
+    const { supabase } = context;
+    if (!data.courseIds.length) throw new Error("Pick at least one class.");
+    const { data: courses } = await supabase.from("courses").select("id,title,owner_id").in("id", data.courseIds);
+    const owned = (courses ?? []).filter((c) => c.owner_id === context.userId);
+    if (!owned.length) throw new Error("Classes not found");
+    const { data: exams } = await supabase.from("exams").select("id").in("course_id", owned.map((c) => c.id));
+    const examIds = (exams ?? []).map((e) => e.id);
+    const { data: course, error } = await supabase
+      .from("courses")
+      .insert({ title: "Final review", owner_id: context.userId, color: "grape" })
+      .select("id")
+      .single();
+    if (error || !course) throw error ?? new Error("save failed");
+    const { data: exam, error: e2 } = await supabase
+      .from("exams")
+      .insert({ course_id: course.id, owner_id: context.userId, title: `Final · ${owned.map((c) => c.title).join(" + ")}`.slice(0, 120), status: "ready" })
+      .select("id")
+      .single();
+    if (e2 || !exam) throw e2 ?? new Error("save failed");
+    if (examIds.length) {
+      const { data: cards } = await supabase.from("cards").select("q,a,position").in("exam_id", examIds).order("position");
+      const { data: questions } = await supabase.from("questions").select("q,a,position").in("exam_id", examIds).order("position");
+      if (cards?.length)
+        await supabase.from("cards").insert(cards.map((c, i) => ({ exam_id: exam.id, section_id: null, position: i, q: c.q, a: c.a })));
+      if (questions?.length)
+        await supabase.from("questions").insert(questions.map((q, i) => ({ exam_id: exam.id, section_id: null, position: i, q: q.q, a: q.a })));
+    }
+    return { examId: exam.id };
+  });
+
 export const transcribeNote = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { audio: string; mime: string }) => {
