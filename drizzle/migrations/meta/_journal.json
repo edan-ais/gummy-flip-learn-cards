@@ -15,6 +15,13 @@
       "when": 1792384491340,
       "tag": "0001_sample_course",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1792384522501,
+      "tag": "0002_storage_policies",
+      "breakpoints": true
     }
   ]
 }
