@@ -177,7 +177,7 @@ const KINDS: { v: PlanKind; label: string }[] = [
 function PlanCard({ examId }: { examId: string }) {
   const { data } = useSuspenseQuery(examQuery(examId));
   const qc = useQueryClient();
-  const saveplan = async (patch: { kind?: PlanKind; due_date?: string | null }) => {
+  const savePlan = async (patch: { kind?: PlanKind; due_date?: string | null }) => {
     const { data: u } = await supabase.auth.getUser();
     if (!u.user) return;
     const next = { ...data.plan, ...patch };
