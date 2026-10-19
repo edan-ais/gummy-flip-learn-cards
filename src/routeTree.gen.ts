@@ -17,6 +17,8 @@ import { Route as AuthenticatedExamExamIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedExamsNewRouteImport } from './routes/_authenticated/exams.new'
 import { Route as AuthenticatedExamExamIdIndexRouteImport } from './routes/_authenticated/exam.$examId.index'
 import { Route as AuthenticatedExamExamIdCardsRouteImport } from './routes/_authenticated/exam.$examId.cards'
+import { Route as AuthenticatedExamExamIdMemorizeRouteImport } from './routes/_authenticated/exam.$examId.memorize'
+import { Route as AuthenticatedExamExamIdPodcastRouteImport } from './routes/_authenticated/exam.$examId.podcast'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -59,6 +61,18 @@ const AuthenticatedExamExamIdCardsRoute =
     path: '/cards',
     getParentRoute: () => AuthenticatedExamExamIdRoute,
   } as any)
+const AuthenticatedExamExamIdMemorizeRoute =
+  AuthenticatedExamExamIdMemorizeRouteImport.update({
+    id: '/memorize',
+    path: '/memorize',
+    getParentRoute: () => AuthenticatedExamExamIdRoute,
+  } as any)
+const AuthenticatedExamExamIdPodcastRoute =
+  AuthenticatedExamExamIdPodcastRouteImport.update({
+    id: '/podcast',
+    path: '/podcast',
+    getParentRoute: () => AuthenticatedExamExamIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -67,6 +81,8 @@ export interface FileRoutesByFullPath {
   '/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
+  '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
+  '/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
   '/exam/$examId/': typeof AuthenticatedExamExamIdIndexRoute
 }
 export interface FileRoutesByTo {
@@ -75,6 +91,8 @@ export interface FileRoutesByTo {
   '/courses': typeof AuthenticatedCoursesRoute
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
+  '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
+  '/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
   '/exam/$examId': typeof AuthenticatedExamExamIdIndexRoute
 }
 export interface FileRoutesById {
@@ -86,6 +104,8 @@ export interface FileRoutesById {
   '/_authenticated/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/_authenticated/exams/new': typeof AuthenticatedExamsNewRoute
   '/_authenticated/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
+  '/_authenticated/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
+  '/_authenticated/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
   '/_authenticated/exam/$examId/': typeof AuthenticatedExamExamIdIndexRoute
 }
 export interface FileRouteTypes {
@@ -97,6 +117,8 @@ export interface FileRouteTypes {
     | '/exam/$examId'
     | '/exams/new'
     | '/exam/$examId/cards'
+    | '/exam/$examId/memorize'
+    | '/exam/$examId/podcast'
     | '/exam/$examId/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -105,6 +127,8 @@ export interface FileRouteTypes {
     | '/courses'
     | '/exams/new'
     | '/exam/$examId/cards'
+    | '/exam/$examId/memorize'
+    | '/exam/$examId/podcast'
     | '/exam/$examId'
   id:
     | '__root__'
@@ -115,6 +139,8 @@ export interface FileRouteTypes {
     | '/_authenticated/exam/$examId'
     | '/_authenticated/exams/new'
     | '/_authenticated/exam/$examId/cards'
+    | '/_authenticated/exam/$examId/memorize'
+    | '/_authenticated/exam/$examId/podcast'
     | '/_authenticated/exam/$examId/'
   fileRoutesById: FileRoutesById
 }
@@ -182,17 +208,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExamExamIdCardsRouteImport
       parentRoute: typeof AuthenticatedExamExamIdRoute
     }
+    '/_authenticated/exam/$examId/memorize': {
+      id: '/_authenticated/exam/$examId/memorize'
+      path: '/memorize'
+      fullPath: '/exam/$examId/memorize'
+      preLoaderRoute: typeof AuthenticatedExamExamIdMemorizeRouteImport
+      parentRoute: typeof AuthenticatedExamExamIdRoute
+    }
+    '/_authenticated/exam/$examId/podcast': {
+      id: '/_authenticated/exam/$examId/podcast'
+      path: '/podcast'
+      fullPath: '/exam/$examId/podcast'
+      preLoaderRoute: typeof AuthenticatedExamExamIdPodcastRouteImport
+      parentRoute: typeof AuthenticatedExamExamIdRoute
+    }
   }
 }
 
 interface AuthenticatedExamExamIdRouteChildren {
   AuthenticatedExamExamIdCardsRoute: typeof AuthenticatedExamExamIdCardsRoute
+  AuthenticatedExamExamIdMemorizeRoute: typeof AuthenticatedExamExamIdMemorizeRoute
+  AuthenticatedExamExamIdPodcastRoute: typeof AuthenticatedExamExamIdPodcastRoute
   AuthenticatedExamExamIdIndexRoute: typeof AuthenticatedExamExamIdIndexRoute
 }
 
 const AuthenticatedExamExamIdRouteChildren: AuthenticatedExamExamIdRouteChildren =
   {
     AuthenticatedExamExamIdCardsRoute: AuthenticatedExamExamIdCardsRoute,
+    AuthenticatedExamExamIdMemorizeRoute: AuthenticatedExamExamIdMemorizeRoute,
+    AuthenticatedExamExamIdPodcastRoute: AuthenticatedExamExamIdPodcastRoute,
     AuthenticatedExamExamIdIndexRoute: AuthenticatedExamExamIdIndexRoute,
   }
 
