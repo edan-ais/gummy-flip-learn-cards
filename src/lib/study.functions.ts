@@ -242,8 +242,8 @@ export const processSyllabus = createServerFn({ method: "POST" })
             ? { type: "file" as const, filename: data.name, data: b64, mediaType: "application/pdf" }
             : { type: "image" as const, image: new URL(`data:${data.mime};base64,${b64}`) };
         text = await aiText("Transcribe this syllabus exactly as written. Plain text only.", [
-          { role: "user", content: [part, { type: "text", text: "Transcribe this." }] }],
-        });
+          { role: "user", content: [part, { type: "text", text: "Transcribe this." }] },
+        ]);
       }
       if (!text.trim()) throw new Error("No readable text found in that syllabus.");
       const parsed = await aiObject(
