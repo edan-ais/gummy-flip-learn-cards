@@ -58,9 +58,25 @@ function NewExam() {
   const [busy, setBusy] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
+  const { confirmSpend, dialog } = useSpendGuard();
+  const existingHashes = useRef<Set<string> | null>(null);
 
-  const addFiles = (files: FileList | null) => {
+  const knownHashes = async () => {
+    if (!existingHashes.current) {
+      existingHashes.current = new Set(
+        examId
+          ? ((await supabase.from("materials").select("file_hash").eq("exam_id", examId).not("file_hash", "is", null)).data ?? []).map(
+              (m) => m.file_hash as string,
+            )
+          : [],
+      );
+    }
+    return existingHashes.current;
+  };
+
+  const addFiles = async (files: FileList | null) => {
     const next: Item[] = [];
+    const known = await knownHashes();
     for (const f of Array.from(files ?? [])) {
       const k = kindOf(f);
       if (!k) {
@@ -71,7 +87,12 @@ function NewExam() {
         toast.error(`${f.name} is over 25 MB.`);
         continue;
       }
-      next.push({ id: crypto.randomUUID(), file: f, name: f.name, kind: k });
+      const hash = await hashFile(f);
+      if (known.has(hash) || items.some((x) => x.hash === hash) || next.some((x) => x.hash === hash)) {
+        toast(`${f.name} is already uploaded — skipping the copy.`);
+        continue;
+      }
+      next.push({ id: crypto.randomUUID(), file: f, name: f.name, kind: k, hash });
     }
     setItems((x) => [...x, ...next]);
   };
