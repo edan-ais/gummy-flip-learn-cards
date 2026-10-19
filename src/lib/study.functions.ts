@@ -1,6 +1,23 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
+import { GEM_COST, processCost } from "./gems";
+
+type Sb = { rpc: (fn: "spend_gems", args: { _cost: number; _reason: string }) => PromiseLike<{ error: { message: string } | null }> };
+
+/** Charge gems up front; throws NOT_ENOUGH_GEMS when the wallet is short. */
+async function charge(supabase: unknown, cost: number, reason: string) {
+  if (cost <= 0) return;
+  const { error } = await (supabase as Sb).rpc("spend_gems", { _cost: cost, _reason: reason });
+  if (error) throw new Error(error.message.includes("NOT_ENOUGH_GEMS") ? "NOT_ENOUGH_GEMS" : error.message);
+}
+
+/** Give gems back when an AI action we charged for didn't finish. */
+async function refund(userId: string, cost: number, reason: string) {
+  if (cost <= 0) return;
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  await supabaseAdmin.rpc("credit_gems", { _user: userId, _amount: cost, _reason: `Refund: ${reason}`, _ref: null as unknown as string });
+}
 
 const ParseSchema = z.object({
   sections: z.array(
@@ -29,9 +46,19 @@ export const processExam = createServerFn({ method: "POST" })
     const { aiText, aiObject, toBase64 } = await import("./ai/gateway.server");
     const { data: exam } = await supabase.from("exams").select("id, owner_id").eq("id", data.examId).single();
     if (!exam || exam.owner_id !== context.userId) throw new Error("Exam not found");
+    const { data: mats } = await supabase.from("materials").select("*").eq("exam_id", exam.id).order("created_at");
+    const toRead = (mats ?? []).filter((m) => !m.extracted_text && m.storage_path).length;
+    const chars = (mats ?? []).reduce((n, m) => n + (m.extracted_text?.length ?? 0), 0) + toRead * 8000;
+    const cost = processCost(chars, toRead);
+    try {
+      await charge(supabase, cost, "Build study set");
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : "Something went wrong.";
+      await supabase.from("exams").update({ status: "failed", error: msg }).eq("id", exam.id);
+      return { ok: false as const, error: msg };
+    }
     await supabase.from("exams").update({ status: "processing", error: null }).eq("id", exam.id);
     try {
-      const { data: mats } = await supabase.from("materials").select("*").eq("exam_id", exam.id).order("created_at");
       for (const m of mats ?? []) {
         if (m.extracted_text || !m.storage_path) continue;
         const { data: blob, error } = await supabase.storage.from("materials").download(m.storage_path);
@@ -85,6 +112,7 @@ export const processExam = createServerFn({ method: "POST" })
       return { ok: true as const };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Something went wrong.";
+      await refund(context.userId, cost, "Build study set");
       await supabase.from("exams").update({ status: "failed", error: msg }).eq("id", exam.id);
       return { ok: false as const, error: msg };
     }
@@ -110,6 +138,7 @@ export const episodeAudio = createServerFn({ method: "POST" })
     if (exam?.owner_id !== context.userId) throw new Error("Episode not ready");
     const { aiText, speech, chunkText } = await import("./ai/gateway.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await charge(supabase, GEM_COST.episode, "Abstract episode");
     await supabase.from("podcasts").update({ status: "generating" }).eq("id", p.id);
     try {
       const { data: cards } = await supabase.from("cards").select("q,a").eq("section_id", p.section_id!).order("position");
@@ -131,6 +160,7 @@ export const episodeAudio = createServerFn({ method: "POST" })
       return { urls: await signed(paths) };
     } catch (e) {
       await supabase.from("podcasts").update({ status: "empty" }).eq("id", p.id);
+      await refund(context.userId, GEM_COST.episode, "Abstract episode");
       throw e;
     }
   });
@@ -144,15 +174,22 @@ async function sha(text: string) {
 export const speak = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { text: string }) => ({ text: String(d.text).slice(0, 2500) }))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { speech, chunkText } = await import("./ai/gateway.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const chunks = chunkText(data.text, 1200);
     const paths: string[] = [];
+    const missing = new Set<string>();
     for (const c of chunks) {
       const path = `tts/${await sha(c)}.wav`;
       const { data: hit } = await supabaseAdmin.storage.from("audio").createSignedUrl(path, 60);
-      if (!hit?.signedUrl) {
+      if (!hit?.signedUrl) missing.add(path);
+    }
+    // Only new clips cost gems; anything already voiced is free to replay.
+    await charge(context.supabase, missing.size * GEM_COST.speechClip, "Read aloud");
+    for (const c of chunks) {
+      const path = `tts/${await sha(c)}.wav`;
+      if (missing.has(path)) {
         const wav = await speech(c);
         const { error } = await supabaseAdmin.storage.from("audio").upload(path, wav, { contentType: "audio/wav", upsert: true });
         if (error) throw error;
@@ -168,8 +205,9 @@ export const transcribeNote = createServerFn({ method: "POST" })
     if (d.audio.length > 14_000_000) throw new Error("Recording is too long. Keep it under 5 minutes.");
     return d;
   })
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { transcribe, fromBase64 } = await import("./ai/gateway.server");
+    await charge(context.supabase, GEM_COST.transcription, "Spoken note");
     const text = await transcribe(fromBase64(data.audio), data.mime.split(";")[0] || "audio/webm");
     return { text };
   });
