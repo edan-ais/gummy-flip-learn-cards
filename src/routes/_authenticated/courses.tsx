@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { GemChip } from "@/lib/gems-client";
+import { GemChip, LowBalanceNudge } from "@/lib/gems-client";
 import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -70,6 +70,7 @@ function Courses() {
       title="Your courses"
       action={
         <div className="flex items-center gap-2">
+          <LowBalanceNudge />
           <GemChip />
           <Link to="/settings" className="gummy-icon" aria-label="Settings">
             <Settings2 size={18} />

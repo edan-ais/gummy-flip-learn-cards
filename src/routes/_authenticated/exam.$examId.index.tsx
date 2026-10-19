@@ -10,7 +10,7 @@ import { mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
 import { processExam } from "@/lib/study.functions";
 import { ProgressChip } from "@/components/study/Shell";
-import { GemChip } from "@/lib/gems-client";
+import { GemChip, LowBalanceNudge } from "@/lib/gems-client";
 import { paceLabel, type PlanKind } from "@/lib/pacing";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays } from "lucide-react";
@@ -58,7 +58,7 @@ function ExamHome() {
           {data.exam.error && (
             <p className="text-sm text-muted-foreground">
               {data.exam.error.includes("NOT_ENOUGH_GEMS") ? (
-                <>This needs a few more gems. <Link to="/gems">Get gems</Link>, then tap Try again.</>
+                <>This needs a few more BrainBucks. <Link to="/gems">Top up</Link>, then tap Try again.</>
               ) : (
                 data.exam.error
               )}
@@ -90,6 +90,7 @@ function ExamHome() {
           <ChevronLeft />
         </Link>
         <div className="flex items-center gap-2">
+          <LowBalanceNudge />
           <GemChip />
           <ProgressChip today={data.today} />
           <Link to="/settings" className="gummy-icon" aria-label="Settings">

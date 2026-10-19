@@ -2,9 +2,10 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
-import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera } from "lucide-react";
+import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
-import { actionError } from "@/lib/gems-client";
+import { actionError, useSpendGuard } from "@/lib/gems-client";
+import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
 import { Page } from "@/components/study/Shell";
@@ -29,7 +30,12 @@ export const Route = createFileRoute("/_authenticated/exams/new")({
   component: NewExam,
 });
 
-type Item = { id: string; file?: File; text?: string; name: string; kind: "pdf" | "image" | "doc" | "text" };
+type Item = { id: string; file?: File; text?: string; name: string; kind: "pdf" | "image" | "doc" | "text"; hash?: string };
+
+async function hashFile(f: File) {
+  const d = await crypto.subtle.digest("SHA-256", await f.arrayBuffer());
+  return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+}
 
 const kindOf = (f: File): Item["kind"] | null => {
   if (f.type === "application/pdf") return "pdf";
@@ -52,9 +58,25 @@ function NewExam() {
   const [busy, setBusy] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
+  const { confirmSpend, dialog } = useSpendGuard();
+  const existingHashes = useRef<Set<string> | null>(null);
 
-  const addFiles = (files: FileList | null) => {
+  const knownHashes = async () => {
+    if (!existingHashes.current) {
+      existingHashes.current = new Set(
+        examId
+          ? ((await supabase.from("materials").select("file_hash").eq("exam_id", examId).not("file_hash", "is", null)).data ?? []).map(
+              (m) => m.file_hash as string,
+            )
+          : [],
+      );
+    }
+    return existingHashes.current;
+  };
+
+  const addFiles = async (files: FileList | null) => {
     const next: Item[] = [];
+    const known = await knownHashes();
     for (const f of Array.from(files ?? [])) {
       const k = kindOf(f);
       if (!k) {
@@ -65,7 +87,12 @@ function NewExam() {
         toast.error(`${f.name} is over 25 MB.`);
         continue;
       }
-      next.push({ id: crypto.randomUUID(), file: f, name: f.name, kind: k });
+      const hash = await hashFile(f);
+      if (known.has(hash) || items.some((x) => x.hash === hash) || next.some((x) => x.hash === hash)) {
+        toast(`${f.name} is already uploaded — skipping the copy.`);
+        continue;
+      }
+      next.push({ id: crypto.randomUUID(), file: f, name: f.name, kind: k, hash });
     }
     setItems((x) => [...x, ...next]);
   };
@@ -101,9 +128,15 @@ function NewExam() {
           const { error } = await supabase.storage.from("materials").upload(path, it.file, { contentType: it.file.type || undefined });
           if (error) throw error;
         }
-        const { error } = await supabase.from("materials").insert({ exam_id: id, name: it.name, mime, storage_path: path, extracted_text: text });
+        const { error } = await supabase
+          .from("materials")
+          .insert({ exam_id: id, name: it.name, mime, storage_path: path, extracted_text: text, file_hash: it.hash ?? null });
         if (error) throw error;
       }
+      const estChars = items.reduce((n, it) => n + (it.text?.length ?? (it.kind === "text" || it.kind === "doc" ? 0 : 8000)), 0);
+      const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").length;
+      setBusy(null);
+      if (!(await confirmSpend(processCost(estChars, estFiles)))) return;
       setBusy("Reading and organizing… this can take a minute or two.");
       const r = await process({ data: { examId: id } });
       await qc.invalidateQueries();
@@ -130,7 +163,16 @@ function NewExam() {
     );
 
   return (
-    <Page eyebrow={examId ? "Add materials" : "New exam"} title={examId ? "Add more" : "What are you studying?"}>
+    <Page
+      eyebrow={examId ? "Add materials" : "New exam"}
+      title={examId ? "Add more" : "What are you studying?"}
+      action={
+        <button className="gummy-icon" onClick={() => nav({ to: examId ? "/exam/$examId" : "/courses", params: examId ? { examId } : undefined })} aria-label="Back">
+          <ChevronLeft />
+        </button>
+      }
+    >
+      {dialog}
       {!examId && (
         <input className="gummy-input mb-4" placeholder="Exam name, e.g. Unit 3 test" value={title} onChange={(e) => setTitle(e.target.value)} />
       )}

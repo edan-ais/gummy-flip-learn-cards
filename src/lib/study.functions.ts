@@ -36,7 +36,11 @@ For every section write:
 - summary: one plain sentence.
 - cards: 6-20 flashcards covering every key idea, definition, person, stage, and example. Questions are short and specific. Answers are 1-4 short, clear sentences in plain words, faithful to the material. Never invent facts.
 - questions: 3-10 exam-style practice questions (explain, compare, apply to an example) with model answers.
-Use only facts from the material.`;
+Use only facts from the material.
+Source-of-truth rules:
+- Each block is labeled CHAPTER MATERIAL (textbook, slides, teacher handouts) or STUDENT NOTES (the student's own typed, pasted or spoken notes).
+- Chapter material is the source of truth. When student notes contradict it, keep only the version the chapter material supports; never put a contradicted claim in the study guide.
+- When the same fact appears in many of the student's notes, treat it as high priority: make sure it is covered by cards and questions, and cover it early.`;
 
 export const processExam = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
@@ -75,10 +79,19 @@ export const processExam = createServerFn({ method: "POST" })
         await supabase.from("materials").update({ extracted_text: text }).eq("id", m.id);
         m.extracted_text = text;
       }
-      const all = (mats ?? [])
-        .map((m) => `### ${m.name}\n${m.extracted_text}`)
-        .join("\n\n")
-        .slice(0, 150_000);
+      const isStudentNotes = (m: { name: string; mime: string }) =>
+        m.mime.startsWith("text/") || m.name.startsWith("Pasted notes");
+      const { data: myNotes } = await supabase
+        .from("personal_notes")
+        .select("body")
+        .eq("exam_id", exam.id)
+        .order("created_at");
+      const all =
+        (mats ?? [])
+          .map((m) => `### ${isStudentNotes(m) ? "STUDENT NOTES" : "CHAPTER MATERIAL"}: ${m.name}\n${m.extracted_text}`)
+          .concat((myNotes ?? []).map((n, i) => `### STUDENT NOTES: personal note ${i + 1}\n${n.body}`))
+          .join("\n\n")
+          .slice(0, 150_000);
       if (!all.trim()) throw new Error("No readable text found in the uploads.");
       const parsed = await aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema);
 

@@ -71,6 +71,8 @@ function SettingsPage() {
       <Group title="Audio">
         <Range label="Listening speed" value={s.speechRate} min={0.75} max={1.75} step={0.05} fmt={(v) => `${v.toFixed(2)}×`} onChange={(v) => set({ speechRate: v })} />
       </Group>
+
+      <p className="mt-8 text-center text-xs font-bold text-muted-foreground">Powered by waiwiser</p>
     </Page>
   );
 

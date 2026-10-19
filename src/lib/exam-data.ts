@@ -51,6 +51,7 @@ export const examQuery = (examId: string) =>
                 name: "Exam 2 guide + class notes",
                 mime: "text/plain",
                 storage_path: null,
+                file_hash: null,
                 extracted_text: sampleNotes,
                 created_at: exam.created_at,
               },

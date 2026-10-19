@@ -6,8 +6,8 @@ import { usePlayer } from "@/lib/player";
 import { useSettings } from "@/lib/settings";
 
 const TABS = [
-  { to: "/exam/$examId/podcast", label: "Listen", icon: Headphones },
   { to: "/exam/$examId", label: "Home", icon: Home },
+  { to: "/exam/$examId/podcast", label: "Listen", icon: Headphones },
   { to: "/exam/$examId/cards", label: "Cards", icon: Layers },
   { to: "/exam/$examId/memorize", label: "Memorize", icon: Brain },
   { to: "/exam/$examId/practice", label: "Practice", icon: PenLine },

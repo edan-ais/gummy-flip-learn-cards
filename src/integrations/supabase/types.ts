@@ -253,6 +253,7 @@ export type Database = {
           created_at: string
           exam_id: string
           extracted_text: string
+          file_hash: string | null
           id: string
           mime: string
           name: string
@@ -262,6 +263,7 @@ export type Database = {
           created_at?: string
           exam_id: string
           extracted_text?: string
+          file_hash?: string | null
           id?: string
           mime?: string
           name: string
@@ -271,6 +273,7 @@ export type Database = {
           created_at?: string
           exam_id?: string
           extracted_text?: string
+          file_hash?: string | null
           id?: string
           mime?: string
           name?: string
