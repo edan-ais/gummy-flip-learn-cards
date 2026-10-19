@@ -7,6 +7,7 @@ import { DrawLayer, type Stroke } from "@/components/study/DrawLayer";
 import { examQuery, useGrade } from "@/lib/exam-data";
 import { studyOrder } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
+import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks, syllables } from "@/lib/literacy";
 import { MEMORY_ROUNDS, load, save, memoryScore, memoryWords, nearbyKey, passes } from "@/lib/study";
@@ -24,7 +25,7 @@ function Memorize() {
   const grade = useGrade(examId);
   const [section, setSection] = useState<string | null>(null);
   const order = useMemo(
-    () => studyOrder(data.cards.filter((c) => !section || c.section_id === section), data.states, s.spaced),
+    () => pacedOrder(data.cards.filter((c) => !section || c.section_id === section), data.states, s.spaced, data.pace),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [section, s.spaced],
   );

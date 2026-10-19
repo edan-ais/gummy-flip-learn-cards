@@ -6,6 +6,7 @@ import { Page, SectionPills } from "@/components/study/Shell";
 import { examQuery, useGrade } from "@/lib/exam-data";
 import { studyOrder, mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
+import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks } from "@/lib/literacy";
 
@@ -22,7 +23,7 @@ function Practice() {
   const [open, setOpen] = useState<string | null>(null);
   const [marked, setMarked] = useState<Record<string, "ok" | "miss">>({});
   const qs = useMemo(
-    () => studyOrder(data.questions.filter((q) => !section || q.section_id === section), data.states, s.spaced),
+    () => pacedOrder(data.questions.filter((q) => !section || q.section_id === section), data.states, s.spaced, data.pace),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [section, s.spaced],
   );

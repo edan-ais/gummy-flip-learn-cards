@@ -9,6 +9,7 @@ import { BreakCard } from "@/components/study/BreakCard";
 import { examQuery, logEvent, useGrade } from "@/lib/exam-data";
 import { requeue, studyOrder, mastery, type Grade } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
+import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks } from "@/lib/literacy";
 import { load, save } from "@/lib/study";
@@ -24,7 +25,7 @@ function Cards() {
   const grade = useGrade(examId);
   const [section, setSection] = useState<string | null>(null);
   const initial = useMemo(
-    () => studyOrder(data.cards.filter((c) => !section || c.section_id === section), data.states, s.spaced),
+    () => pacedOrder(data.cards.filter((c) => !section || c.section_id === section), data.states, s.spaced, data.pace),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [section, s.spaced, data.cards],
   );
