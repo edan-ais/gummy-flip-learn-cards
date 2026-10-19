@@ -139,27 +139,6 @@ function ExamHome() {
         <ClipboardCheck size={18} /> Take a sample exam
       </Link>
 
-      <h2 className="mt-6 mb-3 font-display text-xl font-bold">Sections</h2>
-      <ul className="space-y-3">
-        {data.sections.map((sec) => {
-          const cs = data.cards.filter((c) => c.section_id === sec.id);
-          const k = cs.filter((c) => mastery(data.states.get(c.id)) === "known").length;
-          const l = cs.filter((c) => mastery(data.states.get(c.id)) === "learning").length;
-          return (
-            <li key={sec.id} className="gummy-card p-4">
-              <div className="flex justify-between gap-2">
-                <h3 className="font-extrabold">{sec.title}</h3>
-                <span className="text-xs font-bold text-muted-foreground">{cs.length} cards</span>
-              </div>
-              <p className="mt-1 text-sm text-muted-foreground">{sec.summary}</p>
-              <div className="mastery-bar mt-3" aria-label={`${k} known, ${l} learning`}>
-                <span className="known" style={{ width: `${(k / Math.max(1, cs.length)) * 100}%` }} />
-                <span className="learning" style={{ width: `${(l / Math.max(1, cs.length)) * 100}%` }} />
-              </div>
-            </li>
-          );
-        })}
-      </ul>
       {own && (
         <Link to="/exams/new" search={{ examId }} className="gummy-btn mt-4 w-full" data-variant="ghost">
           <Plus size={18} /> Add more materials
