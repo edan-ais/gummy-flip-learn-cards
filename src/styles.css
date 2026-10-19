@@ -372,3 +372,9 @@
 @keyframes shake { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
 
 html[data-font="lexend"] { --app-sans: "Lexend", system-ui, sans-serif; --app-display: "Lexend", system-ui, sans-serif; }
+
+@layer components {
+  .gem-icon { color: var(--primary); }
+  .gem-chip { text-decoration: none; color: var(--foreground); padding: 6px 12px 6px 10px; }
+  [data-pace="cram"] { color: var(--heading); font-weight: 600; }
+}
