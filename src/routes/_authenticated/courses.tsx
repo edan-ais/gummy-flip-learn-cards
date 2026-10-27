@@ -145,8 +145,8 @@ function Courses() {
         </div>
       }
     >
-      <div className="space-y-4">
-        <div className="mb-5 flex items-center gap-3">
+      <div className="class-grid space-y-4">
+        <div className="class-brand mb-5 flex items-center gap-3">
           <BrandLogo compact />
           <p className="text-sm font-bold text-muted-foreground">Professor Lamby</p>
         </div>
@@ -214,7 +214,7 @@ function Courses() {
         ))}
 
         {adding ? (
-          <form onSubmit={create} className="gummy-card space-y-3 animate-pop">
+          <form onSubmit={create} className="class-actions gummy-card space-y-3 animate-pop">
             <input autoFocus className="gummy-input" placeholder="Class name, e.g. Science or Math" value={title} onChange={(e) => setTitle(e.target.value)} />
             <div className="flex gap-2">
               {COLORS.map((k) => (
@@ -231,7 +231,7 @@ function Courses() {
             </div>
           </form>
         ) : picking ? (
-          <div className="gummy-card space-y-3 animate-pop">
+          <div className="class-actions gummy-card space-y-3 animate-pop">
             <p className="text-sm font-bold">Pick the classes on your final ({picked.size} picked)</p>
             <div className="grid grid-cols-2 gap-3">
               <button
@@ -250,7 +250,7 @@ function Courses() {
             </div>
           </div>
         ) : (
-          <div className="grid gap-3">
+          <div className="class-actions grid gap-3">
             <button className="gummy-btn w-full" data-variant="primary" onClick={() => setAdding(true)}>
               <Plus size={18} /> New class
             </button>

@@ -1,5 +1,8 @@
 # Roadmap
 
+- [ ] Laptop-width layouts preserving the existing StudyLamb look and mobile screens
+- [ ] Remove Google sign-in from the page and disable its provider
+
 - [x] Mobile fixes: date width, no sideways drift or typing zoom, unclipped chapter pills and page headings
 - [x] Separate home tab, Listen first, dismissible podcast mini-player
 - [x] Flashcard-specific audio toggle with spoken-word highlight and bouncing ball (device speech needs final listening check on iPhone)

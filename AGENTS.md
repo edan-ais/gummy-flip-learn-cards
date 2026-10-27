@@ -14,3 +14,4 @@
 - Brand artwork is rendered through the shared BrandLogo component and asset pointer; StudySplash handles route loading. Why: welcome, courses and loading screens stay consistent without duplicating artwork references.
 - Exam layouts reserve shared header space and expose distinct overview and study tabs. Why: mobile headings stay visible and home never doubles as flashcards.
 - Flashcard read-aloud uses device speech word-boundary events through flashcard-speech. Why: highlighted words and the ball follow actual speech without a new AI charge.
+- Shared laptop layouts use a desktop media query in the global stylesheet, with bounded study surfaces and wider class/overview grids; mobile rules remain the baseline. Why: one web app preserves the same study behavior and visual system on phones and laptops.

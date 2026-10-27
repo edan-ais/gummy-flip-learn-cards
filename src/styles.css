@@ -2011,3 +2011,128 @@ html[data-font="lexend"] {
   width: 100%;
   padding: 22px;
 }
+
+/* One experience, with room for laptop screens and unchanged phone sizing. */
+@media (min-width: 1024px) {
+  .app-frame {
+    max-width: 1120px;
+  }
+  .page {
+    padding-right: 32px;
+    padding-left: 32px;
+  }
+  .page-heading {
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+  }
+  .page-heading > :last-child:not(:first-child) {
+    justify-self: end;
+  }
+  .auth-page,
+  .app-frame > .page:has(> .lamby-logo),
+  .app-frame > .page:has(> .animate-pop > .lamby-logo) {
+    max-width: 600px;
+    margin-inline: auto;
+    padding-bottom: 40px;
+  }
+  .class-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 24px;
+  }
+  .class-grid > * {
+    margin-block: 0;
+    min-width: 0;
+  }
+  .class-brand,
+  .class-actions {
+    grid-column: 1 / -1;
+  }
+  .class-actions:not(form):not(.gummy-card) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .class-actions.gummy-card {
+    max-width: 640px;
+    width: 100%;
+    justify-self: center;
+  }
+  .exam-header {
+    max-width: 1120px;
+    padding-inline: 32px;
+  }
+  .exam-home-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    align-items: start;
+    gap: 32px;
+  }
+  .exam-overview,
+  .exam-notes {
+    min-width: 0;
+  }
+  .fit-page {
+    max-width: 880px;
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+  .exam-layout:not([data-home="true"]) > .page {
+    max-width: 960px;
+    margin-inline: auto;
+  }
+  .tabbar {
+    width: 680px;
+  }
+  .tab-label {
+    font-size: 13px;
+  }
+  .mini-player,
+  .pod-now {
+    width: 664px;
+    bottom: calc(env(safe-area-inset-bottom) + 98px);
+  }
+  .pod-page {
+    display: grid;
+    grid-template-columns: 320px minmax(0, 1fr);
+    align-items: start;
+    column-gap: 32px;
+    padding: 88px 32px 230px;
+  }
+  .pod-hero {
+    padding: 0;
+    background: none;
+    position: sticky;
+    top: 88px;
+  }
+  .pod-cover {
+    width: 100%;
+  }
+  .pod-page > .px-4 {
+    min-width: 0;
+    padding-inline: 0;
+  }
+  .onb-stage {
+    max-width: 1120px;
+  }
+  .onb-body {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+    padding-top: 48px;
+  }
+  .onb-foot {
+    width: 100%;
+    max-width: 720px;
+    margin-inline: auto;
+  }
+  .onb-sb {
+    max-width: 480px;
+  }
+  .onb-lamby {
+    width: 200px;
+    height: 200px;
+  }
+  .onb-cta {
+    max-width: 520px;
+  }
+}
