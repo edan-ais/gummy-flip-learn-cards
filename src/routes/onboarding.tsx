@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useRef, useState } from "react";
-import { ChevronUp, Headphones, Layers, Mic, PencilLine, RefreshCw, Upload } from "lucide-react";
+import { useState } from "react";
+import { Headphones, Layers, Mic, PencilLine, RefreshCw, Upload } from "lucide-react";
 import lamby from "@/assets/professor-lamby.png.asset.json";
 
 export const Route = createFileRoute("/onboarding")({
@@ -58,8 +58,6 @@ function Onboarding() {
   const [style, setStyle] = useState<string>("see");
   const [moodIdx, setMoodIdx] = useState(0);
   const [supportShown, setSupportShown] = useState(true);
-  const touchY = useRef<number | null>(null);
-  const touchX = useRef<number | null>(null);
 
   const go = (n: number) => {
     if (n >= 0 && n <= 6) setStep(n);
@@ -89,18 +87,7 @@ function Onboarding() {
   return (
     <main className="onb-stage" aria-label="StudyLamb welcome">
       {/* 1 · Welcome */}
-      <section
-        className={cls(0, " lav")}
-        onTouchStart={(e) => {
-          touchY.current = e.touches[0]?.clientY ?? null;
-        }}
-        onTouchEnd={(e) => {
-          if (touchY.current === null) return;
-          const dy = (e.changedTouches[0]?.clientY ?? touchY.current) - touchY.current;
-          touchY.current = null;
-          if (dy < -40) go(1);
-        }}
-      >
+      <section className={cls(0, " lav")}>
         <div className="onb-body">
           <div className="onb-wordmark">StudyLamb</div>
           <img
@@ -114,10 +101,6 @@ function Onboarding() {
           </div>
         </div>
         <div className="onb-foot">
-          <div className="onb-swipehint">
-            <ChevronUp size={16} className="chev" aria-hidden />
-            Swipe up to start
-          </div>
           <button className="onb-cta" onClick={() => go(1)}>
             Continue
           </button>
@@ -237,19 +220,7 @@ function Onboarding() {
           <div className={`onb-lambywrap m-${mood}`}>
             <img src={lamby.url} alt="Professor Lamby reacting to the chosen mood" />
           </div>
-          <div
-            className="onb-moods"
-            onTouchStart={(e) => {
-              touchX.current = e.touches[0]?.clientX ?? null;
-            }}
-            onTouchEnd={(e) => {
-              if (touchX.current === null) return;
-              const dx = (e.changedTouches[0]?.clientX ?? touchX.current) - touchX.current;
-              touchX.current = null;
-              if (dx < -30) pickMood(moodIdx + 1);
-              else if (dx > 30) pickMood(moodIdx - 1);
-            }}
-          >
+          <div className="onb-moods">
             <button
               className={`onb-mood${mood === "nervous" ? " sel" : ""}`}
               onClick={() => pickMood(0)}
@@ -274,7 +245,6 @@ function Onboarding() {
           </div>
         </div>
         <div className="onb-foot">
-          <div className="onb-swipehint row">‹&nbsp;&nbsp;Swipe to choose&nbsp;&nbsp;›</div>
           <button className="onb-cta" onClick={() => go(5)}>
             Continue
           </button>
