@@ -46,6 +46,14 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Off-Lovable hosting: Lovable managed sign-in lives on the Lovable app origin, so hand those requests over.
+    const oauthUrl = new URL(request.url);
+    if (oauthUrl.pathname.startsWith("/~oauth/") && !oauthUrl.hostname.endsWith(".lovable.app")) {
+      return Response.redirect(
+        `https://gummy-flip-learn-cards.lovable.app${oauthUrl.pathname}${oauthUrl.search}`,
+        302,
+      );
+    }
     // Off-Lovable hosting: Lovable-hosted uploaded assets (images, audio) live on the Lovable app origin.
     const assetUrl = new URL(request.url);
     if (
