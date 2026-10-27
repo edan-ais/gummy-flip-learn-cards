@@ -1683,23 +1683,6 @@ html[data-font="lexend"] {
   color: var(--primary);
   padding: 4px 8px;
 }
-.onb-swipehint {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted-foreground);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-.onb-swipehint.row {
-  flex-direction: row;
-  gap: 8px;
-}
-.onb-swipehint .chev {
-  color: var(--primary);
-  animation: onb-nudge 1.8s ease-in-out infinite;
-}
 @keyframes onb-nudge {
   0%,
   100% {
