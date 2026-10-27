@@ -1,7 +1,7 @@
 # Roadmap
 
-- [ ] Laptop-width layouts preserving the existing StudyLamb look and mobile screens
-- [ ] Remove Google sign-in from the page and disable its provider
+- [x] Laptop-width layouts preserving the existing StudyLamb look and mobile screens
+- [x] Remove Google sign-in from the page and disable its provider
 
 - [x] Mobile fixes: date width, no sideways drift or typing zoom, unclipped chapter pills and page headings
 - [x] Separate home tab, Listen first, dismissible podcast mini-player
@@ -9,7 +9,7 @@
 
 - [x] StudyLamb branding: supplied Professor Lamby logo on welcome, homepage, route-loading splash and app icon; renamed app throughout
 
-- [x] Sign in (email, Google) and per-user saved progress; Lovable sign-in removed as requested
+- [x] Email/password sign-in and per-user saved progress; Google and Lovable sign-in removed as requested
 - [x] Courses & exams home: open, create courses and exams; psych course kept as sample
 - [x] Upload materials (PDF, photos, Word/text, paste) -> AI parses into sections, cards, practice questions
 - [x] Cards page fits one mobile screen without scrolling
