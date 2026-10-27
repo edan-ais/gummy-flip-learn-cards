@@ -46,6 +46,17 @@ function isH3SwallowedErrorBody(body: string): boolean {
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Off-Lovable hosting: Lovable-hosted uploaded assets (images, audio) live on the Lovable app origin.
+    const assetUrl = new URL(request.url);
+    if (
+      assetUrl.pathname.startsWith("/__l5e/assets-v1/") &&
+      !assetUrl.hostname.endsWith(".lovable.app")
+    ) {
+      return fetch(`https://gummy-flip-learn-cards.lovable.app${assetUrl.pathname}${assetUrl.search}`, {
+        method: request.method,
+        headers: request.headers.has("range") ? { range: request.headers.get("range")! } : {},
+      });
+    }
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
@@ -59,3 +70,4 @@ export default {
     }
   },
 };
+
