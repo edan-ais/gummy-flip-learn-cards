@@ -1683,17 +1683,6 @@ html[data-font="lexend"] {
   color: var(--primary);
   padding: 4px 8px;
 }
-@keyframes onb-nudge {
-  0%,
-  100% {
-    transform: translateY(2px);
-    opacity: 0.55;
-  }
-  50% {
-    transform: translateY(-2px);
-    opacity: 1;
-  }
-}
 
 .onb-dropzone {
   margin-top: 18px;
