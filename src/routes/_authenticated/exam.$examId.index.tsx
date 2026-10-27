@@ -99,6 +99,8 @@ function ExamHome() {
           </Link>
         </div>
       </div>
+      <div className="exam-home-grid">
+      <div className="exam-overview">
       <p className="eyebrow">{data.exam.course?.title}</p>
       <h1 className="page-title">{data.exam.title}</h1>
       <PlanCard examId={examId} />
@@ -130,7 +132,11 @@ function ExamHome() {
 
       {own && data.sections.length > 0 && <ChaptersCard examId={examId} />}
 
-      <NotesPanel examId={examId} materials={data.materials} />
+      </div>
+      <div className="exam-notes">
+        <NotesPanel examId={examId} materials={data.materials} />
+      </div>
+      </div>
     </main>
   );
 }
