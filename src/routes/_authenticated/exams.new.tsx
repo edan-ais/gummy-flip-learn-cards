@@ -8,7 +8,7 @@ import { actionError, useSpendGuard } from "@/lib/gems-client";
 import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
-import { peekPendingUpload, setPendingUpload } from "@/lib/pending-upload";
+import { restorePendingUpload, persistPendingUpload } from "@/lib/pending-upload";
 import { Page } from "@/components/study/Shell";
 
 type Search = { courseId?: string; examId?: string; pending?: boolean; course?: string };
@@ -104,7 +104,9 @@ function NewExam() {
   // Onboarding hands off picked files here after sign-in.
   useEffect(() => {
     if (!pending) return;
-    const p = peekPendingUpload();
+    let cancelled = false;
+    void restorePendingUpload().then((p) => {
+    if (cancelled) return;
     if (!p) return;
     if (p.courseName && !courseId) setCourseName(p.courseName);
     setItems((x) => [
@@ -116,6 +118,8 @@ function NewExam() {
       ...(p.text ? [{ id: crypto.randomUUID(), text: p.text, name: "Pasted notes", kind: "text" as const }] : []),
       ...x,
     ]);
+    }).catch(() => toast.error("Please select your notes again."));
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -178,7 +182,7 @@ function NewExam() {
       await qc.invalidateQueries();
       if (!r.ok) actionError(r.error, "We couldn't build this study set.");
       else {
-        if (pending) setPendingUpload(null);
+        if (pending) await persistPendingUpload(null);
         toast.success("Your study set is ready. Next: start with Cards.");
       }
       nav({ to: "/exam/$examId", params: { examId: id } });

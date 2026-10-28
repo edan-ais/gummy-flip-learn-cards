@@ -33,3 +33,40 @@ export function takePendingUpload(): PendingUpload | null {
   setPendingUpload(null);
   return p;
 }
+
+async function uploadDatabase() {
+  return new Promise<IDBDatabase>((resolve, reject) => {
+    const request = indexedDB.open("studylamb-onboarding", 1);
+    request.onupgradeneeded = () => request.result.createObjectStore("uploads");
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+export async function persistPendingUpload(value: PendingUpload | null) {
+  setPendingUpload(value);
+  const db = await uploadDatabase();
+  try {
+    await new Promise<void>((resolve, reject) => {
+      const tx = db.transaction("uploads", "readwrite");
+      const store = tx.objectStore("uploads");
+      if (value) store.put(value, "pending");
+      else store.delete("pending");
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  } finally { db.close(); }
+}
+
+export async function restorePendingUpload(): Promise<PendingUpload | null> {
+  const current = peekPendingUpload();
+  if (current) return current;
+  const db = await uploadDatabase();
+  try {
+    return await new Promise<PendingUpload | null>((resolve, reject) => {
+      const request = db.transaction("uploads").objectStore("uploads").get("pending");
+      request.onsuccess = () => resolve(request.result ?? null);
+      request.onerror = () => reject(request.error);
+    });
+  } finally { db.close(); }
+}
