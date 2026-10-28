@@ -8,7 +8,7 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
-- Gems: every AI server function charges via the `spend_gems` RPC before doing work and refunds via `credit_gems` (service role) on failure; prices live in `src/lib/gems.ts` with a margin test; server functions enforce `LIMITS` from that file (file size, file count, input chars, output tokens, audio length) so worst-case costs hold, and prices must cover 2x worst-case AI after payment fees and overhead share. Why: users must never get paid AI work for free, and failed work is never billed.
+- Gems: every AI server function charges via the `spend_gems` RPC before doing work and refunds via `credit_gems` (service role) on failure; prices live in `src/lib/gems.ts` with a margin test; there are no hard size caps — cost scales with `UNITS` steps (characters, file bytes, clips, recording length) and servers top up mid-task when work runs longer than quoted, and prices must cover 2x worst-case AI after payment fees and overhead share. Why: users must never get paid AI work for free, and failed work is never billed.
 - Deadline pacing lives in `src/lib/pacing.ts` (`pacedOrder`) and wraps `studyOrder` on every study page. Why: one place decides cram vs. spread.
 - Section colors come from `html[data-section]` set in `__root.tsx` (learn vs quiz). Why: same color means the same thing on every screen.
 - Brand artwork is rendered through the shared BrandLogo component and asset pointer; StudySplash handles route loading. Why: welcome, courses and loading screens stay consistent without duplicating artwork references.

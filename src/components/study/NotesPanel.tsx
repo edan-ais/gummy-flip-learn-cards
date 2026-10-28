@@ -76,6 +76,7 @@ function AddMaterials({ examId }: { examId: string }) {
         ),
       );
       let added = 0;
+      const addedSizes: number[] = [];
       for (const f of list) {
         const d = await crypto.subtle.digest("SHA-256", await f.arrayBuffer());
         const hash = [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
@@ -99,9 +100,10 @@ function AddMaterials({ examId }: { examId: string }) {
         if (e2) throw e2;
         known.add(hash);
         added++;
+        if (!text) addedSizes.push(f.size);
       }
       if (!added) return;
-      if (!(await confirmSpend(processCost(added * 8000, added)))) return;
+      if (!(await confirmSpend(processCost(added * 8000, addedSizes)))) return;
       toast("Reading your new pages… this can take a minute or two.");
       const r = await process({ data: { examId } });
       if (!r.ok) actionError(r.error, "We couldn't add those pages.");
