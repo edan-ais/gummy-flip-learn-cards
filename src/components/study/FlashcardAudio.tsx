@@ -1,10 +1,10 @@
-import { Square, Volume2 } from "lucide-react";
+import { Loader2, Square, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { speechWords } from "@/lib/flashcard-speech";
 
-export function FlashcardAudioButton({ playing, play }: { playing: boolean; play: () => void }) {
-  return <Button type="button" variant="ghost" size="icon" className="gummy-icon sm shrink-0" aria-label={playing ? "Stop flashcard audio" : "Read flashcard aloud"} onClick={(event) => { event.stopPropagation(); play(); }}>
-    {playing ? <Square /> : <Volume2 />}
+export function FlashcardAudioButton({ playing, loading = false, play }: { playing: boolean; loading?: boolean; play: () => void }) {
+  return <Button type="button" variant="ghost" size="icon" className="gummy-icon sm shrink-0" aria-label={playing || loading ? "Stop flashcard audio" : "Read flashcard aloud"} onClick={(event) => { event.stopPropagation(); play(); }} onKeyDown={(event) => event.stopPropagation()}>
+    {loading ? <Loader2 className="animate-spin" /> : playing ? <Square /> : <Volume2 />}
   </Button>;
 }
 
