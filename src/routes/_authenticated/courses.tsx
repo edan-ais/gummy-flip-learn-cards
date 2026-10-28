@@ -2,7 +2,8 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
-import { GemChip, LowBalanceNudge, actionError } from "@/lib/gems-client";
+import { GemChip, LowBalanceNudge, actionError, useSpendGuard } from "@/lib/gems-client";
+import { GEM_COST } from "@/lib/gems";
 import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut, Pencil, FileUp, Check, GraduationCap } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -269,6 +270,7 @@ function Courses() {
 
 /** Upload a syllabus; AI reads it and creates the class with its major exams. */
 function SyllabusUpload({ onDone }: { onDone: () => Promise<unknown> }) {
+  const spend = useSpendGuard();
   const run = useServerFn(processSyllabus);
   const [busy, setBusy] = useState(false);
   const ref = useRef<HTMLInputElement>(null);
@@ -279,9 +281,12 @@ function SyllabusUpload({ onDone }: { onDone: () => Promise<unknown> }) {
     const ok = f.type === "application/pdf" || f.type.startsWith("image/") || f.name.endsWith(".docx") || f.type.startsWith("text/");
     if (!ok) return toast.error("Use a PDF, photo, Word (.docx) or text file.");
     if (f.size > 25 * 1024 * 1024) return toast.error("That file is over 25 MB.");
+    const needsRead = !f.name.endsWith(".docx") && !f.type.startsWith("text/");
+    if (!(await spend.confirmSpend(GEM_COST.parseBase + (needsRead ? GEM_COST.ocrPerFile : 0)))) return;
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
+      if (!u.user) throw new Error("Please sign in to add your syllabus.");
       let text = "";
       let path: string | undefined;
       if (f.name.endsWith(".docx")) {
@@ -290,7 +295,7 @@ function SyllabusUpload({ onDone }: { onDone: () => Promise<unknown> }) {
       } else if (f.type.startsWith("text/")) {
         text = await f.text();
       } else {
-        path = `${u.user!.id}/syllabus/${crypto.randomUUID()}-${f.name.replace(/[^\w.-]/g, "_")}`;
+        path = `${u.user.id}/syllabus/${crypto.randomUUID()}-${f.name.replace(/[^\w.-]/g, "_")}`;
         const { error } = await supabase.storage.from("materials").upload(path, f, { contentType: f.type || undefined });
         if (error) throw error;
       }
@@ -307,6 +312,7 @@ function SyllabusUpload({ onDone }: { onDone: () => Promise<unknown> }) {
 
   return (
     <>
+      {spend.dialog}
       <button className="gummy-btn w-full" data-variant="ghost" onClick={() => ref.current?.click()} disabled={busy}>
         {busy ? <Loader2 className="animate-spin" size={18} /> : <FileUp size={18} />} Upload a syllabus
       </button>

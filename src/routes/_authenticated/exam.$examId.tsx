@@ -2,6 +2,7 @@ import { createFileRoute, Outlet, useLocation } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { examQuery } from "@/lib/exam-data";
 import { ExamHeader, ExamTabBar } from "@/components/study/Shell";
+import { GoalCelebration } from "@/components/study/GoalCelebration";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(examQuery(params.examId)),
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/_authenticated/exam/$examId")({
 function ExamLayout() {
   const { examId } = Route.useParams();
   const { data } = useSuspenseQuery(examQuery(examId));
+  const { user } = Route.useRouteContext();
   const { pathname } = useLocation();
   const home = pathname.replace(/\/$/, "").endsWith(examId);
   return (
@@ -28,6 +30,7 @@ function ExamLayout() {
       {!home && <ExamHeader title={data.exam.title} examId={examId} today={data.today} />}
       <Outlet />
       <ExamTabBar examId={examId} title={data.exam.title} />
+      <GoalCelebration today={data.today} userId={user.id} />
     </div>
   );
 }

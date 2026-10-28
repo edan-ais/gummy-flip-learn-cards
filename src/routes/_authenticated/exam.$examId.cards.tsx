@@ -16,6 +16,7 @@ import { Switch } from "@/components/ui/switch";
 import { FlashcardAudioButton, SpokenWords } from "@/components/study/FlashcardAudio";
 import { useFlashcardSpeech } from "@/lib/flashcard-speech";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
   head: () => ({
@@ -222,11 +223,9 @@ function Cards() {
       {!onBreak && !doneAll && c && (
         <>
           <div className="tool-row">
-            {!s.spaced && (
-              <button className="gummy-icon sm" disabled={pos === 0} onClick={() => go(pos - 1)} aria-label="Previous">
+              <Button variant="ghost" size="icon" className="gummy-icon sm" disabled={pos === 0} onClick={() => go(pos - 1)} aria-label="Previous flashcard">
                 <ChevronLeft size={18} />
-              </button>
-            )}
+              </Button>
             <button className="gummy-chip" data-on={draw} onClick={() => setDraw(!draw)}>
               <Pencil size={14} /> {draw ? "Done" : "Draw"}
             </button>

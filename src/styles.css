@@ -1401,7 +1401,7 @@
     background: var(--primary);
   }
   .animate-rise {
-    animation: rise 0.55s var(--spring) both;
+    animation: content-appear 0.32s var(--ease-out) both;
   }
   .animate-pop {
     animation: pop 0.45s var(--spring) both;
@@ -1492,6 +1492,45 @@
 html[data-font="lexend"] {
   --app-sans: "Lexend", system-ui, sans-serif;
   --app-display: "Lexend", system-ui, sans-serif;
+}
+
+@keyframes content-appear { from { opacity: 0; } to { opacity: 1; } }
+.app-frame, body { transition: background-color 280ms ease; }
+.exam-layout > main, .app-frame > main { animation: content-appear 320ms var(--ease-out); }
+.study-dialog {
+  width: min(440px, calc(100vw - 32px));
+  max-height: calc(100dvh - 40px);
+  overflow-y: auto;
+  border-radius: var(--radius);
+  background: var(--card);
+  color: var(--foreground);
+  box-shadow: var(--shadow-float);
+  gap: 12px;
+}
+.study-dialog-mascot { display: grid; place-items: center; }
+.study-dialog-mascot .lamby-logo { width: 112px; height: 112px; object-fit: contain; }
+.study-dialog-title { font-size: 22px; line-height: 1.4; color: var(--heading); letter-spacing: 0; }
+.brainbucks-packs { display: grid; gap: 10px; }
+.brainbucks-pack { width: 100%; height: 58px; justify-content: flex-start; padding: 12px; border-radius: var(--radius); background: var(--background); box-shadow: var(--shadow-gummy); gap: 10px; white-space: normal; }
+.brainbucks-pack span { flex: 1; text-align: left; }
+.brainbucks-pack strong { color: var(--primary); }
+.lamby-confetti { pointer-events: none; position: absolute; inset: 10px 30px auto; height: 140px; overflow: hidden; }
+.lamby-confetti i { position: absolute; width: 6px; height: 12px; background: var(--primary); left: 10%; top: 12%; }
+.lamby-confetti i:nth-child(3n) { background: var(--success); }
+.lamby-confetti i:nth-child(3n+1) { background: var(--quiz); }
+.lamby-confetti i:nth-child(2n) { left: 85%; top: 30%; }
+.lamby-confetti i:nth-child(3n) { left: 70%; top: 65%; }
+.lamby-confetti i:nth-child(4n) { left: 20%; top: 60%; }
+@media (prefers-reduced-motion: no-preference) {
+  .study-dialog[data-celebration="true"] .lamby-logo { animation: lamby-celebrate 650ms var(--spring) 2; }
+  .lamby-confetti i { animation: confetti-fall 1600ms ease-out both; }
+  .lamby-confetti i:nth-child(2n) { animation-delay: 160ms; }
+}
+@keyframes lamby-celebrate { 50% { transform: translateY(-10px) rotate(5deg); } }
+@keyframes confetti-fall { from { opacity: 0; transform: translateY(-30px) rotate(0); } 20% { opacity: 1; } to { opacity: 0; transform: translateY(100px) rotate(180deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .animate-rise, .animate-pop, .exam-layout > main, .app-frame > main { animation: none; }
+  .app-frame, body { transition: none; }
 }
 
 @layer components {

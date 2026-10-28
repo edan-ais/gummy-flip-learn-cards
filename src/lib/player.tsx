@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { useSettings } from "./settings";
+import { createAudioCache, isFundsError } from "./study-feedback";
 
 export type Track = { key: string; title: string; subtitle: string; resolve: () => Promise<string[]> };
 
@@ -43,6 +44,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const iRef = useRef(0);
   const token = useRef(0);
   const cache = useRef(new Map<string, string[]>());
+  const resolveAudio = useRef(createAudioCache());
 
   const load = async (q: Track[], i: number) => {
     const t = q[i];
@@ -54,7 +56,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     setLoading(true);
     setStarted(true);
     try {
-      const urls = cache.current.get(t.key) ?? (await t.resolve());
+      const urls = await resolveAudio.current(t.key, t.resolve);
       cache.current.set(t.key, urls);
       if (my !== token.current) return;
       parts.current = { urls, i: 0 };
@@ -64,11 +66,9 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       a.src = first;
       a.playbackRate = s.speechRate;
       await a.play().catch(() => {});
-      // Prefetch next track
-      const n = q[i + 1];
-      if (n && !cache.current.has(n.key)) n.resolve().then((u) => cache.current.set(n.key, u)).catch(() => {});
+      // Never prefetch a resolver: it may generate paid audio the student did not choose.
     } catch (e) {
-      if (my === token.current) setError(e instanceof Error ? e.message : "Could not load audio.");
+      if (my === token.current) setError(isFundsError(e) ? "Top up BrainBucks to create new audio. Saved episodes still play free." : e instanceof Error ? e.message : "Could not load audio.");
     } finally {
       if (my === token.current) setLoading(false);
     }
@@ -80,9 +80,10 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     load(q, i);
   };
   const toggle = () => {
+    if (loading) return;
     const a = ref.current;
     if (!a) return;
-    if (!a.src && qRef.current.length) return load(qRef.current, iRef.current);
+    if ((!a.getAttribute("src") || error) && qRef.current.length) return load(qRef.current, iRef.current);
     if (a.paused) a.play().catch(() => {});
     else a.pause();
   };

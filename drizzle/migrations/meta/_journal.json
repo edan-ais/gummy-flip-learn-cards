@@ -43,6 +43,13 @@
       "when": 1792395028058,
       "tag": "0005_brainbucks_grace_and_file_hash",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1793196324454,
+      "tag": "0006_honor_brainbucks_grace",
+      "breakpoints": true
     }
   ]
 }

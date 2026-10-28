@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Smooth content transitions; matching BrainBucks popups; cached and locked podcasts; flashcards back button; practice Review label; daily Lamby celebration; default read-aloud; fix syllabus configuration; clarify font choices
+
 - [x] Finish laptop onboarding and verify selected notes reach the exam upload screen
 - [ ] Verify onboarding study-set generation end-to-end (test account has 0 BrainBucks; checkout not connected)
 

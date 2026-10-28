@@ -34,7 +34,6 @@ function SettingsPage() {
     >
       <Group title="Learning supports">
         <Toggle k="spaced" label="Spaced repetition" desc="Things you know well become quick review. Things you're struggling with come back more often." />
-        <Toggle k="readAloud" label="Read-aloud" desc="Adds a speaker button to cards, questions and notes. The text always stays on screen." />
         <Toggle k="dyslexia" label="Dyslexia support" desc="Readable font and spacing, syllable chunks, sound-letter and spelling patterns, and a guided Word lab with instant feedback." />
         <Toggle k="adhd" label="ADHD support" desc="Short chunks with breaks, answers split into bite-size bullets, chunk progress dots, and a quick focus check-in." />
         <Toggle k="timers" label="Show timers" desc="Off by default. Shows how long you've been studying." />
@@ -46,13 +45,7 @@ function SettingsPage() {
       </Group>
 
       <Group title="Text">
-        <div className="seg">
-          {(["rounded", "lexend"] as const).map((f) => (
-            <button key={f} data-active={s.font === f} onClick={() => set({ font: f })} style={{ fontFamily: f === "lexend" ? "Lexend" : undefined }}>
-              {f === "rounded" ? "Rounded" : "Lexend (easy read)"}
-            </button>
-          ))}
-        </div>
+        <p className="font-bold">Lexend · easy read</p>
         <Range label="Text size" value={s.fontScale} min={0.9} max={1.5} step={0.05} fmt={(v) => `${Math.round(v * 100)}%`} onChange={(v) => set({ fontScale: v })} />
         <Range label="Letter spacing" value={s.letterSpacing} min={0} max={0.15} step={0.01} fmt={(v) => (v ? `+${Math.round(v * 100)}` : "Normal")} onChange={(v) => set({ letterSpacing: v })} />
         <Range label="Line spacing" value={s.lineHeight} min={1.3} max={2.4} step={0.1} fmt={(v) => v.toFixed(1)} onChange={(v) => set({ lineHeight: v })} />

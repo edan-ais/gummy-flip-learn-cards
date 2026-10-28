@@ -5,7 +5,8 @@ import { useMemo, useState } from "react";
 import { Play, Pause, SkipBack, SkipForward, Shuffle, MoreHorizontal, Loader2, Sparkles, MessagesSquare, Wand2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import { actionError } from "@/lib/gems-client";
+import { actionError, useSpendGuard } from "@/lib/gems-client";
+import { GEM_COST } from "@/lib/gems";
 import { examQuery } from "@/lib/exam-data";
 import { usePlayer, fmt, type Track } from "@/lib/player";
 import { episodeAudio, speak } from "@/lib/study.functions";
@@ -36,6 +37,7 @@ function Podcast() {
   const say = useServerFn(speak);
   const [mode, setMode] = useState<"qa" | "abstract">("abstract");
   const [making, setMaking] = useState<string | null>(null);
+  const spend = useSpendGuard();
 
   const qa = useMemo(() => {
     const ordered = s.spaced
@@ -48,13 +50,22 @@ function Podcast() {
     key: `qa:${c.id}`,
     title: c.q,
     subtitle: "Q&A",
-    resolve: async () => (await say({ data: { text: `Question. ${c.q} ... Think about it. ... Answer. ${c.a}` } })).urls,
+    resolve: async () => {
+      const text = `Question. ${c.q} ... Think about it. ... Answer. ${c.a}`;
+      try {
+        const quote = await say({ data: { text, quoteOnly: true } });
+        if (!(await spend.confirmSpend(quote.cost))) throw new Error("Audio creation paused.");
+        return (await say({ data: { text } })).urls;
+      } catch (e) { actionError(e, "Could not make this audio."); throw e; }
+      finally { qc.invalidateQueries({ queryKey: ["gems"] }); }
+    },
   }));
   const absTracks: Track[] = data.podcasts.map((x) => ({
     key: `ep:${x.id}`,
     title: x.title,
     subtitle: x.detail || "Episode",
     resolve: async () => {
+      if (!x.audio_urls.length && !x.storage_paths.length && x.status !== "generating" && !(await spend.confirmSpend(GEM_COST.episode))) throw new Error("Episode creation paused.");
       if (x.status !== "ready") setMaking(x.id);
       try {
         const r = await ep({ data: { podcastId: x.id } });
@@ -77,6 +88,7 @@ function Podcast() {
 
   return (
     <main className="pod-page">
+      {spend.dialog}
       <div className="pod-hero">
         <div className="pod-cover" data-mode={mode}>
           {mode === "qa" ? <MessagesSquare size={64} /> : <Sparkles size={64} />}
@@ -126,7 +138,7 @@ function Podcast() {
             const m = card ? mastery(data.states.get(card.id)) : null;
             return (
               <li key={t.key}>
-                <button className="pod-row" onClick={() => (active ? p.toggle() : p.playQueue(tracks, i))}>
+                <Button variant="ghost" className="pod-row" disabled={!!making || p.loading || pod?.status === "generating"} onClick={() => (active ? p.toggle() : p.playQueue(tracks, i))}>
                   <span className="pod-thumb" data-mode={mode}>
                     {making === pod?.id ? <Loader2 size={18} className="animate-spin" /> : i + 1}
                   </span>
@@ -150,7 +162,7 @@ function Podcast() {
                     </p>
                   </div>
                   <MoreHorizontal size={20} className="text-muted-foreground" />
-                </button>
+                </Button>
               </li>
             );
           })}
