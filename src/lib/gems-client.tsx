@@ -4,7 +4,6 @@ import { Banknote } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { NOT_ENOUGH } from "./gems";
 import { canAfford, isFundsError } from "./study-feedback";
 import { FUNDS_EVENT } from "@/components/study/BrainBucksDialog";
 import { StudyDialog } from "@/components/study/StudyDialog";

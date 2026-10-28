@@ -1,9 +1,8 @@
 import { createFileRoute, Link, useRouter } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { ChevronLeft, Banknote } from "lucide-react";
-import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { GEM_COST, GEM_PACKS } from "@/lib/gems";
+import { GEM_COST } from "@/lib/gems";
 import { useGems } from "@/lib/gems-client";
 import { BrainBucksPacks } from "@/components/study/BrainBucksPacks";
 
