@@ -122,12 +122,26 @@ function NewExam() {
     if (!examId && !title.trim()) return toast.error("Name your exam first.");
     if (!items.length) return toast.error("Add at least one study material.");
     try {
+      let cid = courseId;
+      if (!cid && courseName.trim()) {
+        const { data: c, error: cerr } = await supabase
+          .from("courses")
+          .insert({ title: courseName.trim(), color: "mint", owner_id: user.id })
+          .select("id")
+          .single();
+        if (cerr) throw cerr;
+        cid = c.id;
+      }
+      if (!cid) {
+        setBusy(null);
+        return toast.error("Add a class first, then upload your notes.");
+      }
       setBusy("Saving your materials…");
       let id = examId;
       if (!id) {
         const { data, error } = await supabase
           .from("exams")
-          .insert({ course_id: courseId!, owner_id: user.id, title: title.trim(), status: "processing" })
+          .insert({ course_id: cid, owner_id: user.id, title: title.trim(), status: "processing" })
           .select("id")
           .single();
         if (error) throw error;
