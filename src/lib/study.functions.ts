@@ -186,7 +186,7 @@ async function sha(text: string) {
 /** Read text aloud. Audio is cached so repeat listens are free. */
 export const speak = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
-  .inputValidator((d: { text: string }) => ({ text: String(d.text).slice(0, 2500) }))
+  .inputValidator((d: { text: string; quoteOnly?: boolean }) => ({ text: String(d.text), quoteOnly: !!d.quoteOnly }))
   .handler(async ({ data, context }) => {
     const { speech, chunkText } = await import("./ai/gateway.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -194,22 +194,31 @@ export const speak = createServerFn({ method: "POST" })
     const paths: string[] = [];
     const missing = new Set<string>();
     for (const c of chunks) {
-      const path = `tts/${await sha(c)}.wav`;
-      const { data: hit } = await supabaseAdmin.storage.from("audio").createSignedUrl(path, 60);
-      if (!hit?.signedUrl) missing.add(path);
+      const name = `${await sha(c)}.wav`;
+      const path = `tts/${name}`;
+      const { data: hits, error } = await supabaseAdmin.storage.from("audio").list("tts", { search: name, limit: 1 });
+      if (error) throw error;
+      if (!hits?.some((hit) => hit.name === name)) missing.add(path);
     }
     // Only new clips cost gems; anything already voiced is free to replay.
-    await charge(context.supabase, missing.size * GEM_COST.speechClip, "Read aloud");
-    for (const c of chunks) {
+    const cost = missing.size * GEM_COST.speechClip;
+    if (data.quoteOnly) return { urls: [] as string[], texts: chunks, cost };
+    await charge(context.supabase, cost, "Read aloud");
+    try {
+      for (const c of chunks) {
       const path = `tts/${await sha(c)}.wav`;
       if (missing.has(path)) {
         const wav = await speech(c);
         const { error } = await supabaseAdmin.storage.from("audio").upload(path, wav, { contentType: "audio/wav", upsert: true });
         if (error) throw error;
       }
-      paths.push(path);
+        paths.push(path);
+      }
+      return { urls: await signed(paths), texts: chunks, cost };
+    } catch (e) {
+      await refund(context.userId, cost, "Read aloud");
+      throw e;
     }
-    return { urls: await signed(paths) };
   });
 
 const SyllabusSchema = z.object({

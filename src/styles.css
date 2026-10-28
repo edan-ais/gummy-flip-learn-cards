@@ -671,7 +671,8 @@
     flex-direction: column;
     gap: 10px;
     padding: calc(env(safe-area-inset-top) + 64px) 16px calc(env(safe-area-inset-bottom) + 96px);
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .fit-page > :not(.card-area) {
     flex-shrink: 0;
@@ -719,10 +720,12 @@
   .card-q.card-scroll {
     padding-top: 24px;
     overflow-wrap: anywhere;
+    flex: 0 0 auto;
+    overflow: visible;
   }
   .card-area {
     flex: 1;
-    min-height: 0;
+    min-height: 300px;
   }
   .app-frame:has(.mini-player) .fit-page {
     padding-bottom: calc(env(safe-area-inset-bottom) + 162px);

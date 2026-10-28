@@ -13,5 +13,6 @@
 - Section colors come from `html[data-section]` set in `__root.tsx` (learn vs quiz). Why: same color means the same thing on every screen.
 - Brand artwork is rendered through the shared BrandLogo component and asset pointer; StudySplash handles route loading. Why: welcome, courses and loading screens stay consistent without duplicating artwork references.
 - Exam layouts reserve shared header space and expose distinct overview and study tabs. Why: mobile headings stay visible and home never doubles as flashcards.
-- Flashcard read-aloud uses device speech word-boundary events through flashcard-speech. Why: highlighted words and the ball follow actual speech without a new AI charge.
+- All read-aloud uses the shared podcast TTS narrator through flashcard-speech and speak, with cached clips, spend checks and refunds; flashcards auto-play on side/card changes and estimate highlighting from playback time. Why: keep Professor Lamby's voice consistent and prevent stale audio or unapproved spending.
+- Flashcards measure the full question to set their minimum height and allow vertical page scrolling when player space is tight. Why: podcast controls must never truncate study text.
 - Shared laptop layouts use a desktop media query in the global stylesheet, with bounded study surfaces and wider class/overview grids; mobile rules remain the baseline. Why: one web app preserves the same study behavior and visual system on phones and laptops.

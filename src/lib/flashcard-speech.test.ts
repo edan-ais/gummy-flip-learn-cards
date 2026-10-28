@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { speechWords, wordAtOffset } from "./flashcard-speech";
+import { speechWords, wordAtOffset, playbackWord } from "./flashcard-speech";
 
 describe("Flashcard spoken-word tracking", () => {
   it("highlights the word at each speech boundary, including punctuation and line breaks", () => {
@@ -9,5 +9,10 @@ describe("Flashcard spoken-word tracking", () => {
     expect(wordAtOffset(text, 4)).toBe(1);
     expect(wordAtOffset(text, 12)).toBe(2);
     expect(wordAtOffset(text, 18)).toBe(3);
+  });
+  it("tracks recorded audio from the first to the final word without truncating text", () => {
+    expect(playbackWord("Read every word.", 0, 5)).toBe(0);
+    expect(playbackWord("Read every word.", 4.99, 5)).toBe(2);
+    expect(playbackWord("Read every word.", 0, NaN)).toBe(-1);
   });
 });

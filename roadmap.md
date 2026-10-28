@@ -1,5 +1,9 @@
 # Roadmap
 
+- [x] Restore phone-only welcome swipes with laptop buttons
+- [x] Preserve full flashcard questions while podcast player is open
+- [x] Use the podcast narrator for read-aloud and automatically read flips and next cards
+
 - [x] Laptop-width layouts preserving the existing StudyLamb look and mobile screens
 - [x] Remove Google sign-in from the page and disable its provider
 
