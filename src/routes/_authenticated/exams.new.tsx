@@ -49,7 +49,7 @@ const kindOf = (f: File): Item["kind"] | null => {
 };
 
 function NewExam() {
-  const { courseId, examId } = Route.useSearch();
+  const { courseId, examId, pending, course } = Route.useSearch();
   const { user } = Route.useRouteContext();
   const nav = useNavigate();
   const qc = useQueryClient();
@@ -58,6 +58,7 @@ function NewExam() {
   const [items, setItems] = useState<Item[]>([]);
   const [paste, setPaste] = useState("");
   const [showPaste, setShowPaste] = useState(false);
+  const [courseName, setCourseName] = useState(course ?? "");
   const [busy, setBusy] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
