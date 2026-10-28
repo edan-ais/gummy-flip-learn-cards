@@ -1,6 +1,7 @@
 # Roadmap
 
-- [ ] Finish laptop onboarding and verify selected notes reach a generated study set
+- [x] Finish laptop onboarding and verify selected notes reach the exam upload screen
+- [ ] Verify onboarding study-set generation end-to-end (test account has 0 BrainBucks; checkout not connected)
 
 - [x] Restore phone-only welcome swipes with laptop buttons
 - [x] Preserve full flashcard questions while podcast player is open
