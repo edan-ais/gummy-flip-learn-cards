@@ -36,7 +36,7 @@ function setup(paths: string[] = []) {
           Object.assign(row, update);
           return { data: { id: row.id }, error: null };
         },
-        then: (resolve: (value: { error: null }) => unknown) => { Object.assign(row, update); return Promise.resolve(resolve({ error: null })); },
+        then: (resolve: (value: { error: null }) => unknown) => { Object.assign(row, update); resolve({ error: null }); },
       };
       return builder;
     },
@@ -45,7 +45,7 @@ function setup(paths: string[] = []) {
 }
 
 beforeEach(() => {
-  vi.clearAllMocks();
+  vi.resetAllMocks();
   mocks.charge.mockResolvedValue({ error: null });
   mocks.refund.mockResolvedValue({ error: null });
   mocks.sign.mockResolvedValue({ data: [{ signedUrl: "saved.wav" }] });
