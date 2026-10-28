@@ -20,3 +20,5 @@
 - Podcast creation atomically claims the episode before charging, saves audio before signing URLs, and never prefetches paid resolvers; player requests coalesce and replay cached audio. Why: selecting or retrying an episode must not cause duplicate or unsolicited charges.
 - Daily goal progress counts all user reviews and celebrates once per user/day through the shared StudyDialog. Why: effort across classes contributes to one daily target.
 - Server function middleware fills missing public Cloud configuration from build-time public values without replacing runtime bindings. Why: hosted uploads must authenticate even when public values are supplied only at build time.
+- Delete actions use the shared in-app DeleteDialog and report completion with Sonner; class and exam edit/delete commands live in overflow menus. Why: destructive actions stay consistent and controls stay uncluttered.
+- Route queries share a short freshness window and intent preloading; content uses a short fade without stagger delays. Why: navigating cached study pages should not refetch or wait through repeated animation.
