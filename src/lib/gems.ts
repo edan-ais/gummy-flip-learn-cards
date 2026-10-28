@@ -5,24 +5,29 @@
  */
 
 /**
- * Hard limits the server enforces on every paid action. Worst-case costs below
- * are only valid while these limits hold, so the server reads them from here.
+ * No hard caps: bigger work costs more. Each unit below is one "step" of work;
+ * a task is charged one price per step it uses.
  */
-export const LIMITS = {
-  fileBytes: 25 * 1024 * 1024, // largest PDF/photo we will read
-  filesPerBuild: 12, // files read in one study-set build
-  buildChars: 150_000, // characters sent to the organizer
-  syllabusChars: 60_000,
-  transcriptOutputTokens: 12_000, // per file read
-  organizeOutputTokens: 16_000, // study-set output
-  episodeOutputTokens: 1_500, // episode script
-  episodeChars: 4_500, // voiced episode length (≈5 clips)
-  speakChars: 7_200, // one read-aloud request (≤6 clips, each charged)
-  clipChars: 1_200, // one voiced clip
-  recordingBase64Chars: 14_000_000, // ≈5 min spoken note
+export const UNITS = {
+  parseChars: 30_000, // characters organized per parse step
+  fileBytes: 5 * 1024 * 1024, // bytes read per file step (a 12 MB PDF = 3 steps)
+  episodeClips: 5, // voiced clips included in an episode price
+  recordingBase64Chars: 7_000_000, // ≈2.5 minutes of speech per transcription step
 } as const;
 
-/** Worst-case AI cost per unit of work under LIMITS, in USD (deliberately high). */
+/** Steps needed to read one file of this size (at least 1). */
+export const fileSteps = (bytes: number) => Math.max(1, Math.ceil(bytes / UNITS.fileBytes));
+/** BrainBucks to read files of these sizes. */
+export const filesCost = (sizes: number[]) => sizes.reduce((n, b) => n + GEM_COST.ocrPerFile * fileSteps(b), 0);
+/** Parse steps for this much text (at least 1). */
+export const parseSteps = (chars: number) => Math.max(1, Math.ceil(chars / UNITS.parseChars));
+/** BrainBucks for a spoken note of this encoded length. */
+export const transcriptionCost = (b64Chars: number) =>
+  GEM_COST.transcription * Math.max(1, Math.ceil(b64Chars / UNITS.recordingBase64Chars));
+/** Extra BrainBucks when an episode script needs more clips than its price includes. */
+export const extraEpisodeCost = (clips: number) => Math.max(0, clips - UNITS.episodeClips) * GEM_COST.speechClip;
+
+/** Worst-case AI cost per step of work (see UNITS), in USD (deliberately high). */
 export const AI_COST_USD = {
   parsePer30k: 0.05, // organize up to 30k characters, capped output
   ocrPerFile: 0.03, // read one PDF/photo up to LIMITS.fileBytes, capped output
@@ -47,9 +52,9 @@ export const GEM_COST = {
   transcription: 1,
 } as const;
 
-/** Gems charged to build or rebuild an exam's study set. */
-export function processCost(chars: number, filesToRead: number) {
-  return GEM_COST.parseBase + GEM_COST.parsePer30k * Math.max(1, Math.ceil(chars / 30_000)) + GEM_COST.ocrPerFile * filesToRead;
+/** BrainBucks to build a study set: base + per 30k characters + per file step read. */
+export function processCost(chars: number, fileSizes: number[] = []) {
+  return GEM_COST.parseBase + GEM_COST.parsePer30k * parseSteps(chars) + filesCost(fileSizes);
 }
 
 export const GEM_PACKS = [
