@@ -20,23 +20,24 @@ const call = episodeAudio as unknown as (input: { data: { podcastId: string }; c
 function setup(paths: string[] = []) {
   const row: Row = { id: "episode", exam_id: "exam", section_id: "chapter", status: paths.length ? "ready" : "empty", storage_paths: paths, audio_urls: [], title: "Science", detail: "Atoms" };
   const client = {
-    rpc: (...args: unknown[]) => { console.log("charge"); return mocks.charge(...args); },
+    rpc: mocks.charge,
     from: (table: string) => {
       let update: Partial<Row> | undefined;
       let claim = false;
+      let requiresEmpty = false;
       const builder = {
         select: () => builder,
         update: (value: Partial<Row>) => { update = value; return builder; },
-        eq: () => builder,
+        eq: (column: string) => { if (column === "storage_paths" || column === "audio_urls") requiresEmpty = true; return builder; },
         neq: () => { claim = true; return builder; },
         order: async () => ({ data: [{ q: "What is an atom?", a: "A unit of matter." }] }),
         single: async () => ({ data: table === "exams" ? { owner_id: "student" } : { ...row } }),
         maybeSingle: async () => {
-          if (claim && row.status === "generating") return { data: null, error: null };
+          if (claim && (row.status === "generating" || (requiresEmpty && (row.storage_paths.length > 0 || row.audio_urls.length > 0)))) return { data: null, error: null };
           Object.assign(row, update);
           return { data: { id: row.id }, error: null };
         },
-        then: (resolve: (value: { error: null }) => unknown) => { console.log("update then", update); Object.assign(row, update); resolve({ error: null }); },
+        then: (resolve: (value: { error: null }) => unknown) => { Object.assign(row, update); resolve({ error: null }); },
       };
       return builder;
     },
@@ -49,9 +50,9 @@ beforeEach(() => {
   mocks.charge.mockResolvedValue({ error: null });
   mocks.refund.mockResolvedValue({ error: null });
   mocks.sign.mockResolvedValue({ data: [{ signedUrl: "saved.wav" }] });
-  mocks.upload.mockImplementation(async () => {console.log("upload");return {error:null};});
-  mocks.ai.mockImplementation(async () => {console.log("AI");return "lesson";});
-  mocks.speech.mockImplementation(async () => {console.log("speech");return new Uint8Array([1,2]);});
+  mocks.upload.mockResolvedValue({ error: null });
+  mocks.ai.mockResolvedValue("A science lesson");
+  mocks.speech.mockImplementation(async () => { await new Promise((resolve) => setTimeout(resolve, 10)); return new Uint8Array([1, 2]); });
 });
 
 it("replays a completed episode without charging or generating", async () => {
