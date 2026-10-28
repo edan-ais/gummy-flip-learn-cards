@@ -277,13 +277,14 @@ export const processSyllabus = createServerFn({ method: "POST" })
         if (blob.size > LIMITS.fileBytes) throw new Error("That file is over 25 MB. Try compressing it first.");
         text = await aiText("Transcribe this syllabus exactly as written. Plain text only.", [
           { role: "user", content: [part, { type: "text", text: "Transcribe this." }] },
-        ]);
+        ], LIMITS.transcriptOutputTokens);
       }
       if (!text.trim()) throw new Error("No readable text found in that syllabus.");
       const parsed = await aiObject(
         `Read this school syllabus and list the class and its major exams (tests, quizzes, midterms, finals — not homework or readings). Return one class per syllabus. Exam titles short and clear, dates as YYYY-MM-DD when stated, else null.`,
-        [{ role: "user", content: text.slice(0, 60_000) }],
+        [{ role: "user", content: text.slice(0, LIMITS.syllabusChars) }],
         SyllabusSchema,
+        LIMITS.organizeOutputTokens,
       );
       const created: { courseId: string; exams: number }[] = [];
       for (const c of parsed.classes.slice(0, 8)) {
