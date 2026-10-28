@@ -15,6 +15,7 @@ import { load, save } from "@/lib/study";
 import { Switch } from "@/components/ui/switch";
 import { FlashcardAudioButton, SpokenWords } from "@/components/study/FlashcardAudio";
 import { useFlashcardSpeech } from "@/lib/flashcard-speech";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
   head: () => ({
@@ -32,6 +33,7 @@ export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
 
 function Cards() {
   const { examId } = Route.useParams();
+  const mobile = useIsMobile();
   const { data } = useSuspenseQuery(examQuery(examId));
   const { s, set } = useSettings();
   const grade = useGrade(examId);
@@ -152,9 +154,9 @@ function Cards() {
             key={c.id + pos}
             className="flip-scene h-full"
             data-dir={dir}
-            onTouchStart={(e) => (touch.current = draw ? null : e.touches[0]?.clientX ?? null)}
+              onTouchStart={(e) => (touch.current = !mobile || draw ? null : e.touches[0]?.clientX ?? null)}
             onTouchEnd={(e) => {
-              if (touch.current == null || s.spaced) return;
+                if (!mobile || touch.current == null || s.spaced) return;
               const end = e.changedTouches[0];
               if (!end) return;
               const dx = end.clientX - touch.current;

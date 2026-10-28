@@ -22,7 +22,7 @@ Chapter 2 · Study tools
 
 Flashcards. Spaced repetition drives every page: what you know well returns later as review, what you struggle with returns sooner and more often. Tap a card to flip it and grade yourself honestly.
 
-Flashcard audio. The audio button reads the card with your device's own voice, highlighting the current word while a bouncy ball jumps word to word. It is free and never costs BrainBucks.
+Flashcard audio. Turn audio on to hear Professor Lamby's podcast voice automatically on each card and flip. The current word is highlighted with a bouncing ball; word timing is approximate. New recordings cost BrainBucks, and cached replays are free.
 
 Drawing. You can sketch on any study card; the ink is slightly transparent so the words stay readable.
 
