@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Headphones, Layers, Mic, PencilLine, RefreshCw, Upload, X } from "lucide-react";
 import lamby from "@/assets/professor-lamby.png.asset.json";
-import { setPendingUpload } from "@/lib/pending-upload";
+import { persistPendingUpload } from "@/lib/pending-upload";
 
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
@@ -122,7 +122,7 @@ function Onboarding() {
     }
   };
 
-  const finish = () => {
+  const finish = async () => {
     try {
       localStorage.setItem("studylamb-onboarded", "1");
     } catch {
@@ -130,7 +130,7 @@ function Onboarding() {
     }
     const text = savedPaste || paste.trim();
     if (files.length || text) {
-      setPendingUpload({
+      await persistPendingUpload({
         files: files.map((f) => f.file),
         text: text || undefined,
         courseName: courseName.trim() || undefined,

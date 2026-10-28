@@ -8,7 +8,7 @@ import { actionError, useSpendGuard } from "@/lib/gems-client";
 import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
-import { takePendingUpload } from "@/lib/pending-upload";
+import { restorePendingUpload, persistPendingUpload } from "@/lib/pending-upload";
 import { Page } from "@/components/study/Shell";
 
 type Search = { courseId?: string; examId?: string; pending?: boolean; course?: string };
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/exams/new")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     courseId: typeof s.courseId === "string" ? s.courseId : undefined,
     examId: typeof s.examId === "string" ? s.examId : undefined,
-    pending: s.pending === "1" || s.pending === true,
+    pending: s.pending === "1" || s.pending === 1 || s.pending === true,
     course: typeof s.course === "string" ? s.course : undefined,
   }),
   head: () => ({
@@ -104,17 +104,22 @@ function NewExam() {
   // Onboarding hands off picked files here after sign-in.
   useEffect(() => {
     if (!pending) return;
-    const p = takePendingUpload();
+    let cancelled = false;
+    void restorePendingUpload().then((p) => {
+    if (cancelled) return;
     if (!p) return;
     if (p.courseName && !courseId) setCourseName(p.courseName);
     setItems((x) => [
       ...p.files
-        .map((f) => ({ f, k: kindOf(f) }))
-        .filter((y) => y.k)
-        .map(({ f, k }) => ({ id: crypto.randomUUID(), file: f, name: f.name, kind: k!, hash: undefined })),
+        .flatMap((f) => {
+          const kind = kindOf(f);
+          return kind ? [{ id: crypto.randomUUID(), file: f, name: f.name, kind, hash: undefined }] : [];
+        }),
       ...(p.text ? [{ id: crypto.randomUUID(), text: p.text, name: "Pasted notes", kind: "text" as const }] : []),
       ...x,
     ]);
+    }).catch(() => toast.error("Please select your notes again."));
+    return () => { cancelled = true; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -176,7 +181,10 @@ function NewExam() {
       const r = await process({ data: { examId: id } });
       await qc.invalidateQueries();
       if (!r.ok) actionError(r.error, "We couldn't build this study set.");
-      else toast.success("Your study set is ready. Next: start with Cards.");
+      else {
+        if (pending) await persistPendingUpload(null);
+        toast.success("Your study set is ready. Next: start with Cards.");
+      }
       nav({ to: "/exam/$examId", params: { examId: id } });
     } catch (e) {
       actionError(e, "That upload didn't go through. Try again.");
