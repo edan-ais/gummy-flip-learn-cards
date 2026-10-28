@@ -14,7 +14,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PlayerProvider } from "@/lib/player";
-import { MiniPlayer } from "@/components/study/Shell";
+import { MiniPlayer, WebTopBar } from "@/components/study/Shell";
 import { StudySplash } from "@/components/study/BrandLogo";
 import { SettingsProvider } from "@/lib/settings";
 import { Toaster } from "@/components/ui/sonner";
@@ -131,6 +131,7 @@ function RootComponent() {
       <SettingsProvider>
         <PlayerProvider>
           <div className="app-frame">
+            <WebTopBar />
             <Outlet />
             <MiniPlayer />
           </div>

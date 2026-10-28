@@ -27,7 +27,7 @@ function ExamLayout() {
     <div className="exam-layout" data-home={home}>
       {!home && <ExamHeader title={data.exam.title} examId={examId} today={data.today} />}
       <Outlet />
-      <ExamTabBar examId={examId} />
+      <ExamTabBar examId={examId} title={data.exam.title} />
     </div>
   );
 }
