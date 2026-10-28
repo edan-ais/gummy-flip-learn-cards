@@ -13,10 +13,20 @@ const TABS = [
   { to: "/exam/$examId/practice", label: "Practice", icon: PenLine },
 ] as const;
 
-export function ExamTabBar({ examId }: { examId: string }) {
+export function ExamTabBar({ examId, title }: { examId: string; title?: string }) {
   const { pathname } = useLocation();
   return (
     <nav className="tabbar" aria-label="Study sections">
+      <Link to="/courses" className="web-only side-brand" aria-label="All classes">
+        <BrandLogo compact />
+        <span>StudyLamb</span>
+      </Link>
+      {title && (
+        <div className="web-only side-exam">
+          <p className="eyebrow">Studying</p>
+          <p className="side-exam-title">{title}</p>
+        </div>
+      )}
       {TABS.map(({ to, label, icon: Icon }) => {
         const path = to.replace("$examId", examId);
         const active = label === "Home" ? pathname.replace(/\/$/, "") === path : pathname.startsWith(path) || (label === "Practice" && pathname.endsWith("/sample-exam"));
@@ -29,7 +39,27 @@ export function ExamTabBar({ examId }: { examId: string }) {
           </Link>
         );
       })}
+      <div className="web-only side-foot">
+        <Link to="/courses" className="side-link"><ChevronLeft size={16} /> All classes</Link>
+        <Link to="/settings" className="side-link"><Settings2 size={16} /> Settings</Link>
+      </div>
     </nav>
+  );
+}
+
+/** Laptop-only top bar for class-level pages; hidden on phones. */
+export function WebTopBar() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith("/exam/") || pathname.startsWith("/onboarding") || pathname.startsWith("/auth") || pathname === "/") return null;
+  return (
+    <header className="web-only web-topbar">
+      <Link to="/courses" className="side-brand"><BrandLogo compact /><span>StudyLamb</span></Link>
+      <nav className="web-topnav">
+        <Link to="/courses" data-active={pathname.startsWith("/courses")}>Classes</Link>
+        <Link to="/gems" data-active={pathname.startsWith("/gems")}>BrainBucks</Link>
+        <Link to="/settings" data-active={pathname.startsWith("/settings")}>Settings</Link>
+      </nav>
+    </header>
   );
 }
 
