@@ -64,6 +64,11 @@ function NewExam() {
   const camRef = useRef<HTMLInputElement>(null);
   const { confirmSpend, dialog } = useSpendGuard();
   const existingHashes = useRef<Set<string> | null>(null);
+  // Remember what this screen already saved so a retry never creates copies.
+  const createdExam = useRef<string | null>(null);
+  const createdCourse = useRef<string | null>(null);
+  const savedItems = useRef<Set<string>>(new Set());
+  const submitting = useRef(false);
 
   const knownHashes = async () => {
     if (!existingHashes.current) {
@@ -126,8 +131,10 @@ function NewExam() {
   const submit = async () => {
     if (!examId && !title.trim()) return toast.error("Name your exam first.");
     if (!items.length) return toast.error("Add at least one study material.");
+    if (submitting.current) return;
+    submitting.current = true;
     try {
-      let cid = courseId;
+      let cid = courseId ?? createdCourse.current ?? undefined;
       if (!cid && courseName.trim()) {
         const { data: c, error: cerr } = await supabase
           .from("courses")
@@ -136,13 +143,14 @@ function NewExam() {
           .single();
         if (cerr) throw cerr;
         cid = c.id;
+        createdCourse.current = c.id;
       }
       if (!cid) {
         setBusy(null);
         return toast.error("Add a class first, then upload your notes.");
       }
       setBusy("Saving your materials…");
-      let id = examId;
+      let id = examId ?? createdExam.current ?? undefined;
       if (!id) {
         const { data, error } = await supabase
           .from("exams")
@@ -151,8 +159,10 @@ function NewExam() {
           .single();
         if (error) throw error;
         id = data.id;
+        createdExam.current = data.id;
       }
       for (const it of items) {
+        if (savedItems.current.has(it.id)) continue;
         let text = it.text ?? "";
         let path: string | null = null;
         let mime = it.file?.type || "text/plain";
@@ -172,6 +182,7 @@ function NewExam() {
           .from("materials")
           .insert({ exam_id: id, name: it.name, mime, storage_path: path, extracted_text: text, file_hash: it.hash ?? null });
         if (error) throw error;
+        savedItems.current.add(it.id);
       }
       const estChars = items.reduce((n, it) => n + (it.text?.length ?? (it.kind === "text" || it.kind === "doc" ? 0 : 8000)), 0);
       const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").map((it) => it.file!.size);
@@ -189,6 +200,8 @@ function NewExam() {
     } catch (e) {
       actionError(e, "That upload didn't go through. Try again.");
       setBusy(null);
+    } finally {
+      submitting.current = false;
     }
   };
 
