@@ -17,7 +17,7 @@ export const LIMITS = {
   organizeOutputTokens: 16_000, // study-set output
   episodeOutputTokens: 1_500, // episode script
   episodeChars: 4_500, // voiced episode length (≈5 clips)
-  speakChars: 1_200, // one read-aloud request
+  speakChars: 7_200, // one read-aloud request (≤6 clips, each charged)
   clipChars: 1_200, // one voiced clip
   recordingBase64Chars: 14_000_000, // ≈5 min spoken note
 } as const;

@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { GEM_COST, processCost } from "./gems";
+import { GEM_COST, LIMITS, processCost } from "./gems";
 
 type Sb = { rpc: (fn: "spend_gems", args: { _cost: number; _reason: string }) => PromiseLike<{ error: { message: string } | null }> };
 
@@ -52,7 +52,9 @@ export const processExam = createServerFn({ method: "POST" })
     if (!exam || exam.owner_id !== context.userId) throw new Error("Exam not found");
     const { data: mats } = await supabase.from("materials").select("*").eq("exam_id", exam.id).order("created_at");
     const toRead = (mats ?? []).filter((m) => !m.extracted_text && m.storage_path).length;
-    const chars = (mats ?? []).reduce((n, m) => n + (m.extracted_text?.length ?? 0), 0) + toRead * 8000;
+    if (toRead > LIMITS.filesPerBuild)
+      return { ok: false as const, error: `That's a lot of files. Add up to ${LIMITS.filesPerBuild} PDFs or photos at a time.` };
+    const chars = Math.min(LIMITS.buildChars, (mats ?? []).reduce((n, m) => n + (m.extracted_text?.length ?? 0), 0) + toRead * 8000);
     const cost = processCost(chars, toRead);
     try {
       await charge(supabase, cost, "Build study set");
@@ -67,6 +69,7 @@ export const processExam = createServerFn({ method: "POST" })
         if (m.extracted_text || !m.storage_path) continue;
         const { data: blob, error } = await supabase.storage.from("materials").download(m.storage_path);
         if (error || !blob) throw new Error(`Could not open ${m.name}`);
+        if (blob.size > LIMITS.fileBytes) throw new Error(`${m.name} is over 25 MB. Try compressing it first.`);
         const b64 = toBase64(new Uint8Array(await blob.arrayBuffer()));
         const part =
           m.mime === "application/pdf"
@@ -75,6 +78,7 @@ export const processExam = createServerFn({ method: "POST" })
         const text = await aiText(
           "Transcribe this study material exactly as written, keeping headings, lists and paragraph breaks. Output plain text only. For handwriting, transcribe faithfully. Do not summarize or add anything.",
           [{ role: "user", content: [part, { type: "text", text: "Transcribe this." }] }],
+          LIMITS.transcriptOutputTokens,
         );
         await supabase.from("materials").update({ extracted_text: text }).eq("id", m.id);
         m.extracted_text = text;
@@ -91,9 +95,9 @@ export const processExam = createServerFn({ method: "POST" })
           .map((m) => `### ${isStudentNotes(m) ? "STUDENT NOTES" : "CHAPTER MATERIAL"}: ${m.name}\n${m.extracted_text}`)
           .concat((myNotes ?? []).map((n, i) => `### STUDENT NOTES: personal note ${i + 1}\n${n.body}`))
           .join("\n\n")
-          .slice(0, 150_000);
+          .slice(0, LIMITS.buildChars);
       if (!all.trim()) throw new Error("No readable text found in the uploads.");
-      const parsed = await aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema);
+      const parsed = await aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema, LIMITS.organizeOutputTokens);
 
       // Replace previously generated content
       await supabase.from("podcasts").delete().eq("exam_id", exam.id);
@@ -172,9 +176,10 @@ export const episodeAudio = createServerFn({ method: "POST" })
       const facts = (cards ?? []).map((c) => `Q: ${c.q}\nA: ${c.a}`).join("\n");
       const script = await aiText(
         `Write a short, fun, memorable audio lesson (about 500 words) that a narrator reads aloud. Teach the facts below in a vivid way: a story or scene, analogies, a mnemonic, and 2 quick "pause and recall" questions with the answers given after. Warm, friendly, simple words. Plain text only, no stage directions, no markdown. Use only these facts.`,
-        [{ role: "user", content: `Topic: ${p.title}\n${p.detail}\n\n${facts}` }],
+        [{ role: "user", content: `Topic: ${p.title}\n${p.detail}\n\n${facts.slice(0, 20_000)}` }],
+        LIMITS.episodeOutputTokens,
       );
-      const chunks = chunkText(script);
+      const chunks = chunkText(script.slice(0, LIMITS.episodeChars));
       const paths: string[] = [];
       for (const [i, c] of chunks.entries()) {
         const wav = await speech(c);
@@ -208,7 +213,8 @@ export const speak = createServerFn({ method: "POST" })
   .handler(async ({ data, context }) => {
     const { speech, chunkText } = await import("./ai/gateway.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const chunks = chunkText(data.text, 1200);
+    if (data.text.length > LIMITS.speakChars) throw new Error("That's too much to read at once. Try a shorter part.");
+    const chunks = chunkText(data.text, LIMITS.clipChars);
     const paths: string[] = [];
     const missing = new Set<string>();
     for (const c of chunks) {
@@ -268,6 +274,7 @@ export const processSyllabus = createServerFn({ method: "POST" })
           data.mime === "application/pdf"
             ? { type: "file" as const, filename: data.name, data: b64, mediaType: "application/pdf" }
             : { type: "image" as const, image: new URL(`data:${data.mime};base64,${b64}`) };
+        if (blob.size > LIMITS.fileBytes) throw new Error("That file is over 25 MB. Try compressing it first.");
         text = await aiText("Transcribe this syllabus exactly as written. Plain text only.", [
           { role: "user", content: [part, { type: "text", text: "Transcribe this." }] },
         ]);
@@ -345,7 +352,7 @@ export const buildFinalReview = createServerFn({ method: "POST" })
 export const transcribeNote = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { audio: string; mime: string }) => {
-    if (d.audio.length > 14_000_000) throw new Error("Recording is too long. Keep it under 5 minutes.");
+    if (d.audio.length > LIMITS.recordingBase64Chars) throw new Error("Recording is too long. Keep it under 5 minutes.");
     return d;
   })
   .handler(async ({ data, context }) => {
