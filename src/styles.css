@@ -2111,3 +2111,77 @@ html[data-font="lexend"] {
     max-width: 520px;
   }
 }
+
+/* ---------- Laptop identity: sidebar workspace, crisp surfaces ---------- */
+.web-only { display: none; }
+@media (min-width: 1024px) {
+  .web-only { display: revert; }
+  body { background: color-mix(in oklab, var(--background) 70%, var(--card)); }
+  .app-frame:has(.exam-layout), .app-frame:has(.web-topbar) { max-width: none; }
+
+  /* Top bar for class-level pages */
+  .web-topbar {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 68px; padding-inline: max(32px, calc((100vw - 1120px) / 2));
+    background: color-mix(in oklab, var(--card) 92%, transparent);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .web-topbar ~ .page, .web-topbar ~ main { max-width: 1120px; margin-inline: auto; padding-top: 40px; padding-bottom: 80px; }
+  .web-topnav { display: flex; gap: 4px; }
+  .web-topnav a {
+    padding: 8px 16px; border-radius: 10px; font-weight: 600; font-size: 15px;
+    color: var(--muted-foreground); text-decoration: none; transition: background .15s, color .15s;
+  }
+  .web-topnav a:hover { background: var(--muted); color: var(--foreground); }
+  .web-topnav a[data-active="true"] { color: var(--primary); background: color-mix(in oklab, var(--primary) 10%, transparent); }
+  .side-brand { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--heading); font-family: var(--font-display); font-weight: 700; font-size: 19px; }
+  .side-brand .lamby-logo-compact { width: 36px; height: 36px; border-radius: 10px; box-shadow: none; }
+
+  /* Exam: bottom bar becomes a left sidebar */
+  .exam-layout { padding-left: 260px; }
+  .tabbar {
+    left: 0; top: 0; bottom: 0; transform: none;
+    width: 260px; flex-direction: column; gap: 4px;
+    padding: 24px 16px; border-radius: 0;
+    background: var(--card); backdrop-filter: none;
+    box-shadow: none; border-right: 1px solid var(--border);
+  }
+  .tabbar .side-brand { display: flex; padding: 0 8px 20px; }
+  .side-exam { padding: 0 10px 16px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .side-exam-title { font-weight: 700; color: var(--heading); line-height: 1.3; }
+  .tab {
+    flex: 0 0 auto; flex-direction: row; gap: 12px; justify-content: flex-start;
+    padding: 10px 12px; border-radius: 10px;
+  }
+  .tab:hover { background: var(--muted); color: var(--foreground); }
+  .tab-label { font-size: 15px; font-weight: 600; }
+  .tab-icon svg { width: 19px; height: 19px; }
+  .tab[data-active="true"] .tab-icon { transform: none; }
+  .tab[data-active="true"] { box-shadow: inset 3px 0 0 var(--primary); }
+  .side-foot { margin-top: auto; display: grid; gap: 2px; }
+  .side-link { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 10px; color: var(--muted-foreground); font-size: 14px; font-weight: 600; text-decoration: none; }
+  .side-link:hover { background: var(--muted); color: var(--foreground); }
+  .exam-header {
+    left: 260px; right: 0; transform: none; width: auto; max-width: none;
+    padding: 14px 40px; background: color-mix(in oklab, var(--background) 90%, transparent);
+    backdrop-filter: blur(14px); border-bottom: 1px solid var(--border);
+  }
+  .exam-header > a:first-child { display: none; }
+  .exam-header { grid-template-columns: minmax(0, 1fr) auto auto; }
+  .exam-layout > .page, .exam-layout:not([data-home="true"]) > .page { max-width: 1040px; padding: 96px 40px 120px; margin-inline: auto; }
+  .exam-layout[data-home="true"] > .page { padding-top: 48px; }
+  .fit-page { padding-top: 88px; }
+  .page-title { font-size: 2.5rem; letter-spacing: -0.01em; }
+
+  /* Crisper web surfaces */
+  .gummy-card { border-radius: 16px; box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent); border: 1px solid var(--border); transition: box-shadow .2s, transform .2s; }
+  a.gummy-card:hover, button.gummy-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -12px color-mix(in oklab, var(--foreground) 25%, transparent); }
+  .gummy-btn { border-radius: 12px; }
+  .gummy-btn:hover { filter: brightness(1.05); }
+
+  /* Player docks bottom-right like a desktop app */
+  .mini-player, .pod-now { left: auto; right: 24px; transform: none; width: 380px; bottom: 24px; }
+  .pod-page { padding-top: 96px; padding-bottom: 140px; }
+}

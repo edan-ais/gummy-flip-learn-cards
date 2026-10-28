@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useEffect, useState, type ReactNode } from "react";
 import { usePlayer } from "@/lib/player";
 import { useSettings } from "@/lib/settings";
+import { BrandLogo } from "@/components/study/BrandLogo";
 
 const TABS = [
   { to: "/exam/$examId", label: "Home", icon: Home },
