@@ -1,21 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { actionError, useSpendGuard } from "@/lib/gems-client";
 import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
+import { takePendingUpload } from "@/lib/pending-upload";
 import { Page } from "@/components/study/Shell";
 
-type Search = { courseId?: string; examId?: string };
+type Search = { courseId?: string; examId?: string; pending?: boolean; course?: string };
 
 export const Route = createFileRoute("/_authenticated/exams/new")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     courseId: typeof s.courseId === "string" ? s.courseId : undefined,
     examId: typeof s.examId === "string" ? s.examId : undefined,
+    pending: s.pending === "1" || s.pending === true,
+    course: typeof s.course === "string" ? s.course : undefined,
   }),
   head: () => ({
     meta: [
@@ -46,7 +49,7 @@ const kindOf = (f: File): Item["kind"] | null => {
 };
 
 function NewExam() {
-  const { courseId, examId } = Route.useSearch();
+  const { courseId, examId, pending, course } = Route.useSearch();
   const { user } = Route.useRouteContext();
   const nav = useNavigate();
   const qc = useQueryClient();
@@ -55,6 +58,7 @@ function NewExam() {
   const [items, setItems] = useState<Item[]>([]);
   const [paste, setPaste] = useState("");
   const [showPaste, setShowPaste] = useState(false);
+  const [courseName, setCourseName] = useState(course ?? "");
   const [busy, setBusy] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const camRef = useRef<HTMLInputElement>(null);
@@ -97,16 +101,47 @@ function NewExam() {
     setItems((x) => [...x, ...next]);
   };
 
+  // Onboarding hands off picked files here after sign-in.
+  useEffect(() => {
+    if (!pending) return;
+    const p = takePendingUpload();
+    if (!p) return;
+    if (p.courseName && !courseId) setCourseName(p.courseName);
+    setItems((x) => [
+      ...p.files
+        .map((f) => ({ f, k: kindOf(f) }))
+        .filter((y) => y.k)
+        .map(({ f, k }) => ({ id: crypto.randomUUID(), file: f, name: f.name, kind: k!, hash: undefined })),
+      ...(p.text ? [{ id: crypto.randomUUID(), text: p.text, name: "Pasted notes", kind: "text" as const }] : []),
+      ...x,
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const submit = async () => {
     if (!examId && !title.trim()) return toast.error("Name your exam first.");
     if (!items.length) return toast.error("Add at least one study material.");
     try {
+      let cid = courseId;
+      if (!cid && courseName.trim()) {
+        const { data: c, error: cerr } = await supabase
+          .from("courses")
+          .insert({ title: courseName.trim(), color: "mint", owner_id: user.id })
+          .select("id")
+          .single();
+        if (cerr) throw cerr;
+        cid = c.id;
+      }
+      if (!cid) {
+        setBusy(null);
+        return toast.error("Add a class first, then upload your notes.");
+      }
       setBusy("Saving your materials…");
       let id = examId;
       if (!id) {
         const { data, error } = await supabase
           .from("exams")
-          .insert({ course_id: courseId!, owner_id: user.id, title: title.trim(), status: "processing" })
+          .insert({ course_id: cid, owner_id: user.id, title: title.trim(), status: "processing" })
           .select("id")
           .single();
         if (error) throw error;
