@@ -1,5 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Headphones, Layers, Mic, PencilLine, RefreshCw, Upload } from "lucide-react";
 import lamby from "@/assets/professor-lamby.png.asset.json";
 
@@ -54,6 +55,8 @@ function Steps({ of }: { of: number }) {
 
 function Onboarding() {
   const nav = useNavigate();
+  const mobile = useIsMobile();
+  const touch = useRef<{ x: number; y: number } | null>(null);
   const [step, setStep] = useState(0);
   const [style, setStyle] = useState<string>("see");
   const [moodIdx, setMoodIdx] = useState(0);
@@ -85,7 +88,22 @@ function Onboarding() {
     `onb-screen${extra}${i === step ? " on" : i < step ? " past" : ""}`;
 
   return (
-    <main className="onb-stage" aria-label="StudyLamb welcome">
+    <main className="onb-stage" aria-label="StudyLamb welcome"
+      onTouchStart={(e) => {
+        const point = e.touches[0];
+        const target = e.target as HTMLElement;
+        touch.current = mobile && point && !target.closest("button, input, a") ? { x: point.clientX, y: point.clientY } : null;
+      }}
+      onTouchEnd={(e) => {
+        const start = touch.current;
+        touch.current = null;
+        const end = e.changedTouches[0];
+        if (!mobile || !start || !end) return;
+        const dx = end.clientX - start.x;
+        const dy = end.clientY - start.y;
+        if (step === 4 && Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy)) pickMood(moodIdx + (dx < 0 ? 1 : -1));
+        else if (dy < -60 && Math.abs(dy) > Math.abs(dx)) go(step + 1);
+      }}>
       {/* 1 · Welcome */}
       <section className={cls(0, " lav")}>
         <div className="onb-body">
@@ -101,6 +119,7 @@ function Onboarding() {
           </div>
         </div>
         <div className="onb-foot">
+          {mobile && <p className="caption text-center">Swipe up to start</p>}
           <button className="onb-cta" onClick={() => go(1)}>
             Continue
           </button>
@@ -240,6 +259,7 @@ function Onboarding() {
               Ready
             </button>
           </div>
+          {mobile && <p className="caption text-center">Swipe to choose</p>}
           <div className="onb-support" data-show={supportShown}>
             {SUPPORT[mood]}
           </div>
