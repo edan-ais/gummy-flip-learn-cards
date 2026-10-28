@@ -99,9 +99,10 @@ function AddMaterials({ examId }: { examId: string }) {
         if (e2) throw e2;
         known.add(hash);
         added++;
+        if (path) addedSizes.push(f.size);
       }
       if (!added) return;
-      if (!(await confirmSpend(processCost(added * 8000, added)))) return;
+      if (!(await confirmSpend(processCost(added * 8000, addedSizes)))) return;
       toast("Reading your new pages… this can take a minute or two.");
       const r = await process({ data: { examId } });
       if (!r.ok) actionError(r.error, "We couldn't add those pages.");

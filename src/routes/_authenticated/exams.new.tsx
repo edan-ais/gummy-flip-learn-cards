@@ -174,7 +174,7 @@ function NewExam() {
         if (error) throw error;
       }
       const estChars = items.reduce((n, it) => n + (it.text?.length ?? (it.kind === "text" || it.kind === "doc" ? 0 : 8000)), 0);
-      const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").length;
+      const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").map((it) => it.file!.size);
       setBusy(null);
       if (!(await confirmSpend(processCost(estChars, estFiles)))) return;
       setBusy("Reading and organizing… this can take a minute or two.");

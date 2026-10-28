@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { GEM_COST, UNITS, extraEpisodeCost, filesCost, parseSteps, processCost, transcriptionCost } from "./gems";
+import { GEM_COST, extraEpisodeCost, filesCost, parseSteps, processCost, transcriptionCost } from "./gems";
 
 type Sb = { rpc: (fn: "spend_gems", args: { _cost: number; _reason: string }) => PromiseLike<{ error: { message: string } | null }> };
 
@@ -278,7 +278,7 @@ export const processSyllabus = createServerFn({ method: "POST" })
       if (r.error || !r.data) throw new Error("Could not open that file.");
       blob = r.data;
     }
-    let cost = GEM_COST.parseBase + GEM_COST.parsePer30k * Math.max(0, parseSteps((data.text ?? "").length) - 1) + (blob ? filesCost([blob.size]) : 0);
+    const cost = GEM_COST.parseBase + GEM_COST.parsePer30k * Math.max(0, parseSteps((data.text ?? "").length) - 1) + (blob ? filesCost([blob.size]) : 0);
     await charge(supabase, cost, "Read syllabus");
     try {
       let text = data.text ?? "";

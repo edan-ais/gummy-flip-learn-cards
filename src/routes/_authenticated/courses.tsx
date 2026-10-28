@@ -3,7 +3,7 @@ import { queryOptions, useQueryClient, useSuspenseQuery } from "@tanstack/react-
 import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { GemChip, LowBalanceNudge, actionError, useSpendGuard } from "@/lib/gems-client";
-import { GEM_COST } from "@/lib/gems";
+import { GEM_COST, filesCost } from "@/lib/gems";
 import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut, Pencil, FileUp, Check, GraduationCap, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -281,7 +281,7 @@ function SyllabusUpload({ onDone, compact = false }: { onDone: () => Promise<unk
     if (!ok) return toast.error("Use a PDF, photo, Word (.docx) or text file.");
     if (f.size > 25 * 1024 * 1024) return toast.error("That file is over 25 MB.");
     const needsRead = !f.name.endsWith(".docx") && !f.type.startsWith("text/");
-    if (!(await spend.confirmSpend(GEM_COST.parseBase + (needsRead ? GEM_COST.ocrPerFile : 0)))) return;
+    if (!(await spend.confirmSpend(GEM_COST.parseBase + (needsRead ? filesCost([f.size]) : 0)))) return;
     setBusy(true);
     try {
       const { data: u } = await supabase.auth.getUser();
