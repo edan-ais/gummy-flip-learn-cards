@@ -40,7 +40,7 @@ export const overheadShare = () => Object.values(OVERHEAD_SHARE).reduce((a, b) =
 
 export const GEM_COST = {
   parseBase: 2,
-  parsePer30k: 3,
+  parsePer30k: 4,
   ocrPerFile: 2,
   episode: 4,
   speechClip: 1,
