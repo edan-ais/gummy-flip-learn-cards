@@ -1,21 +1,24 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { actionError, useSpendGuard } from "@/lib/gems-client";
 import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
+import { takePendingUpload } from "@/lib/pending-upload";
 import { Page } from "@/components/study/Shell";
 
-type Search = { courseId?: string; examId?: string };
+type Search = { courseId?: string; examId?: string; pending?: boolean; course?: string };
 
 export const Route = createFileRoute("/_authenticated/exams/new")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     courseId: typeof s.courseId === "string" ? s.courseId : undefined,
     examId: typeof s.examId === "string" ? s.examId : undefined,
+    pending: s.pending === "1" || s.pending === true,
+    course: typeof s.course === "string" ? s.course : undefined,
   }),
   head: () => ({
     meta: [
