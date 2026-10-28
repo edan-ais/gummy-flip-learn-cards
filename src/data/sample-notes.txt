@@ -38,7 +38,7 @@ Practice and sample exams. Practice gives immediate feedback, weighted toward wh
 
 Due dates and pacing. Set a Test, Exam, or Homework due date on Home. About three days out or less, cram mode teaches more in less time by leading with unknown cards. With more time, new cards are spread into small daily sets plus review. Timers are off by default.
 
-BrainBucks. AI work costs BrainBucks (the dollar-bill chip): building a study set costs 5 plus 1 per PDF or photo, an episode costs 3, a new read-aloud clip or spoken note costs 1. Replays are free, and failed work is refunded. New students start with 25 free BrainBucks. A balance of 5 or fewer triggers a top-up reminder, and any action costing 95% or more of your balance shows a warning with cheaper options before you confirm. If you run out mid task, a 3 BrainBuck grace buffer lets the current step finish; beyond that the task pauses until you top up.
+BrainBucks. AI work costs BrainBucks (the dollar-bill chip): building a study set costs 6 plus 2 per PDF or photo, an episode costs 4, a new read-aloud clip or spoken note costs 1. Replays are free, and failed work is refunded. New students start with 25 free BrainBucks. A balance of 5 or fewer triggers a top-up reminder, and any action costing 95% or more of your balance shows a warning with cheaper options before you confirm. If you run out mid task, a 3 BrainBuck grace buffer lets the current step finish; beyond that the task pauses until you top up.
 
 Settings. Optional supports include Dyslexia (structured literacy with explicit sound-letter patterns and the Word Lab), ADHD (short chunks, immediate feedback, visible progress, goal setting), read-aloud as a toggle, and adjustable text size and spacing.
 
