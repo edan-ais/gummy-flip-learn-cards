@@ -66,6 +66,7 @@
 
 :root {
   --radius: 1.25rem;
+  --radius-ctl: 0.875rem; /* rounded-square corner for every button, chip and tile */
   /* Learn (blue) is the base wash. Cards white, text ink, captions slate. */
   --ink: #1c2633;
   --slate: #5a6778;
@@ -258,7 +259,7 @@
     gap: 8px;
     min-height: 52px;
     padding: 0 18px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     font-weight: 800;
     font-size: 0.9375rem;
     background: var(--card);
@@ -301,7 +302,7 @@
     width: 44px;
     height: 44px;
     flex-shrink: 0;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     background: var(--card);
     color: var(--foreground);
     box-shadow: var(--shadow-gummy);
@@ -321,7 +322,7 @@
     align-items: center;
     gap: 6px;
     padding: 8px 14px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     font-weight: 800;
     font-size: 0.8125rem;
     background: var(--card);
@@ -337,7 +338,7 @@
   .pill {
     flex: 1;
     padding: 10px 0;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     font-weight: 800;
     font-size: 0.875rem;
     background: var(--secondary);
@@ -831,7 +832,7 @@
     text-align: left;
   }
   .gummy-select {
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     padding: 8px 14px;
     background: var(--secondary);
     font-weight: 800;
@@ -843,7 +844,7 @@
     height: 44px;
     box-sizing: border-box;
     padding: 6px 12px 6px 8px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     background: var(--card);
     box-shadow: var(--shadow-gummy);
     font-size: 0.75rem;
@@ -982,7 +983,7 @@
     place-items: center;
     width: 56px;
     height: 56px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     background: color-mix(in oklab, var(--card) 25%, transparent);
   }
   .brand-blob {
@@ -1019,7 +1020,7 @@
   .swatch {
     width: 36px;
     height: 36px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     transition: transform 0.3s var(--spring);
   }
   .swatch[data-active="true"] {
@@ -1083,7 +1084,7 @@
   .seg {
     display: flex;
     padding: 4px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     background: var(--secondary);
   }
   .seg button {
@@ -1093,7 +1094,7 @@
     justify-content: center;
     gap: 6px;
     padding: 10px;
-    border-radius: 999px;
+    border-radius: calc(var(--radius-ctl) - 4px);
     font-weight: 800;
     font-size: 0.875rem;
     color: var(--muted-foreground);
@@ -1293,7 +1294,7 @@
     place-items: center;
     width: 56px;
     height: 56px;
-    border-radius: 999px;
+    border-radius: var(--radius-ctl);
     background: var(--primary);
     color: var(--primary-foreground);
     box-shadow: var(--shadow-gummy-primary);
@@ -1712,7 +1713,7 @@ html[data-font="lexend"] {
   width: 100%;
   max-width: 400px;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-ctl);
   background: var(--primary);
   color: var(--primary-foreground);
   font-family: inherit;
@@ -1888,7 +1889,7 @@ html[data-font="lexend"] {
 .onb-mood {
   border: 1.5px solid var(--border);
   background: var(--card);
-  border-radius: 999px;
+  border-radius: var(--radius-ctl);
   padding: 9px 14px;
   font-family: inherit;
   font-size: 13px;
@@ -1942,7 +1943,7 @@ html[data-font="lexend"] {
 .onb-lambywrap img {
   width: 118px;
   height: 118px;
-  border-radius: 50%;
+  border-radius: var(--radius-2xl);
   object-fit: cover;
 }
 
@@ -2012,7 +2013,7 @@ html[data-font="lexend"] {
 .onb-winrow .win {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 999px;
+  border-radius: var(--radius-ctl);
   padding: 7px 12px;
   font-size: 12px;
   font-weight: 600;
