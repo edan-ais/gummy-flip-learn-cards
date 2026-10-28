@@ -17,7 +17,7 @@ export const Route = createFileRoute("/_authenticated/exams/new")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     courseId: typeof s.courseId === "string" ? s.courseId : undefined,
     examId: typeof s.examId === "string" ? s.examId : undefined,
-    pending: s.pending === "1" || s.pending === true,
+    pending: s.pending === "1" || s.pending === 1 || s.pending === true,
     course: typeof s.course === "string" ? s.course : undefined,
   }),
   head: () => ({
