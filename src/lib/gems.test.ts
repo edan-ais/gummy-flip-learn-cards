@@ -1,17 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { GEM_PACKS, MIN_MARGIN, maxCostPerGem, netPerGem, processCost, GEM_COST } from "./gems";
+import { GEM_PACKS, MIN_MARGIN, maxCostPerGem, aiBudgetPerGem, processCost, GEM_COST, FREE_BUDGET_USD_PER_STUDENT, welcomeWorstCaseUsd } from "./gems";
 
-describe("gem pricing", () => {
-  it("every pack meets the target margin against estimated AI costs", () => {
-    for (const p of GEM_PACKS) expect(netPerGem(p)).toBeGreaterThanOrEqual(MIN_MARGIN * maxCostPerGem());
+describe("BrainBucks pricing", () => {
+  it("every pack covers 2x worst-case AI cost after payment fees and overhead", () => {
+    for (const p of GEM_PACKS) expect(aiBudgetPerGem(p)).toBeGreaterThanOrEqual(MIN_MARGIN * maxCostPerGem());
   });
-  it("a short paste with no files costs 5 gems", () => {
-    expect(processCost(5_000, 0)).toBe(5);
+  it("free welcome BrainBucks stay within the per-student budget", () => {
+    expect(welcomeWorstCaseUsd()).toBeLessThanOrEqual(FREE_BUDGET_USD_PER_STUDENT);
   });
-  it("each PDF or photo to read adds a gem", () => {
-    expect(processCost(5_000, 3)).toBe(8);
+  it("a short paste with no files costs 6", () => {
+    expect(processCost(5_000, 0)).toBe(6);
   });
-  it("an Abstract episode costs 3 gems", () => {
-    expect(GEM_COST.episode).toBe(3);
+  it("each PDF or photo to read adds 2", () => {
+    expect(processCost(5_000, 3)).toBe(12);
+  });
+  it("an Abstract episode costs 4", () => {
+    expect(GEM_COST.episode).toBe(4);
   });
 });

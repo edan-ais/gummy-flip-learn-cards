@@ -57,9 +57,9 @@ function wrap(e: unknown): never {
   throw new AiError(friendly(status, "The AI could not finish this. Try again."), status);
 }
 
-export async function aiText(instructions: string, messages: ModelMessage[]) {
+export async function aiText(instructions: string, messages: ModelMessage[], maxOutputTokens: number) {
   try {
-    const r = streamText({ model: provider().responses(TEXT_MODEL), instructions, messages, providerOptions: opts });
+    const r = streamText({ model: provider().responses(TEXT_MODEL), instructions, messages, maxOutputTokens, providerOptions: opts });
     const text = await r.text;
     if (!text.trim()) throw new AiError("The AI returned nothing for this file.", 422);
     return text;
@@ -69,12 +69,13 @@ export async function aiText(instructions: string, messages: ModelMessage[]) {
   }
 }
 
-export async function aiObject<T>(instructions: string, messages: ModelMessage[], schema: z.ZodType<T>) {
+export async function aiObject<T>(instructions: string, messages: ModelMessage[], schema: z.ZodType<T>, maxOutputTokens: number) {
   try {
     const r = streamText({
       model: provider().responses(TEXT_MODEL),
       instructions,
       messages,
+      maxOutputTokens,
       providerOptions: opts,
       output: Output.object({ schema }),
     });
@@ -86,6 +87,8 @@ export async function aiObject<T>(instructions: string, messages: ModelMessage[]
 
 /** Returns a complete WAV file for the text. */
 export async function speech(text: string) {
+  const { LIMITS } = await import("../gems");
+  if (text.length > LIMITS.clipChars) throw new AiError("That clip is too long.", 413);
   const res = await fetch(`${BASE}/audio/speech`, {
     method: "POST",
     headers: { Authorization: `Bearer ${key()}`, "Content-Type": "application/json" },

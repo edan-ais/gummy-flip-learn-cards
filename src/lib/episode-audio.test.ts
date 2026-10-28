@@ -61,23 +61,23 @@ it("replays a completed episode without charging or generating", async () => {
   expect(mocks.ai).not.toHaveBeenCalled();
 });
 
-it("locks simultaneous creation so only one request spends three BrainBucks", async () => {
+it("locks simultaneous creation so only one request spends four BrainBucks", async () => {
   const { run, row } = setup();
   const results = await Promise.allSettled([run(), run()]);
   expect(results.some((r) => r.status === "fulfilled")).toBe(true);
   expect(mocks.charge).toHaveBeenCalledTimes(1);
-  expect(mocks.charge).toHaveBeenCalledWith("spend_gems", { _cost: 3, _reason: "Abstract episode" });
+  expect(mocks.charge).toHaveBeenCalledWith("spend_gems", { _cost: 4, _reason: "Abstract episode" });
   expect(mocks.ai).toHaveBeenCalledTimes(1);
   expect(row.status).toBe("ready");
 });
 
-it("releases the lock and refunds three BrainBucks if generation fails", async () => {
+it("releases the lock and refunds four BrainBucks if generation fails", async () => {
   mocks.ai.mockRejectedValueOnce(new Error("AI unavailable"));
   const { run, row } = setup();
   await expect(run()).rejects.toThrow("AI unavailable");
   expect(row.status).toBe("empty");
   expect(mocks.refund).toHaveBeenCalledTimes(1);
-  expect(mocks.refund).toHaveBeenCalledWith("credit_gems", expect.objectContaining({ _amount: 3, _user: "student" }));
+  expect(mocks.refund).toHaveBeenCalledWith("credit_gems", expect.objectContaining({ _amount: 4, _user: "student" }));
 });
 
 it("does not credit free BrainBucks when the initial spend is rejected", async () => {

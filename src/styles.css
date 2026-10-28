@@ -2229,7 +2229,7 @@ html[data-font="lexend"] {
   /* Crisper web surfaces */
   .gummy-card { border-radius: 16px; box-shadow: 0 1px 2px color-mix(in oklab, var(--foreground) 6%, transparent); border: 1px solid var(--border); transition: box-shadow .2s, transform .2s; }
   a.gummy-card:hover, button.gummy-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px -12px color-mix(in oklab, var(--foreground) 25%, transparent); }
-  .gummy-btn { border-radius: 12px; }
+
   .gummy-btn:hover { filter: brightness(1.05); }
 
   /* Player docks bottom-right like a desktop app */
@@ -2460,3 +2460,6 @@ html[data-font="lexend"] {
     50% { height: 100%; }
   }
 }
+
+/* One corner for every button and chip, beating utility radii. */
+.gummy-btn, .gummy-chip { border-radius: var(--radius-ctl); }
