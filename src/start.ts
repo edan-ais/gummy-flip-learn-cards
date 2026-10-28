@@ -25,7 +25,15 @@ const csrfMiddleware = createCsrfMiddleware({
   filter: (ctx) => ctx.handlerType === "serverFn",
 });
 
+// The hosted build may expose public Cloud configuration only through Vite.
+// Fill only missing public values; never replace runtime/draft bindings or expose secrets.
+const cloudConfiguration = createMiddleware({ type: "function" }).server(async ({ next }) => {
+  process.env["SUPABASE_URL"] ??= import.meta.env.VITE_SUPABASE_URL;
+  process.env["SUPABASE_PUBLISHABLE_KEY"] ??= import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  return next();
+});
+
 export const startInstance = createStart(() => ({
-  functionMiddleware: [attachSupabaseAuth],
+  functionMiddleware: [cloudConfiguration, attachSupabaseAuth],
   requestMiddleware: [errorMiddleware, csrfMiddleware],
 }));

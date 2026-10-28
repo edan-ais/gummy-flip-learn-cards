@@ -17,3 +17,6 @@
 - Flashcards measure the full question to set their minimum height and allow vertical page scrolling when player space is tight. Why: podcast controls must never truncate study text.
 - Laptop (>=1024px) gets its own shell: exam tab bar becomes a left sidebar, class pages get WebTopBar, flatter bordered surfaces; `.web-only` elements are hidden on phones. Why: web has its own identity while mobile stays the baseline.
 - Onboarding upload handoff persists File objects in IndexedDB until processing succeeds. Why: sign-in navigation and page reloads must not lose selected notes.
+- Podcast creation atomically claims the episode before charging, saves audio before signing URLs, and never prefetches paid resolvers; player requests coalesce and replay cached audio. Why: selecting or retrying an episode must not cause duplicate or unsolicited charges.
+- Daily goal progress counts all user reviews and celebrates once per user/day through the shared StudyDialog. Why: effort across classes contributes to one daily target.
+- Server function middleware fills missing public Cloud configuration from build-time public values without replacing runtime bindings. Why: hosted uploads must authenticate even when public values are supplied only at build time.
