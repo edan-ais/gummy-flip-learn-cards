@@ -9,6 +9,7 @@ import { useSettings } from "@/lib/settings";
 import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks } from "@/lib/literacy";
+import { practiceAction } from "@/lib/study-feedback";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/practice")({
   head: () => ({
@@ -64,7 +65,7 @@ function Practice() {
                 <ReadAloud text={q.q} />
               </div>
               <button className="reveal-btn" data-open={open === q.id} onClick={() => setOpen(open === q.id ? null : q.id)} aria-expanded={open === q.id}>
-                Check answer <ChevronDown size={16} />
+                {practiceAction(m === "known", marked[q.id])} <ChevronDown size={16} />
               </button>
               <div className="reveal" data-open={open === q.id}>
                 <div>

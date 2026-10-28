@@ -3,11 +3,10 @@ import { Button } from "@/components/ui/button";
 import { useFlashcardSpeech } from "./flashcard-speech";
 import { useSettings } from "./settings";
 
-/** Read-aloud button. Shown only when the Read-aloud setting is on; text always stays on screen. */
+/** Read-aloud is always available; text always stays on screen. */
 export function ReadAloud({ text, className = "" }: { text: string; className?: string }) {
   const { s } = useSettings();
-  const speech = useFlashcardSpeech(text, s.readAloud, s.speechRate);
-  if (!s.readAloud) return null;
+  const speech = useFlashcardSpeech(text, true, s.speechRate);
 
   return (
     <><Button variant="ghost" size="icon"

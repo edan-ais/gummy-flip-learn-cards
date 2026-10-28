@@ -5,6 +5,11 @@ import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { NOT_ENOUGH } from "./gems";
+import { canAfford, isFundsError } from "./study-feedback";
+import { FUNDS_EVENT } from "@/components/study/BrainBucksDialog";
+import { StudyDialog } from "@/components/study/StudyDialog";
+import { BrainBucksPacks } from "@/components/study/BrainBucksPacks";
+import { Button } from "@/components/ui/button";
 
 export const walletQuery = queryOptions({
   queryKey: ["gems"],
@@ -24,11 +29,8 @@ export function useGems() {
 /** Friendly message for any failed action; points to the BrainBucks shop when the wallet is short. */
 export function actionError(e: unknown, fallback: string) {
   const msg = e instanceof Error ? e.message : typeof e === "string" ? e : fallback;
-  if (msg.includes(NOT_ENOUGH)) {
-    toast("You're out of BrainBucks.", {
-      description: "Top up and it picks up right where it stopped.",
-      action: { label: "Top up", onClick: () => (window.location.href = "/gems") },
-    });
+  if (isFundsError(e)) {
+    window.dispatchEvent(new Event(FUNDS_EVENT));
     return;
   }
   toast.error(msg || fallback);
@@ -41,11 +43,9 @@ export function LowBalanceNudge() {
   useEffect(() => {
     if (shown.current || balance == null || balance > 5) return;
     shown.current = true;
-    toast("Your BrainBucks are running low.", {
-      description: "Top up soon so your study tools keep working.",
-      duration: 8000,
-      action: { label: "Top up", onClick: () => (window.location.href = "/gems") },
-    });
+    if (sessionStorage.getItem("studylamb:funds-nudge")) return;
+    sessionStorage.setItem("studylamb:funds-nudge", "shown");
+    window.dispatchEvent(new Event(FUNDS_EVENT));
   }, [balance]);
   return null;
 }
@@ -59,6 +59,11 @@ export function useSpendGuard() {
   const [pending, setPending] = useState<{ cost: number; resolve: (ok: boolean) => void } | null>(null);
 
   const confirmSpend = (cost: number) => {
+    if (cost <= 0) return Promise.resolve(true);
+    if (balance != null && !canAfford(cost, balance)) {
+      window.dispatchEvent(new Event(FUNDS_EVENT));
+      return Promise.resolve(false);
+    }
     if (balance == null || cost < balance * 0.95) return Promise.resolve(true);
     return new Promise<boolean>((resolve) => setPending({ cost, resolve }));
   };
@@ -69,27 +74,23 @@ export function useSpendGuard() {
   };
 
   const dialog = pending && (
-    <div className="confirm-backdrop" role="alertdialog" aria-modal="true" aria-label="Big spend warning">
-      <div className="gummy-card confirm-card animate-pop">
-        <p className="text-lg font-extrabold">This uses almost all your BrainBucks</p>
-        <p className="mt-2 text-sm text-muted-foreground">
-          It costs {pending.cost} and you have {balance}. Ways to make it cheaper:
-        </p>
+    <StudyDialog open onOpenChange={(open) => { if (!open) done(false); }} title="This uses almost all your BrainBucks"
+      description={`It costs ${pending.cost} and you have ${balance}. You can still go ahead, or top up first.`}>
         <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
           <li>Convert scans and photos to one PDF first.</li>
           <li>Compress big PDFs before uploading.</li>
           <li>Upload one chapter at a time instead of everything at once.</li>
         </ul>
         <div className="mt-4 grid gap-2">
-          <button className="gummy-btn" data-variant="primary" onClick={() => done(true)}>
+          <Button className="gummy-btn" onClick={() => done(true)}>
             Go ahead anyway
-          </button>
-          <button className="gummy-btn" data-variant="ghost" onClick={() => done(false)}>
+          </Button>
+          <Button className="gummy-btn" variant="secondary" onClick={() => done(false)}>
             Go back
-          </button>
+          </Button>
         </div>
-      </div>
-    </div>
+        <BrainBucksPacks />
+    </StudyDialog>
   );
 
   return { confirmSpend, dialog };

@@ -19,12 +19,12 @@ export type Settings = {
 
 export const DEFAULTS: Settings = {
   spaced: true,
-  readAloud: false,
+  readAloud: true,
   flashcardAudio: false,
   dyslexia: false,
   adhd: false,
   timers: false,
-  font: "rounded",
+  font: "lexend",
   fontScale: 1,
   letterSpacing: 0,
   lineHeight: 1.6,
@@ -56,7 +56,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       setUid(id);
       if (!id) return setReady(true);
       const { data } = await supabase.from("profiles").select("settings").eq("id", id).maybeSingle();
-      setS({ ...DEFAULTS, ...((data?.settings as Partial<Settings>) ?? {}) });
+      setS({ ...DEFAULTS, ...((data?.settings as Partial<Settings>) ?? {}), readAloud: true, font: "lexend" });
       setReady(true);
     };
     supabase.auth.getSession().then(({ data }) => load(data.session?.user.id ?? null));

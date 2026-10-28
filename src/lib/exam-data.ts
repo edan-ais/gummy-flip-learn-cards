@@ -61,7 +61,6 @@ export const examQuery = (examId: string) =>
         supabase
           .from("study_events")
           .select("id", { count: "exact", head: true })
-          .eq("exam_id", examId)
           .eq("kind", "review")
           .gte("created_at", start.toISOString()),
         exam.is_sample

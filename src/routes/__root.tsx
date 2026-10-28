@@ -19,6 +19,7 @@ import { StudySplash } from "@/components/study/BrandLogo";
 import { SettingsProvider } from "@/lib/settings";
 import { Toaster } from "@/components/ui/sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { BrainBucksDialog } from "@/components/study/BrainBucksDialog";
 
 function NotFoundComponent() {
   return (
@@ -135,6 +136,7 @@ function RootComponent() {
             <Outlet />
             <MiniPlayer />
           </div>
+          <BrainBucksDialog />
           <Toaster position="top-center" />
         </PlayerProvider>
       </SettingsProvider>

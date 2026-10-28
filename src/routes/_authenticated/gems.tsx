@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { GEM_COST, GEM_PACKS } from "@/lib/gems";
 import { useGems } from "@/lib/gems-client";
+import { BrainBucksPacks } from "@/components/study/BrainBucksPacks";
 
 export const Route = createFileRoute("/_authenticated/gems")({
   head: () => ({
@@ -48,19 +49,7 @@ function Gems() {
       <p className="mt-2 text-muted-foreground">BrainBucks power the smart tools. Replaying audio you already made is free.</p>
 
       <h2 className="mt-6 mb-3 text-lg font-bold">Get BrainBucks</h2>
-      <div className="grid gap-3">
-        {GEM_PACKS.map((p) => (
-          <button
-            key={p.id}
-            className="gummy-card flex items-center gap-3 p-4 text-left"
-            onClick={() => toast("BrainBucks checkout is coming soon.")}
-          >
-            <Banknote className="gem-icon" />
-            <span className="flex-1 font-bold">{p.gems} BrainBucks</span>
-            <span className="gummy-chip">${p.priceUsd.toFixed(2)}</span>
-          </button>
-        ))}
-      </div>
+      <BrainBucksPacks />
 
       <h2 className="mt-6 mb-3 text-lg font-bold">What BrainBucks do</h2>
       <ul className="gummy-card divide-y p-0">
