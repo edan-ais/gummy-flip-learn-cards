@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Finish laptop onboarding and verify selected notes reach a generated study set
+
 - [x] Restore phone-only welcome swipes with laptop buttons
 - [x] Preserve full flashcard questions while podcast player is open
 - [x] Use the podcast narrator for read-aloud and automatically read flips and next cards

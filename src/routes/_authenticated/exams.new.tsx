@@ -8,7 +8,7 @@ import { actionError, useSpendGuard } from "@/lib/gems-client";
 import { processCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
-import { takePendingUpload } from "@/lib/pending-upload";
+import { peekPendingUpload, setPendingUpload } from "@/lib/pending-upload";
 import { Page } from "@/components/study/Shell";
 
 type Search = { courseId?: string; examId?: string; pending?: boolean; course?: string };
@@ -104,14 +104,15 @@ function NewExam() {
   // Onboarding hands off picked files here after sign-in.
   useEffect(() => {
     if (!pending) return;
-    const p = takePendingUpload();
+    const p = peekPendingUpload();
     if (!p) return;
     if (p.courseName && !courseId) setCourseName(p.courseName);
     setItems((x) => [
       ...p.files
-        .map((f) => ({ f, k: kindOf(f) }))
-        .filter((y) => y.k)
-        .map(({ f, k }) => ({ id: crypto.randomUUID(), file: f, name: f.name, kind: k!, hash: undefined })),
+        .flatMap((f) => {
+          const kind = kindOf(f);
+          return kind ? [{ id: crypto.randomUUID(), file: f, name: f.name, kind, hash: undefined }] : [];
+        }),
       ...(p.text ? [{ id: crypto.randomUUID(), text: p.text, name: "Pasted notes", kind: "text" as const }] : []),
       ...x,
     ]);
@@ -176,7 +177,10 @@ function NewExam() {
       const r = await process({ data: { examId: id } });
       await qc.invalidateQueries();
       if (!r.ok) actionError(r.error, "We couldn't build this study set.");
-      else toast.success("Your study set is ready. Next: start with Cards.");
+      else {
+        if (pending) setPendingUpload(null);
+        toast.success("Your study set is ready. Next: start with Cards.");
+      }
       nav({ to: "/exam/$examId", params: { examId: id } });
     } catch (e) {
       actionError(e, "That upload didn't go through. Try again.");
