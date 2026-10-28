@@ -51,6 +51,8 @@ function Cards() {
   const [onBreak, setOnBreak] = useState(false);
   const [dir, setDir] = useState(0);
   const touch = useRef<number | null>(null);
+  const questionRef = useRef<HTMLHeadingElement | null>(null);
+  const [cardHeight, setCardHeight] = useState(300);
 
   useEffect(() => {
     setQueue(initial);
@@ -59,6 +61,15 @@ function Cards() {
   }, [initial]);
   const c = queue[pos];
   const speech = useFlashcardSpeech(c ? (flipped ? c.a : c.q) : "", s.flashcardAudio && !onBreak, s.speechRate, `${c?.id ?? "done"}:${pos}:${flipped}`);
+  useEffect(() => {
+    const question = questionRef.current;
+    if (!question) return;
+    const measure = () => setCardHeight(Math.max(300, question.scrollHeight + 180));
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(question);
+    return () => observer.disconnect();
+  }, [c?.id, pos, onBreak]);
   useEffect(() => {
     if (c) setStrokes(load(c.id, []));
   }, [c?.id]);
@@ -117,7 +128,7 @@ function Cards() {
         </div>
       )}
 
-      <div className="card-area">
+      <div className="card-area" style={{ minHeight: cardHeight }}>
         {onBreak ? (
           <BreakCard
             done={chunkDone}
@@ -172,7 +183,7 @@ function Cards() {
                   <span className="eyebrow">{st ? (mastery(st) === "known" ? "Review" : "Still learning") : "New card"}</span>
                    {s.flashcardAudio && !flipped && <FlashcardAudioButton playing={speech.playing} loading={speech.loading} play={speech.play} />}
                 </div>
-                <h2 className="card-q card-scroll"><SpokenWords text={c.q} current={!flipped ? speech.word : -1} /></h2>
+                <h2 ref={questionRef} className="card-q card-scroll"><SpokenWords text={c.q} current={!flipped ? speech.word : -1} /></h2>
                 <p className="text-sm text-muted-foreground">Say your answer out loud, then tap to flip.</p>
                 <span className="card-foot">{draw ? "Draw anywhere on this card" : "Tap for answer"}</span>
                 {!flipped && <DrawLayer strokes={strokes} active={draw} onCommit={(x) => (setStrokes(x), save(c.id, x))} />}
