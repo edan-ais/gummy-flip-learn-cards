@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] In-app delete confirmations; non-overlapping podcasts; no automatic flashcard-audio spend at zero BrainBucks; faster transitions; condensed class controls and equal row heights; verify AI margin evidence
+- [x] In-app delete confirmations; non-overlapping podcasts; no automatic flashcard-audio spend at zero BrainBucks; faster transitions; condensed class controls and equal row heights; review actual AI usage (real margins not proven; pricing estimates exclude shared overhead)
 
 - [x] Smooth content transitions; matching BrainBucks popups; cached and locked podcasts; flashcards back button; practice Review label; daily Lamby celebration; default read-aloud; fix syllabus configuration; clarify font choices
 
