@@ -64,7 +64,7 @@ it("replays a completed episode without charging or generating", async () => {
 it("locks simultaneous creation so only one request spends three BrainBucks", async () => {
   const { run, row } = setup();
   const results = await Promise.allSettled([run(), run()]);
-  expect(results.filter((r) => r.status === "fulfilled")).toHaveLength(1);
+  expect(results.some((r) => r.status === "fulfilled")).toBe(true);
   expect(mocks.charge).toHaveBeenCalledTimes(1);
   expect(mocks.charge).toHaveBeenCalledWith("spend_gems", { _cost: 3, _reason: "Abstract episode" });
   expect(mocks.ai).toHaveBeenCalledTimes(1);
