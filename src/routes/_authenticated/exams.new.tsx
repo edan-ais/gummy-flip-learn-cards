@@ -101,6 +101,23 @@ function NewExam() {
     setItems((x) => [...x, ...next]);
   };
 
+  // Onboarding hands off picked files here after sign-in.
+  useEffect(() => {
+    if (!pending) return;
+    const p = takePendingUpload();
+    if (!p) return;
+    if (p.courseName && !courseId) setCourseName(p.courseName);
+    setItems((x) => [
+      ...p.files
+        .map((f) => ({ f, k: kindOf(f) }))
+        .filter((y) => y.k)
+        .map(({ f, k }) => ({ id: crypto.randomUUID(), file: f, name: f.name, kind: k!, hash: undefined })),
+      ...(p.text ? [{ id: crypto.randomUUID(), text: p.text, name: "Pasted notes", kind: "text" as const }] : []),
+      ...x,
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const submit = async () => {
     if (!examId && !title.trim()) return toast.error("Name your exam first.");
     if (!items.length) return toast.error("Add at least one study material.");
