@@ -2,6 +2,10 @@ export function canAfford(cost: number, balance: number) {
   return balance - cost >= -3;
 }
 
+export function flashcardAudioAllowed(balance: number | undefined) {
+  return balance !== undefined && balance > 0;
+}
+
 export function isFundsError(error: unknown) {
   const message = error instanceof Error ? error.message : typeof error === "string" ? error :
     error && typeof error === "object" && "message" in error ? String(error.message) : "";

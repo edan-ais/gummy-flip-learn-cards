@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { type Material } from "@/lib/exam-data";
 import { processExam, transcribeNote } from "@/lib/study.functions";
 import { ReadAloud } from "@/lib/read-aloud";
+import { DeleteDialog } from "@/components/study/DeleteDialog";
 
 const notesQuery = (examId: string) =>
   queryOptions({
@@ -168,6 +169,7 @@ function MaterialView({ m, open: initial }: { m: Material; open: boolean }) {
 }
 
 function MyNotes({ examId }: { examId: string }) {
+  const [deleting, setDeleting] = useState<string | null>(null);
   const { data: notes = [] } = useQuery(notesQuery(examId));
   const qc = useQueryClient();
   const transcribe = useServerFn(transcribeNote);
@@ -224,6 +226,13 @@ function MyNotes({ examId }: { examId: string }) {
 
   return (
     <div>
+      {deleting && <DeleteDialog title="Delete this note?" description="This removes your personal note. This can't be undone."
+        onClose={() => setDeleting(null)} onConfirm={async () => {
+          const { error } = await supabase.from("personal_notes").delete().eq("id", deleting);
+          if (error) { toast.error("Couldn't delete your note. Please try again."); return; }
+          await qc.invalidateQueries({ queryKey: ["notes", examId] });
+          toast.success("Note deleted.");
+        }} />}
       <div className="gummy-card space-y-3">
         <textarea className="gummy-input min-h-32" placeholder="Type a note, or tap the mic and say it" value={body} onChange={(e) => setBody(e.target.value)} />
         <div className="grid grid-cols-[auto_1fr] gap-3">
@@ -248,10 +257,7 @@ function MyNotes({ examId }: { examId: string }) {
                 <button
                   className="gummy-icon sm"
                   aria-label="Delete note"
-                  onClick={async () => {
-                    await supabase.from("personal_notes").delete().eq("id", n.id);
-                    qc.invalidateQueries({ queryKey: ["notes", examId] });
-                  }}
+                  onClick={() => setDeleting(n.id)}
                 >
                   <Trash2 size={14} />
                 </button>

@@ -1,7 +1,13 @@
 import { describe, it, expect, vi } from "vitest";
-import { canAfford, isFundsError, shouldCelebrate, practiceAction, createAudioCache } from "./study-feedback";
+import { canAfford, isFundsError, shouldCelebrate, practiceAction, createAudioCache, flashcardAudioAllowed } from "./study-feedback";
 
 describe("BrainBucks rules", () => {
+  it("keeps automatic flashcard audio off at zero, negative, or unresolved balance", () => {
+    expect(flashcardAudioAllowed(0)).toBe(false);
+    expect(flashcardAudioAllowed(-3)).toBe(false);
+    expect(flashcardAudioAllowed(undefined)).toBe(false);
+    expect(flashcardAudioAllowed(1)).toBe(true);
+  });
   it("allows exactly three BrainBucks of grace, never four", () => {
     expect(canAfford(3, 0)).toBe(true);
     expect(canAfford(4, 0)).toBe(false);
