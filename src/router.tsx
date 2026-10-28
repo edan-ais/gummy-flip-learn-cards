@@ -3,15 +3,16 @@ import { createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
 export const getRouter = () => {
-  const queryClient = new QueryClient();
+  const queryClient = new QueryClient({ defaultOptions: { queries: { staleTime: 30_000 } } });
 
   const router = createRouter({
     routeTree,
     context: { queryClient },
     scrollRestoration: true,
     defaultPreloadStaleTime: 0,
-    defaultPendingMs: 450,
-    defaultPendingMinMs: 180,
+    defaultPreload: "intent",
+    defaultPendingMs: 150,
+    defaultPendingMinMs: 0,
   });
 
   return router;
