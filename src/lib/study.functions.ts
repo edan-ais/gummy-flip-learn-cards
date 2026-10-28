@@ -151,10 +151,24 @@ export const episodeAudio = createServerFn({ method: "POST" })
     if (exam?.owner_id !== context.userId) throw new Error("Episode not ready");
     const { aiText, speech, chunkText } = await import("./ai/gateway.server");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await charge(supabase, GEM_COST.episode, "Abstract episode");
-    await supabase.from("podcasts").update({ status: "generating" }).eq("id", p.id);
+    if (p.status === "generating") throw new Error("Professor Lamby is already making this episode. Try again shortly — no extra BrainBucks were used.");
+    const { data: claimed, error: claimError } = await supabase.from("podcasts")
+      .update({ status: "generating" }).eq("id", p.id).neq("status", "generating")
+      .eq("storage_paths", "{}").eq("audio_urls", "{}").select("id").maybeSingle();
+    if (claimError) throw claimError;
+    if (!claimed) {
+      const { data: current } = await supabase.from("podcasts").select("audio_urls,storage_paths").eq("id", p.id).single();
+      if (current?.audio_urls.length) return { urls: current.audio_urls };
+      if (current?.storage_paths.length) return { urls: await signed(current.storage_paths) };
+      throw new Error("Professor Lamby is already making this episode. Try again shortly — no extra BrainBucks were used.");
+    }
+    let charged = false;
+    let saved = false;
     try {
-      const { data: cards } = await supabase.from("cards").select("q,a").eq("section_id", p.section_id!).order("position");
+      await charge(supabase, GEM_COST.episode, "Abstract episode");
+      charged = true;
+      if (!p.section_id) throw new Error("This episode needs a chapter first.");
+      const { data: cards } = await supabase.from("cards").select("q,a").eq("section_id", p.section_id).order("position");
       const facts = (cards ?? []).map((c) => `Q: ${c.q}\nA: ${c.a}`).join("\n");
       const script = await aiText(
         `Write a short, fun, memorable audio lesson (about 500 words) that a narrator reads aloud. Teach the facts below in a vivid way: a story or scene, analogies, a mnemonic, and 2 quick "pause and recall" questions with the answers given after. Warm, friendly, simple words. Plain text only, no stage directions, no markdown. Use only these facts.`,
@@ -169,11 +183,15 @@ export const episodeAudio = createServerFn({ method: "POST" })
         if (error) throw error;
         paths.push(path);
       }
-      await supabase.from("podcasts").update({ script, storage_paths: paths, status: "ready" }).eq("id", p.id);
+      const { error: saveError } = await supabase.from("podcasts").update({ script, storage_paths: paths, status: "ready" }).eq("id", p.id);
+      if (saveError) throw saveError;
+      saved = true;
       return { urls: await signed(paths) };
     } catch (e) {
-      await supabase.from("podcasts").update({ status: "empty" }).eq("id", p.id);
-      await refund(context.userId, GEM_COST.episode, "Abstract episode");
+      if (!saved) {
+        await supabase.from("podcasts").update({ status: "empty" }).eq("id", p.id);
+        if (charged) await refund(context.userId, GEM_COST.episode, "Abstract episode");
+      }
       throw e;
     }
   });
@@ -225,7 +243,7 @@ const SyllabusSchema = z.object({
   classes: z.array(
     z.object({
       title: z.string(),
-      exams: z.array(z.object({ title: z.string(), date: z.string().nullable().default(null) })).default([]),
+      exams: z.array(z.object({ title: z.string(), date: z.string().nullable() })),
     }),
   ),
 });
@@ -242,8 +260,8 @@ export const processSyllabus = createServerFn({ method: "POST" })
     await charge(supabase, cost, "Read syllabus");
     try {
       let text = data.text ?? "";
-      if (needsRead) {
-        const { data: blob, error } = await supabase.storage.from("materials").download(data.path!);
+      if (needsRead && data.path) {
+        const { data: blob, error } = await supabase.storage.from("materials").download(data.path);
         if (error || !blob) throw new Error("Could not open that file.");
         const b64 = toBase64(new Uint8Array(await blob.arrayBuffer()));
         const part =
