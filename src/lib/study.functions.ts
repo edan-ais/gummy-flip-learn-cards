@@ -154,7 +154,7 @@ export const episodeAudio = createServerFn({ method: "POST" })
     if (p.status === "generating") throw new Error("Professor Lamby is already making this episode. Try again shortly — no extra BrainBucks were used.");
     const { data: claimed, error: claimError } = await supabase.from("podcasts")
       .update({ status: "generating" }).eq("id", p.id).neq("status", "generating")
-      .eq("storage_paths", "{}").eq("audio_urls", "{}").select("id").maybeSingle();
+      .eq("storage_paths", []).eq("audio_urls", []).select("id").maybeSingle();
     if (claimError) throw claimError;
     if (!claimed) {
       const { data: current } = await supabase.from("podcasts").select("audio_urls,storage_paths").eq("id", p.id).single();
