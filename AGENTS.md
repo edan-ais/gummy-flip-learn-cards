@@ -15,4 +15,4 @@
 - Exam layouts reserve shared header space and expose distinct overview and study tabs. Why: mobile headings stay visible and home never doubles as flashcards.
 - All read-aloud uses the shared podcast TTS narrator through flashcard-speech and speak, with cached clips, spend checks and refunds; flashcards auto-play on side/card changes and estimate highlighting from playback time. Why: keep Professor Lamby's voice consistent and prevent stale audio or unapproved spending.
 - Flashcards measure the full question to set their minimum height and allow vertical page scrolling when player space is tight. Why: podcast controls must never truncate study text.
-- Shared laptop layouts use a desktop media query in the global stylesheet, with bounded study surfaces and wider class/overview grids; mobile rules remain the baseline. Why: one web app preserves the same study behavior and visual system on phones and laptops.
+- Laptop (>=1024px) gets its own shell: exam tab bar becomes a left sidebar, class pages get WebTopBar, flatter bordered surfaces; `.web-only` elements are hidden on phones. Why: web has its own identity while mobile stays the baseline.
