@@ -17,6 +17,9 @@ import { FlashcardAudioButton, SpokenWords } from "@/components/study/FlashcardA
 import { useFlashcardSpeech } from "@/lib/flashcard-speech";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "@/components/ui/button";
+import { useGems } from "@/lib/gems-client";
+import { FUNDS_EVENT } from "@/components/study/BrainBucksDialog";
+import { flashcardAudioAllowed } from "@/lib/study-feedback";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/cards")({
   head: () => ({
@@ -37,6 +40,11 @@ function Cards() {
   const mobile = useIsMobile();
   const { data } = useSuspenseQuery(examQuery(examId));
   const { s, set } = useSettings();
+  const { balance } = useGems();
+  const audioAvailable = flashcardAudioAllowed(balance);
+  useEffect(() => {
+    if (balance !== undefined && !audioAvailable && s.flashcardAudio) set({ flashcardAudio: false });
+  }, [balance, audioAvailable, s.flashcardAudio]);
   const grade = useGrade(examId);
   const [section, setSection] = useState<string | null>(null);
   const initial = useMemo(
@@ -63,7 +71,7 @@ function Cards() {
     setFlipped(false);
   }, [initial]);
   const c = queue[pos];
-  const speech = useFlashcardSpeech(c ? (flipped ? c.a : c.q) : "", s.flashcardAudio && !onBreak, s.speechRate, `${c?.id ?? "done"}:${pos}:${flipped}`);
+  const speech = useFlashcardSpeech(c ? (flipped ? c.a : c.q) : "", s.flashcardAudio && audioAvailable && !onBreak, s.speechRate, `${c?.id ?? "done"}:${pos}:${flipped}`);
   useEffect(() => {
     const question = questionRef.current;
     if (!question) return;
@@ -110,7 +118,10 @@ function Cards() {
       <SectionPills sections={data.sections} value={section} onChange={setSection} />
       <div className="flashcard-audio-setting">
         <label htmlFor="flashcard-audio" className="font-bold">Flashcard audio</label>
-        <Switch id="flashcard-audio" checked={s.flashcardAudio} onCheckedChange={(value) => set({ flashcardAudio: value })} />
+        <Switch id="flashcard-audio" checked={s.flashcardAudio && audioAvailable} onCheckedChange={(value) => {
+          if (value && !audioAvailable) { window.dispatchEvent(new Event(FUNDS_EVENT)); return; }
+          set({ flashcardAudio: value });
+        }} />
       </div>
       {speech.error && <p role="status" className="text-sm text-muted-foreground">{speech.error}</p>}
       <div className="flex items-center justify-between gap-2 text-xs font-bold">

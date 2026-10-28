@@ -4,12 +4,15 @@ import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { GemChip, LowBalanceNudge, actionError, useSpendGuard } from "@/lib/gems-client";
 import { GEM_COST } from "@/lib/gems";
-import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut, Pencil, FileUp, Check, GraduationCap } from "lucide-react";
+import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut, Pencil, FileUp, Check, GraduationCap, MoreHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Page } from "@/components/study/Shell";
 import { BrandLogo } from "@/components/study/BrandLogo";
 import { buildFinalReview, processSyllabus } from "@/lib/study.functions";
+import { Button } from "@/components/ui/button";
+import { DeleteDialog } from "@/components/study/DeleteDialog";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 
 const COLORS = ["coral", "mint", "sky", "sun", "grape"] as const;
 
@@ -52,6 +55,7 @@ function Courses() {
   const [picking, setPicking] = useState(false);
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [buildingFinal, setBuildingFinal] = useState(false);
+  const [deleting, setDeleting] = useState<{ id: string; kind: "class" | "exam" } | null>(null);
   const buildFinal = useServerFn(buildFinalReview);
 
   const refresh = () => qc.invalidateQueries({ queryKey: ["courses"] });
@@ -76,9 +80,7 @@ function Courses() {
   };
 
   const removeCourse = async (id: string) => {
-    if (!confirm("Delete this class and all its exams?")) return;
-    await supabase.from("courses").delete().eq("id", id);
-    refresh();
+    setDeleting({ id, kind: "class" });
   };
 
   const renameExam = async (id: string, current: string) => {
@@ -90,9 +92,7 @@ function Courses() {
   };
 
   const removeExam = async (id: string) => {
-    if (!confirm("Delete this exam and its study materials?")) return;
-    await supabase.from("exams").delete().eq("id", id);
-    refresh();
+    setDeleting({ id, kind: "exam" });
   };
 
   const togglePick = (id: string) =>
@@ -146,6 +146,19 @@ function Courses() {
         </div>
       }
     >
+      {deleting && <DeleteDialog title={`Delete this ${deleting.kind}?`}
+        description={deleting.kind === "class" ? "This also removes its exams and study materials. This can't be undone." : "This removes the exam and its study materials. This can't be undone."}
+        onClose={() => setDeleting(null)} onConfirm={async () => {
+          const { error } = await supabase.from(deleting.kind === "class" ? "courses" : "exams").delete().eq("id", deleting.id);
+          if (error) { toast.error("Couldn't delete it. Please try again."); return; }
+          toast.success(deleting.kind === "class" ? "Class deleted." : "Exam deleted.");
+          await refresh();
+        }} />}
+      {!adding && !picking && <div className="class-toolbar">
+        <Button className="gummy-btn" onClick={() => setAdding(true)}><Plus size={18} /> New class</Button>
+        <SyllabusUpload onDone={refresh} compact />
+        {ownCourses.length > 0 && <Button variant="outline" className="gummy-chip" onClick={() => setPicking(true)}><GraduationCap size={18} /> Final review</Button>}
+      </div>}
       <div className="class-grid space-y-4">
         <div className="class-brand mb-5 flex items-center gap-3">
           <BrandLogo compact />
@@ -153,7 +166,7 @@ function Courses() {
         </div>
         {data.map((c, i) => (
           <section key={c.id} className="course-card animate-rise" data-color={c.color} style={{ animationDelay: `${i * 50}ms` }}>
-            <div className="flex items-center justify-between gap-2">
+            <div className="course-heading grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 {picking && !c.is_sample && (
                   <button
@@ -172,14 +185,13 @@ function Courses() {
                 </div>
               </div>
               {!c.is_sample && !picking && (
-                <div className="flex gap-1">
-                  <button className="gummy-icon sm" onClick={() => renameCourse(c.id, c.title)} aria-label="Rename class">
-                    <Pencil size={15} />
-                  </button>
-                  <button className="gummy-icon sm" onClick={() => removeCourse(c.id)} aria-label="Delete class">
-                    <Trash2 size={15} />
-                  </button>
-                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="gummy-icon sm" aria-label={`Class actions for ${c.title}`} title="Class actions"><MoreHorizontal size={18} /></Button></DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onSelect={() => renameCourse(c.id, c.title)}><Pencil /> Rename class</DropdownMenuItem>
+                    <DropdownMenuItem onSelect={() => removeCourse(c.id)}><Trash2 /> Delete class</DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               )}
             </div>
             <ul className="mt-3 space-y-2">
@@ -192,14 +204,13 @@ function Courses() {
                     <ChevronRight size={18} className="text-muted-foreground" />
                   </Link>
                   {!e.is_sample && !picking && (
-                    <>
-                      <button className="gummy-icon sm shrink-0" onClick={() => renameExam(e.id, e.title)} aria-label="Rename exam">
-                        <Pencil size={14} />
-                      </button>
-                      <button className="gummy-icon sm shrink-0" onClick={() => removeExam(e.id)} aria-label="Delete exam">
-                        <Trash2 size={14} />
-                      </button>
-                    </>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild><Button variant="ghost" size="icon" className="gummy-icon sm shrink-0" aria-label={`Exam actions for ${e.title}`} title="Exam actions"><MoreHorizontal size={18} /></Button></DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onSelect={() => renameExam(e.id, e.title)}><Pencil /> Rename exam</DropdownMenuItem>
+                        <DropdownMenuItem onSelect={() => removeExam(e.id)}><Trash2 /> Delete exam</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
                 </li>
               ))}
@@ -250,26 +261,14 @@ function Courses() {
               </button>
             </div>
           </div>
-        ) : (
-          <div className="class-actions grid gap-3">
-            <button className="gummy-btn w-full" data-variant="primary" onClick={() => setAdding(true)}>
-              <Plus size={18} /> New class
-            </button>
-            <SyllabusUpload onDone={refresh} />
-            {ownCourses.length > 0 && (
-              <button className="gummy-btn w-full" data-variant="ghost" onClick={() => setPicking(true)}>
-                <GraduationCap size={18} /> Final review: pick classes
-              </button>
-            )}
-          </div>
-        )}
+        ) : null}
       </div>
     </Page>
   );
 }
 
 /** Upload a syllabus; AI reads it and creates the class with its major exams. */
-function SyllabusUpload({ onDone }: { onDone: () => Promise<unknown> }) {
+function SyllabusUpload({ onDone, compact = false }: { onDone: () => Promise<unknown>; compact?: boolean }) {
   const spend = useSpendGuard();
   const run = useServerFn(processSyllabus);
   const [busy, setBusy] = useState(false);
@@ -313,9 +312,9 @@ function SyllabusUpload({ onDone }: { onDone: () => Promise<unknown> }) {
   return (
     <>
       {spend.dialog}
-      <button className="gummy-btn w-full" data-variant="ghost" onClick={() => ref.current?.click()} disabled={busy}>
+      <Button variant="outline" className={compact ? "gummy-chip" : "gummy-btn w-full"} onClick={() => ref.current?.click()} disabled={busy}>
         {busy ? <Loader2 className="animate-spin" size={18} /> : <FileUp size={18} />} Upload a syllabus
-      </button>
+      </Button>
       <input ref={ref} type="file" hidden accept=".pdf,image/*,.docx,.txt,.md,text/plain" onChange={(e) => handle(e.target.files)} />
     </>
   );
