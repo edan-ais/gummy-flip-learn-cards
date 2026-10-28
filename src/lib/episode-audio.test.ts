@@ -77,7 +77,7 @@ it("releases the lock and refunds four BrainBucks if generation fails", async ()
   await expect(run()).rejects.toThrow("AI unavailable");
   expect(row.status).toBe("empty");
   expect(mocks.refund).toHaveBeenCalledTimes(1);
-  expect(mocks.refund).toHaveBeenCalledWith("credit_gems", expect.objectContaining({ _amount: 3, _user: "student" }));
+  expect(mocks.refund).toHaveBeenCalledWith("credit_gems", expect.objectContaining({ _amount: 4, _user: "student" }));
 });
 
 it("does not credit free BrainBucks when the initial spend is rejected", async () => {
