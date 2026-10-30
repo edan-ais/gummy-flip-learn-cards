@@ -1,1 +1,5 @@
 project_id = "skcmodakoqlbthumifef"
+
+# Send Email hook relay; verifies the signed hook payload and fixed callback origins itself.
+[functions.studylamb-auth-links]
+verify_jwt = false
