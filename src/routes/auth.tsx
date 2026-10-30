@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { BrandLogo } from "@/components/study/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { studyPasswordReset, studySignUp } from "@/lib/hubl.functions";
 
 type Search = { redirect?: string };
 const safe = (r?: string) => (r && r.startsWith("/") && !r.startsWith("//") ? r : "/courses");
@@ -42,12 +43,16 @@ function Auth() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const r =
-      mode === "in"
-        ? await supabase.auth.signInWithPassword({ email, password: pw })
-        : await supabase.auth.signUp({ email, password: pw });
+    if (mode === "up") await studySignUp({ data: { email, password: pw } }).catch(() => null);
+    const r = await supabase.auth.signInWithPassword({ email, password: pw });
     setBusy(false);
-    if (r.error) return toast.error(r.error.message);
+    if (r.error) return toast.error(mode === "up" ? "Not yet. Check your email, or try signing in." : r.error.message);
+  };
+
+  const forgot = async () => {
+    if (!email) return toast("Type your email first, then tap Forgot password.");
+    const r = await studyPasswordReset({ data: { email } }).catch(() => null);
+    toast(r?.message ?? "If that email can use StudyLamb, a message is on its way.");
   };
 
   return (
@@ -66,6 +71,7 @@ function Auth() {
               {mode === "in" ? "Sign in" : "Create account"}
             </Button>
           </form>
+          {mode === "in" && <Button variant="link" type="button" className="w-full text-center text-sm font-bold text-primary" onClick={forgot}>Forgot password?</Button>}
           <Button variant="link" type="button" className="w-full text-center text-sm font-bold text-primary" onClick={() => setMode(mode === "in" ? "up" : "in")}>
             {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
           </Button>

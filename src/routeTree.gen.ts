@@ -16,6 +16,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as AuthenticatedCoursesRouteImport } from './routes/_authenticated/courses'
 import { Route as AuthenticatedGemsRouteImport } from './routes/_authenticated/gems'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
+import { Route as AuthConfirmRouteImport } from './routes/auth_.confirm'
 import { Route as AuthenticatedExamExamIdRouteImport } from './routes/_authenticated/exam.$examId'
 import { Route as AuthenticatedExamsNewRouteImport } from './routes/_authenticated/exams.new'
 import { Route as AuthenticatedExamExamIdIndexRouteImport } from './routes/_authenticated/exam.$examId.index'
@@ -58,6 +59,11 @@ const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
   getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthConfirmRoute = AuthConfirmRouteImport.update({
+  id: '/auth_/confirm',
+  path: '/auth/confirm',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedExamExamIdRoute = AuthenticatedExamExamIdRouteImport.update({
   id: '/exam/$examId',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/courses': typeof AuthenticatedCoursesRoute
   '/gems': typeof AuthenticatedGemsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
@@ -129,6 +136,7 @@ export interface FileRoutesByTo {
   '/courses': typeof AuthenticatedCoursesRoute
   '/gems': typeof AuthenticatedGemsRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/auth/confirm': typeof AuthConfirmRoute
   '/exams/new': typeof AuthenticatedExamsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/_authenticated/courses': typeof AuthenticatedCoursesRoute
   '/_authenticated/gems': typeof AuthenticatedGemsRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/auth_/confirm': typeof AuthConfirmRoute
   '/_authenticated/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/_authenticated/exams/new': typeof AuthenticatedExamsNewRoute
   '/_authenticated/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
@@ -164,6 +173,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/gems'
     | '/settings'
+    | '/auth/confirm'
     | '/exam/$examId'
     | '/exams/new'
     | '/exam/$examId/cards'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/courses'
     | '/gems'
     | '/settings'
+    | '/auth/confirm'
     | '/exams/new'
     | '/exam/$examId/cards'
     | '/exam/$examId/memorize'
@@ -196,6 +207,7 @@ export interface FileRouteTypes {
     | '/_authenticated/courses'
     | '/_authenticated/gems'
     | '/_authenticated/settings'
+    | '/auth_/confirm'
     | '/_authenticated/exam/$examId'
     | '/_authenticated/exams/new'
     | '/_authenticated/exam/$examId/cards'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AuthRoute: typeof AuthRoute
   OnboardingRoute: typeof OnboardingRoute
+  AuthConfirmRoute: typeof AuthConfirmRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/auth_/confirm': {
+      id: '/auth_/confirm'
+      path: '/auth/confirm'
+      fullPath: '/auth/confirm'
+      preLoaderRoute: typeof AuthConfirmRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_authenticated/exam/$examId': {
       id: '/_authenticated/exam/$examId'
@@ -372,6 +392,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AuthRoute: AuthRoute,
   OnboardingRoute: OnboardingRoute,
+  AuthConfirmRoute: AuthConfirmRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -14,6 +14,24 @@ export type Database = {
   }
   public: {
     Tables: {
+      auth_mail_throttle: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+        }
+        Relationships: []
+      }
       cards: {
         Row: {
           a: string
