@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { BrandLogo } from "@/components/study/BrandLogo";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import { studyPasswordReset, studySignUp } from "@/lib/hubl.functions";
 
 type Search = { redirect?: string };
 const safe = (r?: string) => (r && r.startsWith("/") && !r.startsWith("//") ? r : "/courses");
@@ -70,6 +71,7 @@ function Auth() {
               {mode === "in" ? "Sign in" : "Create account"}
             </Button>
           </form>
+          {mode === "in" && <Button variant="link" type="button" className="w-full text-center text-sm font-bold text-primary" onClick={forgot}>Forgot password?</Button>}
           <Button variant="link" type="button" className="w-full text-center text-sm font-bold text-primary" onClick={() => setMode(mode === "in" ? "up" : "in")}>
             {mode === "in" ? "New here? Create an account" : "Have an account? Sign in"}
           </Button>
