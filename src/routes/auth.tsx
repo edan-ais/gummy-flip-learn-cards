@@ -42,12 +42,16 @@ function Auth() {
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     setBusy(true);
-    const r =
-      mode === "in"
-        ? await supabase.auth.signInWithPassword({ email, password: pw })
-        : await supabase.auth.signUp({ email, password: pw });
+    if (mode === "up") await studySignUp({ data: { email, password: pw } }).catch(() => null);
+    const r = await supabase.auth.signInWithPassword({ email, password: pw });
     setBusy(false);
-    if (r.error) return toast.error(r.error.message);
+    if (r.error) return toast.error(mode === "up" ? "Not yet. Check your email, or try signing in." : r.error.message);
+  };
+
+  const forgot = async () => {
+    if (!email) return toast("Type your email first, then tap Forgot password.");
+    const r = await studyPasswordReset({ data: { email } }).catch(() => null);
+    toast(r?.message ?? "If that email can use StudyLamb, a message is on its way.");
   };
 
   return (

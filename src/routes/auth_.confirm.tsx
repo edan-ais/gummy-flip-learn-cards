@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 type Search = { token_hash?: string; type?: string };
 
-export const Route = createFileRoute("/auth/confirm")({
+export const Route = createFileRoute("/auth_/confirm")({
   validateSearch: (s: Record<string, unknown>): Search => ({
     token_hash: typeof s.token_hash === "string" ? s.token_hash : undefined,
     type: typeof s.type === "string" ? s.type : undefined,
