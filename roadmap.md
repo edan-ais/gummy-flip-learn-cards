@@ -1,5 +1,7 @@
 # Roadmap
 
+- [x] Unify script and class Memorize on-card typing, controls, feedback and drawing; exact scoring tests pass; signed-in script advances all three rounds, drawing persists, phone/laptop checked and temporary test removed.
+
 - [x] Restore progressive script recall and saved passage drawing; seven scoring tests pass; signed-in laptop flow verifies all three rounds and drawings survive reload; phone width checked.
 
 - [x] Add exact-word scripts with saved text, ordered Listen tracks, and strict Memorize practice; verified create, all three recall rounds, edit/reload, phone and laptop layout. Paid narration still needs a listening check.

@@ -10,8 +10,8 @@ import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks, syllables } from "@/lib/literacy";
 import { MEMORY_ROUNDS, load, save, memoryScore, memoryWords, nearbyKey, passes } from "@/lib/study";
-import { isScript } from "@/lib/scripts";
-import { ScriptMemorize } from "@/components/study/ScriptMemorize";
+import { isScript, scriptRecallInput } from "@/lib/scripts";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/memorize")({
   head: () => ({
@@ -32,13 +32,7 @@ const WORD_RE = /[A-Za-z0-9]+(?:['’][A-Za-z0-9]+)*[^A-Za-z0-9\s]*/g;
 function Memorize() {
   const { examId } = Route.useParams();
   const { data } = useSuspenseQuery(examQuery(examId));
-  if (isScript(data.materials)) return <ScriptMemorize data={data} />;
-  return <ClassMemorize />;
-}
-
-function ClassMemorize() {
-  const { examId } = Route.useParams();
-  const { data } = useSuspenseQuery(examQuery(examId));
+  const strict = isScript(data.materials);
   const { s } = useSettings();
   const grade = useGrade(examId);
   const [section, setSection] = useState<string | null>(null);
@@ -59,11 +53,14 @@ function ClassMemorize() {
   const c = order[pos];
   const parts = c ? (s.adhd ? chunks(c.a, 18) : [c.a]) : [];
   const text = parts[part] ?? "";
-  const words = text.match(WORD_RE) || [];
+  const pieces = strict ? text.split(/([\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*)/gu) : null;
+  const words = pieces ? pieces.filter((_, i) => i % 2 === 1) : text.match(WORD_RE) || [];
   const total = memoryWords(text).length;
-  const entered = value.toLowerCase().match(/[a-z0-9]/g) || [];
+  const recall = strict ? scriptRecallInput(text, value, stage) : null;
+  const entered = recall?.entered ?? (value.toLowerCase().match(/[a-z0-9]/g) || []);
+  const currentIndex = recall?.current ?? entered.length;
   const firsts = memoryWords(text).map((w) => w[0].toLowerCase());
-  const missAt = (i: number) => entered[i] !== undefined && !nearbyKey(firsts[i] ?? "", entered[i]);
+  const missAt = (i: number) => recall ? recall.misses[i] : entered[i] !== undefined && !nearbyKey(firsts[i] ?? "", entered[i]);
   const [slip, setSlip] = useState<{ typed: string; word: string; n: number } | null>(null);
 
   useEffect(() => {
@@ -84,11 +81,12 @@ function ClassMemorize() {
 
   const check = (typed: string) => {
     if (!c) return;
-    const sc = memoryScore(text, typed);
+    const exact = strict ? scriptRecallInput(text, typed, stage) : null;
+    const sc = exact ? { correct: exact.correct, total: exact.words.length, percent: exact.complete ? 100 : 0 } : memoryScore(text, typed);
     let fb = `${sc.correct} of ${sc.total} words matched. `;
     if (passes(sc.percent)) {
       if (stage < 2) {
-        fb += `Your recall worked. Next: ${MEMORY_ROUNDS[stage + 1]!.toLowerCase()}.`;
+        fb += `Your recall worked. Next: ${(MEMORY_ROUNDS[stage + 1] ?? "Next round").toLowerCase()}.`;
         setStage(stage + 1);
       } else if (part < parts.length - 1) {
         fb += "That chunk stuck. Next: the following piece.";
@@ -110,24 +108,24 @@ function ClassMemorize() {
   };
 
   if (!c) return <main className="page"><p className="text-muted-foreground">No cards in this section.</p></main>;
-  const currentWord = words[entered.length]?.replace(/[^A-Za-z']/g, "");
-  const showCurrent = s.dyslexia && currentWord && !(stage === 2 || (stage === 1 && entered.length % 2 === 1));
+  const currentWord = words[currentIndex]?.replace(/[^A-Za-z']/g, "");
+  const showCurrent = s.dyslexia && currentWord && !(stage === 2 || (stage === 1 && currentIndex % 2 === 1));
 
   return (
     <main className="page compact">
       <SectionPills sections={data.sections} value={section} onChange={setSection} />
       <div className="mt-3 flex items-center gap-2">
-        <button className="gummy-icon sm" disabled={pos === 0} onClick={() => reset(pos - 1)} aria-label="Previous">
+        <Button variant="ghost" size="icon" className="gummy-icon sm" disabled={pos === 0} onClick={() => reset(pos - 1)} aria-label="Previous">
           <ChevronLeft size={18} />
-        </button>
+        </Button>
         <div className="flex flex-1 gap-1.5" aria-label={`Round ${stage + 1} of 3`}>
           {MEMORY_ROUNDS.map((r, i) => (
             <div key={r} className="round-dot" data-on={i <= stage || complete} />
           ))}
         </div>
-        <button className="gummy-icon sm" disabled={pos === order.length - 1} onClick={() => reset(pos + 1)} aria-label="Next">
+        <Button variant="ghost" size="icon" className="gummy-icon sm" disabled={pos === order.length - 1} onClick={() => reset(pos + 1)} aria-label="Next">
           <ChevronRight size={18} />
-        </button>
+        </Button>
       </div>
       <p className="mt-2 text-sm font-bold text-primary">
         Round {stage + 1} / 3 · {MEMORY_ROUNDS[stage]}
@@ -147,13 +145,15 @@ function ClassMemorize() {
           <ReadAloud text={text} />
         </div>
         <h2 className="card-q text-lg">{c.q}</h2>
-        <p className="memory-text">
-          {words.map((w, i) => {
+        <p className={strict ? "memory-text whitespace-pre-wrap" : "memory-text"}>
+          {(pieces ?? words).map((w, key) => {
+            if (pieces && key % 2 === 0) return w;
+            const i = pieces ? Math.floor(key / 2) : key;
             const masked = stage === 2 || (stage === 1 && i % 2 === 1);
-            const done = i < entered.length;
+            const done = recall ? recall.matches[i] || recall.misses[i] : i < entered.length;
             const miss = done && missAt(i);
             return (
-              <span key={i} className="memory-word" data-masked={masked} data-done={done} data-miss={miss} data-current={!complete && i === entered.length}>
+              <span key={i} className="memory-word" data-masked={masked} data-done={done} data-miss={miss} data-current={!complete && i === currentIndex}>
                 <span className="memory-ghost">{w}</span>
                 {done && <span className="memory-letter">{w}</span>}
               </span>
@@ -166,22 +166,24 @@ function ClassMemorize() {
           rows={2}
           value={value}
           disabled={complete}
-          aria-label="Type the first letter of each word"
+          aria-label={strict && stage === 0 ? "Type the exact script passage" : strict && stage === 1 ? "Type full visible words and the first letter of each hidden word" : "Type the first letter of each word"}
           autoCapitalize="none"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
           onChange={(e) => {
             const v = e.target.value;
+            const exact = strict ? scriptRecallInput(text, v, stage) : null;
             const next = v.toLowerCase().match(/[a-z0-9]/g) || [];
-            const i = next.length - 1;
-            if (next.length > entered.length && i >= 0 && i < firsts.length && !nearbyKey(firsts[i]!, next[i]!)) {
-              setSlip({ typed: next[i]!, word: memoryWords(text)[i]!, n: Date.now() });
+            const i = exact ? exact.misses.findIndex(Boolean) : next.length - 1;
+            const missed = exact ? i >= 0 : next.length > entered.length && i >= 0 && i < firsts.length && !nearbyKey(firsts[i] ?? "", next[i] ?? "");
+            if (missed) {
+              setSlip({ typed: exact?.entered[i] ?? next[i] ?? "", word: exact?.words[i] ?? memoryWords(text)[i] ?? "", n: Date.now() });
               navigator.vibrate?.(40);
-            } else if (next.length > entered.length) setSlip(null);
+            } else setSlip(null);
             setValue(v);
             setFeedback("");
-            if ((v.match(/[a-z0-9]/gi) || []).length >= total) check(v);
+            if (exact ? exact.finished : next.length >= total) check(v);
           }}
         />
         <DrawLayer strokes={strokes} active={draw} onCommit={(x) => (setStrokes(x), save(c.id, x))} />
@@ -196,7 +198,7 @@ function ClassMemorize() {
       {showCurrent && (
         <div className="mt-2 flex items-center gap-2 text-sm" aria-live="polite">
           <span className="font-bold text-muted-foreground">Next word:</span>
-          {syllables(currentWord!).map((p, k) => (
+          {syllables(currentWord ?? "").map((p, k) => (
             <span key={k} className="syl" data-alt={k % 2 === 1}>
               {k === 0 ? <><mark>{p[0]}</mark>{p.slice(1)}</> : p}
             </span>
@@ -204,7 +206,7 @@ function ClassMemorize() {
         </div>
       )}
       <p className="caption mt-2">
-        {entered.length} of {total} first letters typed
+        {recall?.correct ?? entered.length} of {total} {strict && stage < 2 ? "words matched" : "first letters typed"}
       </p>
       {feedback && (
         <div className="feedback animate-pop" role="status">
@@ -217,9 +219,12 @@ function ClassMemorize() {
         </div>
       )}
       <div className="mt-3 grid grid-cols-3 gap-2">
-        <button
+        <Button
           className="gummy-btn"
+          variant="ghost"
           data-variant="ghost"
+          aria-label="Restart recall"
+          title="Restart recall"
           onClick={() => {
             setStage(0);
             setPart(0);
@@ -229,13 +234,13 @@ function ClassMemorize() {
           }}
         >
           <RotateCcw size={16} />
-        </button>
-        <button className="gummy-btn" data-variant={draw ? "primary" : "ghost"} onClick={() => setDraw(!draw)}>
+        </Button>
+        <Button variant="ghost" aria-label={draw ? "Switch to typing" : "Draw on card"} title={draw ? "Switch to typing" : "Draw on card"} aria-pressed={draw} className="gummy-btn" data-variant={draw ? "primary" : "ghost"} onClick={() => setDraw(!draw)}>
           {draw ? <Keyboard size={16} /> : <Pencil size={16} />}
-        </button>
-        <button className="gummy-btn" data-variant="primary" disabled={pos === order.length - 1} onClick={() => reset(pos + 1)}>
+        </Button>
+        <Button className="gummy-btn" data-variant="primary" disabled={pos === order.length - 1} onClick={() => reset(pos + 1)}>
           Next
-        </button>
+        </Button>
       </div>
     </main>
   );
