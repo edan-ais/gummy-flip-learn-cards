@@ -24,7 +24,7 @@ export function ScriptMemorize({ data }: { data: ExamBundle }) {
     <h1 className="mt-3 text-lg font-bold">Round {round + 1} / 3 · {ROUNDS[round]}</h1>
     <p className="caption mt-2">Type every word in order. Spelling counts; capitals and punctuation don’t.</p>
     <div className="gummy-card mt-3">
-      {round < 2 ? <p className="memory-text whitespace-pre-wrap">{card.a.split(/(\s+)/u).map((word, i) => /^\s+$/.test(word) ? word : <span key={i} className="memory-word" data-masked={round === 1 && i % 4 === 2}><span className="memory-ghost">{word}</span></span>)}</p> : <p className="font-bold text-muted-foreground">{score.words.length} words · from memory</p>}
+      {round < 2 ? <p className="memory-text whitespace-pre-wrap">{card.a.split(/(\s+)/u).map((word, i) => /^\s+$/.test(word) ? word : <span key={i} className="memory-word" data-masked={round === 1 && i % 4 === 2}><span className={round === 1 && i % 4 === 2 ? "memory-ghost" : "text-foreground"}>{word}</span></span>)}</p> : <p className="font-bold text-muted-foreground">{score.words.length} words · from memory</p>}
     </div>
     <form className="mt-4 space-y-3" onSubmit={(event) => {
       event.preventDefault();

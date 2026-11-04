@@ -140,7 +140,7 @@ function Podcast() {
             const m = card ? mastery(data.states.get(card.id)) : null;
             return (
               <li key={t.key}>
-                <Button variant="ghost" className="pod-row" disabled={!!making || p.loading || pod?.status === "generating"} onClick={() => (active ? p.toggle() : p.playQueue(tracks, i))}>
+                <Button variant="ghost" className={`pod-row ${script ? "h-auto" : ""}`} disabled={!!making || p.loading || pod?.status === "generating"} onClick={() => (active ? p.toggle() : p.playQueue(tracks, i))}>
                   <span className="pod-thumb" data-mode={script ? "qa" : mode}>
                     {making === pod?.id ? <Loader2 size={18} className="animate-spin" /> : i + 1}
                   </span>
