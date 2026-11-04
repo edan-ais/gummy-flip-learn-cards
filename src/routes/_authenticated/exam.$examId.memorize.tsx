@@ -56,7 +56,7 @@ function Memorize() {
   const pieces = strict ? text.split(/([\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*)/gu) : null;
   const words = pieces ? pieces.filter((_, i) => i % 2 === 1) : text.match(WORD_RE) || [];
   const total = memoryWords(text).length;
-  const recall = strict ? scriptRecallInput(text, value, stage) : null;
+  const recall = strict ? scriptRecallInput(text, value) : null;
   const entered = recall?.entered ?? (value.toLowerCase().match(/[a-z0-9]/g) || []);
   const currentIndex = recall?.current ?? entered.length;
   const firsts = memoryWords(text).map((w) => w[0].toLowerCase());
@@ -81,7 +81,7 @@ function Memorize() {
 
   const check = (typed: string) => {
     if (!c) return;
-    const exact = strict ? scriptRecallInput(text, typed, stage) : null;
+    const exact = strict ? scriptRecallInput(text, typed) : null;
     const sc = exact ? { correct: exact.correct, total: exact.words.length, percent: exact.complete ? 100 : 0 } : memoryScore(text, typed);
     let fb = `${sc.correct} of ${sc.total} words matched. `;
     if (passes(sc.percent)) {
@@ -166,14 +166,14 @@ function Memorize() {
           rows={2}
           value={value}
           disabled={complete}
-          aria-label={strict && stage === 0 ? "Type the exact script passage" : strict && stage === 1 ? "Type full visible words and the first letter of each hidden word" : "Type the first letter of each word"}
+          aria-label="Type the first letter of each word"
           autoCapitalize="none"
           autoComplete="off"
           autoCorrect="off"
           spellCheck={false}
           onChange={(e) => {
             const v = e.target.value;
-            const exact = strict ? scriptRecallInput(text, v, stage) : null;
+            const exact = strict ? scriptRecallInput(text, v) : null;
             const next = v.toLowerCase().match(/[a-z0-9]/g) || [];
             const i = exact ? exact.misses.findIndex(Boolean) : next.length - 1;
             const missed = exact ? i >= 0 : next.length > entered.length && i >= 0 && i < firsts.length && !nearbyKey(firsts[i] ?? "", next[i] ?? "");
@@ -206,7 +206,7 @@ function Memorize() {
         </div>
       )}
       <p className="caption mt-2">
-        {recall?.correct ?? entered.length} of {total} {strict && stage < 2 ? "words matched" : "first letters typed"}
+        {recall?.correct ?? entered.length} of {total} first letters typed
       </p>
       {feedback && (
         <div className="feedback animate-pop" role="status">
