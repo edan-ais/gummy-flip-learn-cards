@@ -1,7 +1,21 @@
 import { describe, expect, it } from "vitest";
-import { scriptPassages, scriptScore } from "./scripts";
+import { scriptPassages, scriptScore, scriptRecallScore } from "./scripts";
 
 describe("word-for-word scripts", () => {
+  it("starts with exact full words", () => {
+    expect(scriptRecallScore("Keep the light on", "Keep the light on", 0).complete).toBe(true);
+    expect(scriptRecallScore("Keep the light on", "K t l o", 0).complete).toBe(false);
+  });
+  it("reduces alternating words to initials in the second round", () => {
+    expect(scriptRecallScore("Keep the light on", "Keep t light o", 1).complete).toBe(true);
+    expect(scriptRecallScore("Keep the light on", "Keep r light o", 1).complete).toBe(false);
+  });
+  it("requires exact initials in original order in the final round", () => {
+    expect(scriptRecallScore("Keep the light on", "K t l o", 2).complete).toBe(true);
+    expect(scriptRecallScore("Keep the light on", "K r l o", 2).complete).toBe(false);
+    expect(scriptRecallScore("Keep the light on", "K l t o", 2).complete).toBe(false);
+    expect(scriptRecallScore("Keep the light on", "K t l o x", 2).complete).toBe(false);
+  });
   it("preserves every original word, punctuation and whitespace across passages", () => {
     const text = "  LAMB Y: Hello!\n\nI’m ready.  Are you?\n";
     expect(scriptPassages(text, 3).join("")).toBe(text);

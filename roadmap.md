@@ -1,5 +1,7 @@
 # Roadmap
 
+- [ ] Restore progressive script recall and saved passage drawing; verify all three rounds.
+
 - [x] Add exact-word scripts with saved text, ordered Listen tracks, and strict Memorize practice; verified create, all three recall rounds, edit/reload, phone and laptop layout. Paid narration still needs a listening check.
 
 - [x] In-app delete confirmations; non-overlapping podcasts; no automatic flashcard-audio spend at zero BrainBucks; faster transitions; condensed class controls and equal row heights; review actual AI usage (real margins not proven; pricing estimates exclude shared overhead)

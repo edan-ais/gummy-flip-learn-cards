@@ -26,7 +26,8 @@ export function DrawLayer({
       c.width = w;
       c.height = h;
     }
-    const pen = c.getContext("2d")!;
+    const pen = c.getContext("2d");
+    if (!pen) return;
     pen.clearRect(0, 0, w, h);
     pen.strokeStyle = getComputedStyle(c).color;
     pen.lineWidth = 3 * dpr;
@@ -44,14 +45,15 @@ export function DrawLayer({
 
   useEffect(() => {
     paint();
-    const c = ref.current!;
+    const c = ref.current;
+    if (!c) return;
     const ro = new ResizeObserver(paint);
     ro.observe(c);
     return () => ro.disconnect();
   });
 
   const pt = (e: React.PointerEvent): [number, number] => {
-    const r = ref.current!.getBoundingClientRect();
+    const r = e.currentTarget.getBoundingClientRect();
     return [
       Math.max(0, Math.min(1, (e.clientX - r.left) / r.width)),
       Math.max(0, Math.min(1, (e.clientY - r.top) / r.height)),

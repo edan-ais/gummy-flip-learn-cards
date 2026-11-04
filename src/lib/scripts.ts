@@ -33,3 +33,11 @@ export function scriptScore(expected: string, typed: string) {
 export function isScript(materials: { mime: string }[]) {
   return materials.some((m) => m.mime === SCRIPT_MIME);
 }
+
+/** Progress from full words to alternating initials, then every word's initial. */
+export function scriptRecallScore(expected: string, typed: string, round: number) {
+  const words = scriptWords(expected);
+  const prompts = words.map((word, i) => round === 2 || (round === 1 && i % 2 === 1) ? Array.from(word)[0] ?? "" : word);
+  const score = scriptScore(prompts.join(" "), typed);
+  return { ...score, words, prompts };
+}
