@@ -116,7 +116,7 @@ function Memorize() {
       <div className="mt-3 flex items-center gap-2">
         <Button variant="ghost" size="icon" className="gummy-icon sm" disabled={pos === 0} onClick={() => reset(pos - 1)} aria-label="Previous">
           <ChevronLeft size={18} />
-        </Button
+        </Button>
         <div className="flex flex-1 gap-1.5" aria-label={`Round ${stage + 1} of 3`}>
           {MEMORY_ROUNDS.map((r, i) => (
             <div key={r} className="round-dot" data-on={i <= stage || complete} />
@@ -124,7 +124,7 @@ function Memorize() {
         </div>
         <Button variant="ghost" size="icon" className="gummy-icon sm" disabled={pos === order.length - 1} onClick={() => reset(pos + 1)} aria-label="Next">
           <ChevronRight size={18} />
-        </Button
+        </Button>
       </div>
       <p className="mt-2 text-sm font-bold text-primary">
         Round {stage + 1} / 3 · {MEMORY_ROUNDS[stage]}
@@ -231,13 +231,13 @@ function Memorize() {
           }}
         >
           <RotateCcw size={16} />
-        </Button
+        </Button>
         <Button variant="ghost" aria-label={draw ? "Switch to typing" : "Draw on card"} title={draw ? "Switch to typing" : "Draw on card"} aria-pressed={draw} className="gummy-btn" data-variant={draw ? "primary" : "ghost"} onClick={() => setDraw(!draw)}>
           {draw ? <Keyboard size={16} /> : <Pencil size={16} />}
-        </Button
+        </Button>
         <Button className="gummy-btn" data-variant="primary" disabled={pos === order.length - 1} onClick={() => reset(pos + 1)}>
           Next
-        </Button
+        </Button>
       </div>
     </main>
   );
