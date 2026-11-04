@@ -14,7 +14,7 @@ const TABS = [
   { to: "/exam/$examId/practice", label: "Practice", icon: PenLine },
 ] as const;
 
-export function ExamTabBar({ examId, title }: { examId: string; title?: string }) {
+export function ExamTabBar({ examId, title, script = false }: { examId: string; title?: string; script?: boolean }) {
   const { pathname } = useLocation();
   return (
     <nav className="tabbar" aria-label="Study sections">
@@ -28,7 +28,7 @@ export function ExamTabBar({ examId, title }: { examId: string; title?: string }
           <p className="side-exam-title">{title}</p>
         </div>
       )}
-      {TABS.map(({ to, label, icon: Icon }) => {
+      {TABS.filter((tab) => !script || tab.label === "Home" || tab.label === "Listen" || tab.label === "Memorize").map(({ to, label, icon: Icon }) => {
         const path = to.replace("$examId", examId);
         const active = label === "Home" ? pathname.replace(/\/$/, "") === path : pathname.startsWith(path) || (label === "Practice" && pathname.endsWith("/sample-exam"));
         return (

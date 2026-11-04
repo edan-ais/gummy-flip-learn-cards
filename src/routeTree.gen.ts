@@ -19,6 +19,7 @@ import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticat
 import { Route as AuthConfirmRouteImport } from './routes/auth_.confirm'
 import { Route as AuthenticatedExamExamIdRouteImport } from './routes/_authenticated/exam.$examId'
 import { Route as AuthenticatedExamsNewRouteImport } from './routes/_authenticated/exams.new'
+import { Route as AuthenticatedScriptsNewRouteImport } from './routes/_authenticated/scripts.new'
 import { Route as AuthenticatedExamExamIdIndexRouteImport } from './routes/_authenticated/exam.$examId.index'
 import { Route as AuthenticatedExamExamIdCardsRouteImport } from './routes/_authenticated/exam.$examId.cards'
 import { Route as AuthenticatedExamExamIdMemorizeRouteImport } from './routes/_authenticated/exam.$examId.memorize'
@@ -75,6 +76,11 @@ const AuthenticatedExamsNewRoute = AuthenticatedExamsNewRouteImport.update({
   path: '/exams/new',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedScriptsNewRoute = AuthenticatedScriptsNewRouteImport.update({
+  id: '/scripts/new',
+  path: '/scripts/new',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedExamExamIdIndexRoute =
   AuthenticatedExamExamIdIndexRouteImport.update({
     id: '/',
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/auth/confirm': typeof AuthConfirmRoute
   '/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/exams/new': typeof AuthenticatedExamsNewRoute
+  '/scripts/new': typeof AuthenticatedScriptsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
   '/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
@@ -138,6 +145,7 @@ export interface FileRoutesByTo {
   '/settings': typeof AuthenticatedSettingsRoute
   '/auth/confirm': typeof AuthConfirmRoute
   '/exams/new': typeof AuthenticatedExamsNewRoute
+  '/scripts/new': typeof AuthenticatedScriptsNewRoute
   '/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
   '/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
@@ -157,6 +165,7 @@ export interface FileRoutesById {
   '/auth_/confirm': typeof AuthConfirmRoute
   '/_authenticated/exam/$examId': typeof AuthenticatedExamExamIdRouteWithChildren
   '/_authenticated/exams/new': typeof AuthenticatedExamsNewRoute
+  '/_authenticated/scripts/new': typeof AuthenticatedScriptsNewRoute
   '/_authenticated/exam/$examId/cards': typeof AuthenticatedExamExamIdCardsRoute
   '/_authenticated/exam/$examId/memorize': typeof AuthenticatedExamExamIdMemorizeRoute
   '/_authenticated/exam/$examId/podcast': typeof AuthenticatedExamExamIdPodcastRoute
@@ -176,6 +185,7 @@ export interface FileRouteTypes {
     | '/auth/confirm'
     | '/exam/$examId'
     | '/exams/new'
+    | '/scripts/new'
     | '/exam/$examId/cards'
     | '/exam/$examId/memorize'
     | '/exam/$examId/podcast'
@@ -192,6 +202,7 @@ export interface FileRouteTypes {
     | '/settings'
     | '/auth/confirm'
     | '/exams/new'
+    | '/scripts/new'
     | '/exam/$examId/cards'
     | '/exam/$examId/memorize'
     | '/exam/$examId/podcast'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/auth_/confirm'
     | '/_authenticated/exam/$examId'
     | '/_authenticated/exams/new'
+    | '/_authenticated/scripts/new'
     | '/_authenticated/exam/$examId/cards'
     | '/_authenticated/exam/$examId/memorize'
     | '/_authenticated/exam/$examId/podcast'
@@ -298,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExamsNewRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/scripts/new': {
+      id: '/_authenticated/scripts/new'
+      path: '/scripts/new'
+      fullPath: '/scripts/new'
+      preLoaderRoute: typeof AuthenticatedScriptsNewRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/exam/$examId/': {
       id: '/_authenticated/exam/$examId/'
       path: '/'
@@ -374,6 +393,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
   AuthenticatedExamExamIdRoute: typeof AuthenticatedExamExamIdRouteWithChildren
   AuthenticatedExamsNewRoute: typeof AuthenticatedExamsNewRoute
+  AuthenticatedScriptsNewRoute: typeof AuthenticatedScriptsNewRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
@@ -382,6 +402,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
   AuthenticatedExamExamIdRoute: AuthenticatedExamExamIdRouteWithChildren,
   AuthenticatedExamsNewRoute: AuthenticatedExamsNewRoute,
+  AuthenticatedScriptsNewRoute: AuthenticatedScriptsNewRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
