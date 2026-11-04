@@ -10,6 +10,8 @@ import { pacedOrder } from "@/lib/pacing";
 import { ReadAloud } from "@/lib/read-aloud";
 import { chunks, syllables } from "@/lib/literacy";
 import { MEMORY_ROUNDS, load, save, memoryScore, memoryWords, nearbyKey, passes } from "@/lib/study";
+import { isScript } from "@/lib/scripts";
+import { ScriptMemorize } from "@/components/study/ScriptMemorize";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/memorize")({
   head: () => ({
@@ -28,6 +30,13 @@ export const Route = createFileRoute("/_authenticated/exam/$examId/memorize")({
 const WORD_RE = /[A-Za-z0-9]+(?:['’][A-Za-z0-9]+)*[^A-Za-z0-9\s]*/g;
 
 function Memorize() {
+  const { examId } = Route.useParams();
+  const { data } = useSuspenseQuery(examQuery(examId));
+  if (isScript(data.materials)) return <ScriptMemorize data={data} />;
+  return <ClassMemorize />;
+}
+
+function ClassMemorize() {
   const { examId } = Route.useParams();
   const { data } = useSuspenseQuery(examQuery(examId));
   const { s } = useSettings();

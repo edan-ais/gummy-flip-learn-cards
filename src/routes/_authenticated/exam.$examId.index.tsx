@@ -15,6 +15,9 @@ import { paceLabel, type PlanKind } from "@/lib/pacing";
 import { NotesPanel } from "@/components/study/NotesPanel";
 import { supabase } from "@/integrations/supabase/client";
 import { CalendarDays } from "lucide-react";
+import { isScript, SCRIPT_MIME } from "@/lib/scripts";
+import { ScriptEditor } from "@/components/study/ScriptEditor";
+import { Button } from "@/components/ui/button";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/")({
   head: () => ({
@@ -38,6 +41,7 @@ function ExamHome() {
   const router = useRouter();
   const retry = useServerFn(processExam);
   const [busy, setBusy] = useState(false);
+  const [editingScript, setEditingScript] = useState(false);
   const now = new Date();
   const due = data.cards.filter((c) => {
     const st = data.states.get(c.id);
@@ -46,6 +50,13 @@ function ExamHome() {
   const newCount = data.cards.filter((c) => !data.states.has(c.id)).length;
   const known = data.cards.filter((c) => mastery(data.states.get(c.id)) === "known").length;
   const own = !data.exam.is_sample;
+
+  if (isScript(data.materials)) return <main className="page">
+    <div className="mb-4 flex items-center justify-between"><Link to="/courses" className="gummy-icon" aria-label="Back to classes"><ChevronLeft /></Link><GemChip /></div>
+    <p className="eyebrow">Word-for-word script</p><h1 className="page-title">{data.exam.title}</h1>
+    <div className="mt-4 flex flex-wrap gap-2"><Link to="/exam/$examId/memorize" params={{ examId }} className="gummy-btn">Memorize</Link><Link to="/exam/$examId/podcast" params={{ examId }} className="gummy-chip">Listen</Link><Button variant="outline" className="gummy-chip" onClick={() => setEditingScript(!editingScript)}><Pencil size={16} /> {editingScript ? "Cancel edit" : "Edit script"}</Button></div>
+    <div className="mt-5">{editingScript ? <ScriptEditor examId={examId} courseId={data.exam.course_id} initialTitle={data.exam.title} initialText={data.materials.find((m) => m.mime === SCRIPT_MIME)?.extracted_text ?? ""} onSaved={async () => { await qc.invalidateQueries({ queryKey: ["exam", examId] }); await qc.invalidateQueries({ queryKey: ["courses"] }); setEditingScript(false); toast.success("Script saved."); }} /> : <p className="whitespace-pre-wrap leading-relaxed">{data.materials.find((m) => m.mime === SCRIPT_MIME)?.extracted_text}</p>}</div>
+  </main>;
 
   if (data.exam.status !== "ready")
     return (

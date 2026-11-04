@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { GemChip, LowBalanceNudge, actionError, useSpendGuard } from "@/lib/gems-client";
 import { GEM_COST, filesCost } from "@/lib/gems";
-import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut, Pencil, FileUp, Check, GraduationCap, MoreHorizontal } from "lucide-react";
+import { Plus, Settings2, ChevronRight, Loader2, AlertCircle, Trash2, LogOut, Pencil, FileUp, Check, GraduationCap, MoreHorizontal, ScrollText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { Page } from "@/components/study/Shell";
@@ -156,6 +156,7 @@ function Courses() {
         }} />}
       {!adding && !picking && <div className="class-toolbar">
         <Button className="gummy-btn" onClick={() => setAdding(true)}><Plus size={18} /> New class</Button>
+        <Link to="/scripts/new" className="gummy-chip"><ScrollText size={18} /> New script</Link>
         <SyllabusUpload onDone={refresh} compact />
         {ownCourses.length > 0 && <Button variant="outline" className="gummy-chip" onClick={() => setPicking(true)}><GraduationCap size={18} /> Final review</Button>}
       </div>}

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
 import { GEM_COST, extraEpisodeCost, filesCost, parseSteps, processCost, transcriptionCost } from "./gems";
+import { SCRIPT_MIME } from "./scripts";
 
 type Sb = { rpc: (fn: "spend_gems", args: { _cost: number; _reason: string }) => PromiseLike<{ error: { message: string } | null }> };
 
@@ -51,6 +52,7 @@ export const processExam = createServerFn({ method: "POST" })
     const { data: exam } = await supabase.from("exams").select("id, owner_id").eq("id", data.examId).single();
     if (!exam || exam.owner_id !== context.userId) throw new Error("Exam not found");
     const { data: mats } = await supabase.from("materials").select("*").eq("exam_id", exam.id).order("created_at");
+    if (mats?.some((m) => m.mime === SCRIPT_MIME)) return { ok: false as const, error: "Edit your script from Home to preserve its exact words." };
     // Open files first so bigger files cost more (no AI work yet).
     const blobs = new Map<string, Blob>();
     for (const m of mats ?? []) {

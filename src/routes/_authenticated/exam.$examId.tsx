@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import { examQuery } from "@/lib/exam-data";
 import { ExamHeader, ExamTabBar } from "@/components/study/Shell";
 import { GoalCelebration } from "@/components/study/GoalCelebration";
+import { isScript } from "@/lib/scripts";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId")({
   loader: ({ context, params }) => context.queryClient.ensureQueryData(examQuery(params.examId)),
@@ -29,7 +30,7 @@ function ExamLayout() {
     <div className="exam-layout" data-home={home}>
       {!home && <ExamHeader title={data.exam.title} examId={examId} today={data.today} />}
       <Outlet />
-      <ExamTabBar examId={examId} title={data.exam.title} />
+      <ExamTabBar examId={examId} title={data.exam.title} script={isScript(data.materials)} />
       <GoalCelebration today={data.today} userId={user.id} />
     </div>
   );

@@ -12,6 +12,7 @@ import { usePlayer, fmt, type Track } from "@/lib/player";
 import { episodeAudio, speak } from "@/lib/study.functions";
 import { studyOrder, weakness, mastery } from "@/lib/srs";
 import { useSettings } from "@/lib/settings";
+import { isScript } from "@/lib/scripts";
 
 export const Route = createFileRoute("/_authenticated/exam/$examId/podcast")({
   head: () => ({
@@ -38,20 +39,21 @@ function Podcast() {
   const [mode, setMode] = useState<"qa" | "abstract">("abstract");
   const [making, setMaking] = useState<string | null>(null);
   const spend = useSpendGuard();
+  const script = isScript(data.materials);
 
   const qa = useMemo(() => {
-    const ordered = s.spaced
+    const ordered = script ? [...data.cards].sort((a, b) => a.position - b.position) : s.spaced
       ? [...data.cards].sort((a, b) => weakness(data.states.get(b.id)) - weakness(data.states.get(a.id)))
       : studyOrder(data.cards, data.states, false);
     return ordered;
-  }, [data, s.spaced]);
+  }, [data, s.spaced, script]);
 
   const qaTracks: Track[] = qa.map((c) => ({
-    key: `qa:${c.id}`,
+    key: `${script ? "script" : "qa"}:${c.id}`,
     title: c.q,
-    subtitle: "Q&A",
+    subtitle: script ? "Exact script" : "Q&A",
     resolve: async () => {
-      const text = `Question. ${c.q} ... Think about it. ... Answer. ${c.a}`;
+      const text = script ? c.a : `Question. ${c.q} ... Think about it. ... Answer. ${c.a}`;
       try {
         const quote = await say({ data: { text, quoteOnly: true } });
         if (!(await spend.confirmSpend(quote.cost))) throw new Error("Audio creation paused.");
@@ -81,7 +83,7 @@ function Podcast() {
     },
   }));
 
-  const tracks = mode === "qa" ? qaTracks : absTracks;
+  const tracks = script || mode === "qa" ? qaTracks : absTracks;
   const currentKey = p.current?.key;
   const inThis = currentKey && tracks.some((t) => t.key === currentKey);
   const playAll = () => (inThis ? p.toggle() : p.playQueue(tracks, 0));
@@ -90,30 +92,30 @@ function Podcast() {
     <main className="pod-page">
       {spend.dialog}
       <div className="pod-hero">
-        <div className="pod-cover" data-mode={mode}>
-          {mode === "qa" ? <MessagesSquare size={64} /> : <Sparkles size={64} />}
+        <div className="pod-cover" data-mode={script ? "qa" : mode}>
+          {script || mode === "qa" ? <MessagesSquare size={64} /> : <Sparkles size={64} />}
           <span>{data.exam.title}</span>
         </div>
       </div>
       <div className="px-4">
-        <div className="seg mt-1" role="tablist">
+        {!script && <div className="seg mt-1" role="tablist">
           <button role="tab" aria-selected={mode === "abstract"} data-active={mode === "abstract"} onClick={() => setMode("abstract")}>
             <Wand2 size={15} /> Abstract
           </button>
           <button role="tab" aria-selected={mode === "qa"} data-active={mode === "qa"} onClick={() => setMode("qa")}>
             <MessagesSquare size={15} /> Q&A
           </button>
-        </div>
-        <h1 className="pod-title mt-4">{mode === "qa" ? "Every question, answered" : "Make it memorable"}</h1>
+        </div>}
+        <h1 className="pod-title mt-4">{script ? "Your exact script" : mode === "qa" ? "Every question, answered" : "Make it memorable"}</h1>
         <p className="pod-desc">
-          {mode === "qa"
+          {script ? "Every word, in the original order." : mode === "qa"
             ? s.spaced
               ? "All questions and answers, the ones you're struggling with first."
               : "All questions and answers, in order."
             : "Each section told as a story with analogies, mnemonics and recall breaks."}
         </p>
         <p className="pod-meta mt-1">
-          {data.exam.course?.title} · {tracks.length} {mode === "qa" ? "questions" : "episodes"}
+          {data.exam.course?.title} · {tracks.length} {script ? "passages" : mode === "qa" ? "questions" : "episodes"}
         </p>
 
         <div className="mt-3 flex items-center justify-between">
@@ -121,9 +123,9 @@ function Podcast() {
             <MoreHorizontal size={24} />
           </div>
           <div className="flex items-center gap-5">
-            <button aria-label="Shuffle" className="text-muted-foreground" onClick={() => p.playQueue([...tracks].sort(() => Math.random() - 0.5), 0)}>
+            {!script && <button aria-label="Shuffle" className="text-muted-foreground" onClick={() => p.playQueue([...tracks].sort(() => Math.random() - 0.5), 0)}>
               <Shuffle size={24} />
-            </button>
+            </button>}
             <button className="pod-play" onClick={playAll} aria-label={inThis && p.playing ? "Pause" : "Play all"} disabled={!tracks.length}>
               {inThis && p.loading ? <Loader2 className="animate-spin" /> : inThis && p.playing ? <Pause size={24} fill="currentColor" /> : <Play size={24} fill="currentColor" className="ml-0.5" />}
             </button>
@@ -133,13 +135,13 @@ function Podcast() {
         <ul className="mt-3">
           {tracks.map((t, i) => {
             const active = p.current?.key === t.key;
-            const pod = mode === "abstract" ? data.podcasts[i] : undefined;
-            const card = mode === "qa" ? qa[i] : undefined;
+            const pod = !script && mode === "abstract" ? data.podcasts[i] : undefined;
+            const card = script || mode === "qa" ? qa[i] : undefined;
             const m = card ? mastery(data.states.get(card.id)) : null;
             return (
               <li key={t.key}>
-                <Button variant="ghost" className="pod-row" disabled={!!making || p.loading || pod?.status === "generating"} onClick={() => (active ? p.toggle() : p.playQueue(tracks, i))}>
-                  <span className="pod-thumb" data-mode={mode}>
+                <Button variant="ghost" className={`pod-row ${script ? "h-auto" : ""}`} disabled={!!making || p.loading || pod?.status === "generating"} onClick={() => (active ? p.toggle() : p.playQueue(tracks, i))}>
+                  <span className="pod-thumb" data-mode={script ? "qa" : mode}>
                     {making === pod?.id ? <Loader2 size={18} className="animate-spin" /> : i + 1}
                   </span>
                   <div className="min-w-0 flex-1 text-left">
@@ -147,6 +149,7 @@ function Podcast() {
                       {active && p.playing && <Eq />}
                       {t.title}
                     </p>
+                    {script && <p className="mt-1 whitespace-pre-wrap text-sm text-muted-foreground">{qa[i]?.a}</p>}
                     <p className="pod-meta truncate">
                       {pod
                         ? pod.status === "ready"
@@ -174,7 +177,7 @@ function Podcast() {
         <div className="pod-now">
           <div className="flex items-center gap-3">
             <span className="pod-thumb sm" data-mode={mode}>
-              {mode === "qa" ? <MessagesSquare size={16} /> : <Sparkles size={16} />}
+              {script || mode === "qa" ? <MessagesSquare size={16} /> : <Sparkles size={16} />}
             </span>
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold">{p.current.title}</p>
