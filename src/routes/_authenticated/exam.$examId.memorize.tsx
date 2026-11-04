@@ -53,7 +53,8 @@ function Memorize() {
   const c = order[pos];
   const parts = c ? (s.adhd ? chunks(c.a, 18) : [c.a]) : [];
   const text = parts[part] ?? "";
-  const words = text.match(WORD_RE) || [];
+  const pieces = strict ? text.split(/([\p{L}\p{N}]+(?:['’][\p{L}\p{N}]+)*)/gu) : null;
+  const words = pieces ? pieces.filter((_, i) => i % 2 === 1) : text.match(WORD_RE) || [];
   const total = memoryWords(text).length;
   const recall = strict ? scriptRecallInput(text, value, stage) : null;
   const entered = recall?.entered ?? (value.toLowerCase().match(/[a-z0-9]/g) || []);
@@ -144,8 +145,10 @@ function Memorize() {
           <ReadAloud text={text} />
         </div>
         <h2 className="card-q text-lg">{c.q}</h2>
-        <p className="memory-text">
-          {words.map((w, i) => {
+        <p className={strict ? "memory-text whitespace-pre-wrap" : "memory-text"}>
+          {(pieces ?? words).map((w, key) => {
+            if (pieces && key % 2 === 0) return w;
+            const i = pieces ? Math.floor(key / 2) : key;
             const masked = stage === 2 || (stage === 1 && i % 2 === 1);
             const done = recall ? recall.matches[i] || recall.misses[i] : i < entered.length;
             const miss = done && missAt(i);

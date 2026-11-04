@@ -1,6 +1,6 @@
 # Roadmap
 
-- [ ] Unify script and class Memorize on-card typing, controls, feedback and drawing; retain exact script scoring only.
+- [x] Unify script and class Memorize on-card typing, controls, feedback and drawing; exact scoring tests pass; signed-in script advances all three rounds, drawing persists, phone/laptop checked and temporary test removed.
 
 - [x] Restore progressive script recall and saved passage drawing; seven scoring tests pass; signed-in laptop flow verifies all three rounds and drawings survive reload; phone width checked.
 
