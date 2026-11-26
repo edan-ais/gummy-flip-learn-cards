@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Mic, Square, Trash2, FileText, Loader2, ExternalLink, Upload, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { actionError, useSpendGuard } from "@/lib/gems-client";
-import { processCost } from "@/lib/gems";
+import { GEM_COST, filesCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { type Material } from "@/lib/exam-data";
 import { processExam, transcribeNote } from "@/lib/study.functions";
@@ -103,7 +103,7 @@ function AddMaterials({ examId }: { examId: string }) {
         if (!text) addedSizes.push(f.size);
       }
       if (!added) return;
-      if (!(await confirmSpend(processCost(added * 8000, addedSizes)))) return;
+      if (!(await confirmSpend(GEM_COST.parseBase + filesCost(addedSizes)))) return;
       toast("Reading your new pages… this can take a minute or two.");
       const r = await process({ data: { examId } });
       if (!r.ok) actionError(r.error, "We couldn't add those pages.");
