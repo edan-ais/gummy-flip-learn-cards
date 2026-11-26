@@ -86,6 +86,48 @@ Source-of-truth rules:
 - Chapter material is the source of truth. When student notes contradict it, keep only the version the chapter material supports; never put a contradicted claim in the study guide.
 - When the same fact appears in many of the student's notes, treat it as high priority: make sure it is covered by cards and questions, and cover it early.`;
 
+const ORGANIZE_PIECE_CHARS = 30_000;
+
+// Same rules as PARSE_PROMPT, but each call sees only one piece of a larger upload.
+const PARSE_PROMPT_PIECE = PARSE_PROMPT.replace(
+  "Split the material into its natural sections (chapters, units or topics, 2-10 sections, in the order they appear).",
+  "This is one piece of a larger upload. Split this piece into its natural sections (chapters, units or topics, 1-5 sections, in the order they appear).",
+);
+
+/** Splits the combined material into pieces of about 30k characters at paragraph breaks, keeping every file. */
+function splitForOrganizing(all: string): string[] {
+  if (all.length <= ORGANIZE_PIECE_CHARS) return [all];
+  const pieces: string[] = [];
+  for (const block of all.split(/\n\n(?=### )/)) {
+    if (block.length <= ORGANIZE_PIECE_CHARS) {
+      pieces.push(block);
+      continue;
+    }
+    const header = block.split("\n", 1)[0];
+    const count = Math.ceil(block.length / ORGANIZE_PIECE_CHARS);
+    const target = Math.ceil(block.length / count);
+    let rest = block;
+    let part = 1;
+    while (rest.length > target * 1.25) {
+      let cut = rest.lastIndexOf("\n\n", target);
+      if (cut < target * 0.5) cut = rest.lastIndexOf("\n", target);
+      if (cut < target * 0.5) cut = target;
+      pieces.push(part === 1 ? rest.slice(0, cut) : `${header} (continued)\n${rest.slice(0, cut)}`);
+      rest = rest.slice(cut).trimStart();
+      part++;
+    }
+    pieces.push(part === 1 ? rest : `${header} (continued)\n${rest}`);
+  }
+  // Merge tiny neighbors (e.g. short notes) so we don't make a call per snippet.
+  const merged: string[] = [];
+  for (const p of pieces) {
+    const last = merged[merged.length - 1];
+    if (last !== undefined && last.length + p.length + 2 <= ORGANIZE_PIECE_CHARS) merged[merged.length - 1] = `${last}\n\n${p}`;
+    else merged.push(p);
+  }
+  return merged;
+}
+
 export const processExam = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((d: { examId: string }) => d)
@@ -156,11 +198,22 @@ export const processExam = createServerFn({ method: "POST" })
       const organizeCost = GEM_COST.parsePer30k * parseSteps(all.length);
       await charge(supabase, organizeCost, "Build study set (organizing)");
       cost += organizeCost;
-      const parsed = await withTimeout(
-        aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema),
-        AI_TIMEOUT_MS.organize,
-        "Organizing your study set took too long. Please try again.",
+      // One giant structured answer for ~100k characters can outlive the server
+      // request and die silently, so organize in ~30k-character pieces, in
+      // parallel (same 30k unit the organize cost is priced in), and merge the
+      // sections back in the order the material appears. Small uploads stay one call.
+      const pieces = splitForOrganizing(all);
+      const results = await Promise.all(
+        pieces.map((piece) =>
+          withTimeout(
+            aiObject(pieces.length > 1 ? PARSE_PROMPT_PIECE : PARSE_PROMPT, [{ role: "user", content: piece }], ParseSchema),
+            AI_TIMEOUT_MS.organize,
+            "Organizing your study set took too long. Please try again.",
+          ),
+        ),
       );
+      const parsed = { sections: results.flatMap((r) => r.sections) };
+      if (!parsed.sections.length) throw new Error("The AI could not organize this material. Please try again.");
 
       // Replace previously generated content
       await supabase.from("podcasts").delete().eq("exam_id", exam.id);
