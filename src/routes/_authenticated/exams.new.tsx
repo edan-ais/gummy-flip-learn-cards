@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { FileText, Image as ImageIcon, ClipboardType, X, Loader2, Upload, Camera, ChevronLeft } from "lucide-react";
 import { toast } from "sonner";
 import { actionError, useSpendGuard } from "@/lib/gems-client";
-import { processCost } from "@/lib/gems";
+import { GEM_COST, filesCost } from "@/lib/gems";
 import { supabase } from "@/integrations/supabase/client";
 import { processExam } from "@/lib/study.functions";
 import { restorePendingUpload, persistPendingUpload } from "@/lib/pending-upload";
@@ -184,10 +184,12 @@ function NewExam() {
         if (error) throw error;
         savedItems.current.add(it.id);
       }
-      const estChars = items.reduce((n, it) => n + (it.text?.length ?? (it.kind === "text" || it.kind === "doc" ? 0 : 8000)), 0);
       const estFiles = items.filter((it) => it.file && it.kind !== "text" && it.kind !== "doc").map((it) => it.file!.size);
       setBusy(null);
-      if (!(await confirmSpend(processCost(estChars, estFiles)))) return;
+      // The up-front charge is exact: base step plus reading each file. The
+      // organize steps are charged after reading, once the real text length is
+      // known, so there is no per-file character guess to under-price PDFs.
+      if (!(await confirmSpend(GEM_COST.parseBase + filesCost(estFiles)))) return;
       setBusy("Reading and organizing… this can take a minute or two.");
       const r = await process({ data: { examId: id } });
       await qc.invalidateQueries();
