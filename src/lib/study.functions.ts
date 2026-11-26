@@ -45,6 +45,24 @@ async function refund(userId: string, cost: number, reason: string, ref?: string
   return false;
 }
 
+/**
+ * Fail an AI call that runs too long instead of hanging the whole build in
+ * "processing" forever. A timed-out build lands in the catch below, which
+ * refunds the charge and marks the exam failed so the student can retry.
+ */
+const AI_TIMEOUT_MS = { transcribeFile: 3 * 60_000, organize: 5 * 60_000 } as const;
+async function withTimeout<T>(work: Promise<T>, ms: number, message: string): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const timeout = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error(message)), ms);
+  });
+  try {
+    return await Promise.race([work, timeout]);
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 const ParseSchema = z.object({
   sections: z.array(
     z.object({
@@ -110,9 +128,13 @@ export const processExam = createServerFn({ method: "POST" })
           m.mime === "application/pdf"
             ? { type: "file" as const, filename: m.name, data: b64, mediaType: "application/pdf" }
             : { type: "image" as const, image: new URL(`data:${m.mime};base64,${b64}`) };
-        const text = await aiText(
-          "Transcribe this study material exactly as written, keeping headings, lists and paragraph breaks. Output plain text only. For handwriting, transcribe faithfully. Do not summarize or add anything.",
-          [{ role: "user", content: [part, { type: "text", text: "Transcribe this." }] }],
+        const text = await withTimeout(
+          aiText(
+            "Transcribe this study material exactly as written, keeping headings, lists and paragraph breaks. Output plain text only. For handwriting, transcribe faithfully. Do not summarize or add anything.",
+            [{ role: "user", content: [part, { type: "text", text: "Transcribe this." }] }],
+          ),
+          AI_TIMEOUT_MS.transcribeFile,
+          `Reading ${m.name} took too long. Try re-uploading it as a smaller or clearer PDF.`,
         );
         await supabase.from("materials").update({ extracted_text: text }).eq("id", m.id);
         m.extracted_text = text;
@@ -134,7 +156,11 @@ export const processExam = createServerFn({ method: "POST" })
       const organizeCost = GEM_COST.parsePer30k * parseSteps(all.length);
       await charge(supabase, organizeCost, "Build study set (organizing)");
       cost += organizeCost;
-      const parsed = await aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema);
+      const parsed = await withTimeout(
+        aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema),
+        AI_TIMEOUT_MS.organize,
+        "Organizing your study set took too long. Please try again.",
+      );
 
       // Replace previously generated content
       await supabase.from("podcasts").delete().eq("exam_id", exam.id);
