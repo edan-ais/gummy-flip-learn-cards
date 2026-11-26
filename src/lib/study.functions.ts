@@ -1,7 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { z } from "zod";
-import { GEM_COST, extraEpisodeCost, filesCost, parseSteps, processCost, transcriptionCost } from "./gems";
+import { GEM_COST, extraEpisodeCost, filesCost, parseSteps, transcriptionCost } from "./gems";
 import { SCRIPT_MIME } from "./scripts";
 
 type Sb = { rpc: (fn: "spend_gems", args: { _cost: number; _reason: string }) => PromiseLike<{ error: { message: string } | null }> };
@@ -13,11 +13,36 @@ async function charge(supabase: unknown, cost: number, reason: string) {
   if (error) throw new Error(error.message.includes("NOT_ENOUGH_GEMS") ? "NOT_ENOUGH_GEMS" : error.message);
 }
 
-/** Give gems back when an AI action we charged for didn't finish. */
-async function refund(userId: string, cost: number, reason: string) {
-  if (cost <= 0) return;
+/**
+ * Give gems back when an AI action we charged for didn't finish.
+ * The RPC result is checked and retried: a failed refund is logged loudly and
+ * reported to the caller instead of disappearing silently. `ref` makes retries
+ * idempotent (gem_ledger.ref is unique), so a retried refund never double-credits.
+ */
+async function refund(userId: string, cost: number, reason: string, ref?: string) {
+  if (cost <= 0) return true;
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  await supabaseAdmin.rpc("credit_gems", { _user: userId, _amount: cost, _reason: `Refund: ${reason}`, _ref: null as unknown as string });
+  let lastError = "unknown";
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const { error } = await supabaseAdmin.rpc("credit_gems", {
+        _user: userId,
+        _amount: cost,
+        _reason: `Refund: ${reason}`,
+        _ref: (ref ?? null) as unknown as string,
+      });
+      if (!error) return true;
+      // A duplicate ref means an earlier attempt actually committed and only the
+      // response was lost: the gems are already back, so treat it as done.
+      if (/duplicate|gem_ledger_ref_uniq/i.test(error.message)) return true;
+      lastError = error.message;
+    } catch (e) {
+      lastError = e instanceof Error ? e.message : String(e);
+    }
+    await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+  }
+  console.error(`Refund failed after 3 attempts: user=${userId} amount=${cost} reason=${reason} ref=${ref ?? "none"}: ${lastError}`);
+  return false;
 }
 
 const ParseSchema = z.object({
@@ -62,9 +87,12 @@ export const processExam = createServerFn({ method: "POST" })
       blobs.set(m.id, blob);
     }
     const sizes = [...blobs.values()].map((b) => b.size);
-    const knownChars = (mats ?? []).reduce((n, m) => n + (m.extracted_text?.length ?? 0), 0);
-    const chars = knownChars + sizes.length * 8000;
-    let cost = processCost(chars, sizes);
+    const buildId = crypto.randomUUID();
+    // Charge only what is known exactly up front: the base step plus reading
+    // each file. Text length (and so the organize cost) is only known after
+    // the files are read, and is charged exactly below - no per-file
+    // character guesses, which under-priced dense PDFs.
+    let cost = GEM_COST.parseBase + filesCost(sizes);
     try {
       await charge(supabase, cost, "Build study set");
     } catch (e) {
@@ -102,12 +130,10 @@ export const processExam = createServerFn({ method: "POST" })
           .concat((myNotes ?? []).map((n, i) => `### STUDENT NOTES: personal note ${i + 1}\n${n.body}`))
           .join("\n\n");
       if (!all.trim()) throw new Error("No readable text found in the uploads.");
-      // Longer than estimated? Charge the extra parse steps before organizing.
-      const extra = GEM_COST.parsePer30k * Math.max(0, parseSteps(all.length) - parseSteps(chars));
-      if (extra) {
-        await charge(supabase, extra, "Build study set (longer material)");
-        cost += extra;
-      }
+      // Charge the organize steps now that the real text length is known.
+      const organizeCost = GEM_COST.parsePer30k * parseSteps(all.length);
+      await charge(supabase, organizeCost, "Build study set (organizing)");
+      cost += organizeCost;
       const parsed = await aiObject(PARSE_PROMPT, [{ role: "user", content: all }], ParseSchema);
 
       // Replace previously generated content
@@ -140,8 +166,14 @@ export const processExam = createServerFn({ method: "POST" })
       return { ok: true as const };
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Something went wrong.";
-      await refund(context.userId, cost, "Build study set");
-      await supabase.from("exams").update({ status: "failed", error: msg }).eq("id", exam.id);
+      const refunded = await refund(context.userId, cost, "Build study set", `build:${exam.id}:${buildId}`);
+      await supabase
+        .from("exams")
+        .update({
+          status: "failed",
+          error: refunded ? msg : `${msg} (We also couldn't return the BrainBucks for this failed build - please contact support.)`,
+        })
+        .eq("id", exam.id);
       return { ok: false as const, error: msg };
     }
   });
