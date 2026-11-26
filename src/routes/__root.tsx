@@ -132,8 +132,27 @@ function RootComponent() {
       <SettingsProvider>
         <PlayerProvider>
           <div className="app-frame">
+            <a
+              href="#main-content"
+              className="sr-only focus:not-sr-only focus:fixed focus:left-2 focus:top-2 focus:z-[100] focus:rounded-md focus:bg-background focus:px-3 focus:py-2 focus:text-sm focus:font-bold focus:text-foreground focus:shadow-lg focus:outline focus:outline-2 focus:outline-offset-2"
+              onClick={(e) => {
+                e.preventDefault();
+                const main = document.querySelector("main");
+                if (main instanceof HTMLElement) {
+                  main.setAttribute("tabindex", "-1");
+                  main.focus();
+                }
+              }}
+            >
+              Skip to main content
+            </a>
             <WebTopBar />
             <Outlet />
+            <footer className="px-4 pb-24 pt-2 text-center text-xs text-muted-foreground">
+              <Link to="/accessibility" className="underline underline-offset-2">
+                Accessibility
+              </Link>
+            </footer>
             <MiniPlayer />
           </div>
           <BrainBucksDialog />
